@@ -2077,9 +2077,35 @@ function renderNotifications(){
       <div style="flex:1">
         <div style="font-size:13px;color:var(--text)">${esc(n.text)}</div>
         <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(n.time)}</div>
+        ${n.type==='info'&&n.text.startsWith('New sign-up:')?`
+          <button class="btn bsm bg2" style="margin-top:8px" onclick="openActivateFromNotif('${n.id}')">
+            Activate student & assign ID
+          </button>`:''}
       </div>
       <button class="btn bxs" onclick="delNotif('${n.id}')" style="flex-shrink:0">✕</button>
     </div>`).join('');
+}
+
+function openActivateFromNotif(nid){
+  const n=notifications.find(x=>x.id===nid); if(!n) return;
+  // Parse name and email from notification text e.g. "New sign-up: Mohamed Zayed Adham (email@x.com)"
+  const match=n.text.match(/New sign-up: (.+?) \((.+?)\)/);
+  const name=match?match[1]:'';
+  const email=match?match[2]:'';
+  // Pre-fill the Add Student modal
+  document.getElementById('m-add-stu-title').textContent='Activate new student';
+  document.getElementById('m-add-student')._eid=null;
+  document.getElementById('m-add-student')._signupEmail=email;
+  document.getElementById('st-name').value=name;
+  document.getElementById('st-id').value='';
+  document.getElementById('st-phone').value='';
+  document.getElementById('st-pw').value='';
+  document.getElementById('st-fee').value='';
+  document.getElementById('st-grp').value='online';
+  document.getElementById('st-sat').value='';
+  document.getElementById('st-sat-cw').style.display='none';
+  document.getElementById('st-notes').value='';
+  openModal('m-add-student');
 }
 function clearNotifs(){notifications.forEach(n=>n.read=true);sv('notifications',notifications);updateDots();renderNotifications();}
 function delNotif(id){notifications=notifications.filter(n=>n.id!==id);sv('notifications',notifications);updateDots();renderNotifications();}
