@@ -304,7 +304,6 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     <div class="ltabs">
       <div class="ltab active" onclick="switchTab('teacher',this)">Teacher</div>
       <div class="ltab" onclick="switchTab('student',this)">Student login</div>
-      <div class="ltab" onclick="switchTab('signup',this)">Sign up</div>
     </div>
     <!-- TEACHER LOGIN -->
     <div id="lt-t">
@@ -322,25 +321,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       <input class="li" id="lsp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doStudentLogin()">
       <button class="lbtn" onclick="doStudentLogin()">Sign in</button>
     </div>
-    <!-- STUDENT SIGN-UP -->
-    <div id="lt-su" style="display:none">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.65">
-        Create your account. Your teacher will review and assign your Student ID.
-      </div>
-      <label class="ll">Email address <span style="color:var(--red)">*</span></label>
-      <input class="li" id="su-email" type="email" placeholder="your@email.com" autocomplete="email">
-      <label class="ll">Password <span style="color:var(--red)">*</span> <span style="font-size:10px;opacity:.6">(min 6 chars)</span></label>
-      <input class="li" id="su-pw" type="password" placeholder="••••••••">
-      <label class="ll">Confirm password <span style="color:var(--red)">*</span></label>
-      <input class="li" id="su-pw2" type="password" placeholder="••••••••">
-      <label class="ll">Full triple name <span style="color:var(--red)">*</span> <span style="font-size:10px;opacity:.6">e.g. Mohamed Mostafa Hussein</span></label>
-      <input class="li" id="su-name" type="text" placeholder="First Middle Last" autocomplete="name">
-      <label class="ll">Phone number <span style="color:var(--red)">*</span></label>
-      <input class="li" id="su-phone" type="tel" placeholder="+20 1XX XXX XXXX">
-      <button class="lbtn" onclick="doStudentSignUp()" style="margin-top:4px">Create account</button>
-      <div id="su-msg" style="font-size:12px;margin-top:10px;min-height:16px;line-height:1.55;text-align:center"></div>
-    </div>
-    <div class="lerr" id="lerr"></div>
+       <div class="lerr" id="lerr"></div>
     <div id="lattempts"></div>
   </div>
 </div>
@@ -2077,38 +2058,10 @@ function renderNotifications(){
       <div style="flex:1">
         <div style="font-size:13px;color:var(--text)">${esc(n.text)}</div>
         <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(n.time)}</div>
-        ${n.type==='info'&&n.text.startsWith('New sign-up:')?`
-          <button class="btn bsm bg2" style="margin-top:8px" onclick="openActivateFromNotif('${n.id}')">
-            Activate student & assign ID
-          </button>`:''}
       </div>
       <button class="btn bxs" onclick="delNotif('${n.id}')" style="flex-shrink:0">✕</button>
     </div>`).join('');
 }
-
-function openActivateFromNotif(nid){
-  const n=notifications.find(x=>x.id===nid); if(!n) return;
-  // Parse name and email from notification text e.g. "New sign-up: Mohamed Zayed Adham (email@x.com)"
-  const match=n.text.match(/New sign-up: (.+?) \((.+?)\)/);
-  const name=match?match[1]:'';
-  const email=match?match[2]:'';
-  // Pre-fill the Add Student modal
-  document.getElementById('m-add-stu-title').textContent='Activate new student';
-  document.getElementById('m-add-student')._eid=null;
-  document.getElementById('m-add-student')._signupEmail=email;
-  document.getElementById('st-name').value=name;
-  document.getElementById('st-id').value='';
-  document.getElementById('st-phone').value='';
-  document.getElementById('st-pw').value='';
-  document.getElementById('st-fee').value='';
-  document.getElementById('st-grp').value='online';
-  document.getElementById('st-sat').value='';
-  document.getElementById('st-sat-cw').style.display='none';
-  document.getElementById('st-notes').value='';
-  openModal('m-add-student');
-}
-function clearNotifs(){notifications.forEach(n=>n.read=true);sv('notifications',notifications);updateDots();renderNotifications();}
-function delNotif(id){notifications=notifications.filter(n=>n.id!==id);sv('notifications',notifications);updateDots();renderNotifications();}
 
 // ═══════════════════════════════════════════════════
 // SETTINGS
@@ -2382,64 +2335,6 @@ function submitPayRequest(){
   renderMyPayments(); updateDots();
 }
 
-
-
-// ═══════════════════════════════════════════════════
-// STUDENT SIGN-UP via Supabase Auth
-// ═══════════════════════════════════════════════════
-function validateTriple(name){return name.trim().split(/\s+/).filter(Boolean).length>=3;}
-
-async function doStudentSignUp(){
-  const email  = document.getElementById('su-email').value.trim();
-  const pw     = document.getElementById('su-pw').value;
-  const pw2    = document.getElementById('su-pw2').value;
-  const name   = document.getElementById('su-name').value.trim();
-  const phone  = document.getElementById('su-phone').value.trim();
-  const msgEl  = document.getElementById('su-msg');
-
-  // Validation
-  msgEl.style.color='var(--red)';
-  if(!email||!pw||!name||!phone){msgEl.textContent='All fields are required.';return;}
-  if(!validateTriple(name)){msgEl.textContent='Full triple name required (First Middle Last).';return;}
-  if(pw.length<6){msgEl.textContent='Password must be at least 6 characters.';return;}
-  if(pw!==pw2){msgEl.textContent='Passwords do not match.';return;}
-  if(!DB||!DB_READY){msgEl.textContent='Service unavailable — please try again.';return;}
-
-  msgEl.style.color='var(--text2)';
-  msgEl.textContent='Creating account…';
-
-  const {data,error}=await DB.auth.signUp({
-    email,
-    password:pw,
-    options:{
-      data:{
-        full_name:name,
-        phone,
-        role:'student',
-        status:'pending_approval'
-      }
-    }
-  });
-
-  if(error){msgEl.style.color='var(--red)';msgEl.textContent=error.message;return;}
-
-  // Supabase returns empty identities if email already exists
-  if(data.user?.identities?.length===0){
-    msgEl.style.color='var(--amber)';
-    msgEl.textContent='This email is already registered. Use the Student login tab.';
-    return;
-  }
-
-  // Notify teacher via notifications array
-  addNotif('New sign-up: '+name+' ('+email+')','info');
-
-  msgEl.style.color='var(--green)';
-  msgEl.textContent='Account created! Check your email to confirm, then your teacher will activate your account.';
-  ['su-email','su-pw','su-pw2','su-name','su-phone'].forEach(id=>{
-    const e=document.getElementById(id);if(e)e.value='';
-  });
-}
-
 // ═══════════════════════════════════════════════════
 // STUDENT PASSWORD CHANGE
 // ═══════════════════════════════════════════════════
@@ -2618,49 +2513,6 @@ function resetToDefaults(){
   toast2('Reset to CB defaults');
 }
 
-// ═══════════════════════════════════════════════════
-// SETTINGS — DEPLOYMENT GUIDE
-// ═══════════════════════════════════════════════════
-function renderSettings(){
-  const el=document.getElementById('page-settings');
-  if(!el) return;
-  // Find the inner body div and inject deployment guide tab if not already present
-  const pg=document.querySelector('#page-settings .pb3');
-  if(!pg) return;
-  // Check if already rendered
-  if(pg.querySelector('#deploy-tab')) return;
-  // Add deploy tab HTML after existing settings
-  const deploySection=document.createElement('div');
-  deploySection.innerHTML=`<hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
-  <div class="st2" style="margin-bottom:14px">Go-live deployment guide</div>
-  <div id="deploy-tab" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:840px">
-    <div class="card cp">
-      <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:8px">Step 1 — Save your file</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.7">Save this file as <code style="background:var(--card3);padding:1px 5px;border-radius:4px">index.html</code> on your computer. This is a fully self-contained app — no server needed locally.</div>
-    </div>
-    <div class="card cp">
-      <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:8px">Step 2 — Deploy (free, 30 seconds)</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.7">
-        <strong style="color:var(--gold)">Option A — Netlify Drop:</strong><br>Go to <strong>netlify.com/drop</strong> → drag &amp; drop your file → get a live link instantly (e.g. <code style="background:var(--card3);padding:1px 5px;border-radius:4px">your-site.netlify.app</code>)<br><br>
-        <strong style="color:var(--gold)">Option B — GitHub Pages:</strong><br>Create a repo → upload file as <code style="background:var(--card3);padding:1px 5px;border-radius:4px">index.html</code> → Settings → Pages → Enable → live at <code style="background:var(--card3);padding:1px 5px;border-radius:4px">username.github.io/repo</code>
-      </div>
-    </div>
-    <div class="card cp">
-      <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:8px">Step 3 — Custom domain</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.7">
-        Buy <strong style="color:var(--white)">mzayedsat.com</strong> from <strong style="color:var(--gold)">Namecheap</strong> (~$10/yr) or <strong style="color:var(--gold)">Cloudflare Registrar</strong>.<br><br>
-        In Netlify: Site settings → Domain management → Add custom domain → Add a CNAME record in your registrar DNS pointing to Netlify. Live in minutes.
-      </div>
-    </div>
-    <div class="card cp" style="border-left:2px solid var(--amber)">
-      <div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:8px">Important note on data</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.7">Student data currently lives in <strong style="color:var(--white)">each user's browser</strong> (localStorage). Students on different devices won't share data. When you're ready to scale, upgrade to a cloud database (Supabase or Firebase) — just ask me to build that next.</div>
-    </div>
-  </div>`;
-  pg.appendChild(deploySection);
-}
-
-// ═══════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════
 // MOBILE HAMBURGER SIDEBAR
