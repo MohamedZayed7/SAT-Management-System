@@ -2049,7 +2049,20 @@ function saveExam(){
 // ═══════════════════════════════════════════════════
 // NOTIFICATIONS
 // ═══════════════════════════════════════════════════
-function renderNotifications(){
+function clearNotifs(){
+  notifications.forEach(n=>n.read=true);
+  sv('notifications',notifications);
+  updateDots();
+  renderNotifications();
+}
+
+function delNotif(id){
+  notifications=notifications.filter(n=>n.id!==id);
+  sv('notifications',notifications);
+  updateDots();
+  renderNotifications();
+}
+  function renderNotifications(){
   const el=document.getElementById('notif-list');
   if(!notifications.length){el.innerHTML='<div class="empty">No notifications</div>';return;}
   el.innerHTML=notifications.map(n=>`
