@@ -609,7 +609,9 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     <div class="fg"><label class="fl">Group</label>
       <select id="st-grp"><option value="online">Online</option><option value="physical">Physical</option><option value="both">Online + Physical</option></select></div>
   </div>
-  <div class="fg2">
+ <div class="fg3">
+    <div class="fg"><label class="fl">Grade <span style="color:var(--red)">*</span></label>
+      <select id="st-grade"><option value="10">Grade 10</option><option value="11">Grade 11</option><option value="12">Grade 12</option></select></div>
     <div class="fg"><label class="fl">Total course fee (EGP)</label><input type="number" id="st-fee" placeholder="0" min="0"></div>
     <div class="fg"><label class="fl">SAT exam date</label>
       <select id="st-sat" onchange="document.getElementById('st-sat-cw').style.display=this.value==='custom'?'block':'none'">
@@ -1635,6 +1637,7 @@ function renderStudents(){
       <div class="sname">${esc(s.name)}</div>
       <div class="smeta">${esc(s.id)} · ${esc(s.phone||'—')}</div>
       <div style="margin-top:9px;display:flex;gap:5px;flex-wrap:wrap">
+       <span class="bge bgold">G${esc(s.grade||'?')}</span>
         <span class="bge ${s.group==='online'?'bb':s.group==='physical'?'bgr':'bp'}">${s.group||''}</span>
         ${payStatusBadge(s.id)}
         <span class="bge bgray">${getAttCount(s.id)} sessions</span>
@@ -1649,7 +1652,7 @@ function openAddStudent(){
   document.getElementById('m-add-student')._eid=null;
   ['st-name','st-id','st-phone','st-pw','st-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('st-fee').value='';
-  document.getElementById('st-grp').value='online';
+  document.getElementById('st-grp').value='online';   document.getElementById('st-grade').value='10';
   document.getElementById('st-sat').value='';
   document.getElementById('st-sat-cw').style.display='none';
   openModal('m-add-student');
@@ -1663,16 +1666,17 @@ function saveStudent(){
   const phone=document.getElementById('st-phone').value.trim();
   const pw=document.getElementById('st-pw').value.trim();
   const fee=document.getElementById('st-fee').value;
-  const group=document.getElementById('st-grp').value;
+const group=document.getElementById('st-grp').value;
+  const grade=document.getElementById('st-grade').value;
   const satDate=document.getElementById('st-sat').value;
   const satCustom=document.getElementById('st-sat-c').value;
   const notes=document.getElementById('st-notes').value.trim();
   const eid=document.getElementById('m-add-student')._eid;
   if(eid){
-    const s=students.find(x=>x.id===eid); if(s) Object.assign(s,{name,id,phone,pw,fee,group,satDate,satCustom,notes});
+    const s=students.find(x=>x.id===eid); if(s) Object.assign(s,{name,id,phone,pw,fee,group,grade,satDate,satCustom,notes});
   } else {
     if(students.find(x=>x.id===id)){toast2('ID already exists');return;}
-    students.push({id,name,phone,pw,fee,group,satDate,satCustom,notes,attendance:{}});
+    students.push({id,name,phone,pw,fee,group,grade,satDate,satCustom,notes,attendance:{}});
     addNotif('New student registered: '+name,'info');
   }
   sv('students',students); closeModal('m-add-student'); renderStudents(); toast2('Student saved');
@@ -1690,7 +1694,7 @@ function openStuView(sid){
       <div class="savt" style="width:50px;height:50px;font-size:16px">${init2(s.name)}</div>
       <div>
         <div style="font-size:17px;font-weight:700;color:var(--white)">${esc(s.name)}</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(s.id)} · <span class="bge ${s.group==='online'?'bb':s.group==='physical'?'bgr':'bp'}">${s.group||''}</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(s.id)} · <span class="bge bgold">Grade ${esc(s.grade||'?')}</span> · <span class="bge ${s.group==='online'?'bb':s.group==='physical'?'bgr':'bp'}">${s.group||''}</span></div>
       </div>
     </div>
     <div class="fg2" style="margin-bottom:14px">
@@ -1732,7 +1736,7 @@ function editStuOpen(sid){
   document.getElementById('st-phone').value=s.phone||'';
   document.getElementById('st-pw').value=s.pw||'';
   document.getElementById('st-fee').value=s.fee||'';
-  document.getElementById('st-grp').value=s.group||'online';
+  document.getElementById('st-grp').value=s.group||'online';   document.getElementById('st-grade').value=s.grade||'10';
   document.getElementById('st-sat').value=s.satDate||'';
   document.getElementById('st-sat-c').value=s.satCustom||'';
   document.getElementById('st-sat-cw').style.display=s.satDate==='custom'?'block':'none';
