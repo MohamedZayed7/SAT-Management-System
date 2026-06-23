@@ -668,7 +668,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     <div class="fg"><label class="fl">Time</label><input type="time" id="si-time" value="17:00"></div>
   </div>
   <div class="fg"><label class="fl">Session title</label><input type="text" id="si-title" placeholder="e.g. Lesson 3: Linear Functions — new lesson"></div>
- <div class="fg3">
+ <div class="fg2">
     <div class="fg"><label class="fl">Type</label>
       <select id="si-type">
         <option value="lesson">Session 1 — New lesson</option>
@@ -676,17 +676,11 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
         <option value="quiz">Quiz session</option>
         <option value="exam">Full exam</option>
       </select></div>
-    <div class="fg"><label class="fl">Grade</label>
+   <div class="fg"><label class="fl">Grade</label>
       <select id="si-grade">
         <option value="10">Grade 10</option>
         <option value="11">Grade 11</option>
         <option value="12">Grade 12</option>
-      </select></div>
-    <div class="fg"><label class="fl">Group</label>
-      <select id="si-grp">
-        <option value="all">All groups</option>
-        <option value="online">Online only</option>
-        <option value="physical">Physical only</option>
       </select></div>
   </div>
   <div class="fg2">
@@ -1318,7 +1312,7 @@ function renderDashboard(){
 
     const today=new Date(); today.setHours(0,0,0,0);
     const upSess=sessions.filter(s=>{
-      try{return new Date(s.date)>=today&&(s.group==='all'||s.group===myGrp)&&(!s.grade||s.grade===CU.grade)}catch(e){return false}
+      try{return new Date(s.date)>=today&&String(s.grade)===String(CU.grade)}catch(e){return false}
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
     document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">Upcoming sessions</div>`+
       (upSess.length?upSess.map(s=>{
@@ -1326,7 +1320,7 @@ function renderDashboard(){
         const tl=s.type==='lesson'?'Session 1 — New lesson':s.type==='review'?'Session 2 — HW review':'Quiz / Exam';
         return`<div class="card cp" style="margin-bottom:8px;border-left:2px solid ${tc}">
           <div style="font-size:13px;font-weight:600">${esc(s.title)}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.date)} ${esc(s.time||'')} · ${esc(s.group)} · <span style="color:${tc}">${tl}</span></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.date)} ${esc(s.time||'')} · ${s.grade?'Grade '+esc(s.grade):'No grade'} · <span style="color:${tc}">${tl}</span></div>
           ${s.zoomVis==='live'&&s.zoom?'<span class="bge bgr" style="margin-top:5px">Zoom live</span>':''}
         </div>`;}).join(''):'<div class="empty" style="padding:16px 0">No upcoming sessions</div>');
 
@@ -1551,7 +1545,7 @@ function buildSessCard(s,isPast){
       <div class="sess-date"><div class="sess-day">${day}</div><div class="sess-mon">${mon}</div></div>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(s.title)}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.grade?'G'+esc(s.grade)+' · ':''}${esc(s.group)} · <span style="color:${tc}">${tl}</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.grade?'Grade '+esc(s.grade):'<span style="color:var(--red)">No grade — won\'t show to anyone</span>'} · <span style="color:${tc}">${tl}</span></div>
         <div style="margin-top:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           ${s.zoom?`<span class="zoom-badge ${s.zoomVis==='live'?'zoom-live':'zoom-hidden'}">${s.zoomVis==='live'?'Zoom live':'Zoom hidden'}</span>
           <button class="btn bxs" onclick="toggleZoom(event,'${s.id}')">${s.zoomVis==='live'?'Hide link':'Make live'}</button>`:'<span style="font-size:11px;color:var(--text3)">No Zoom link</span>'}
@@ -1592,7 +1586,6 @@ function openAddSess(){
   document.getElementById('si-time').value='17:00';
   document.getElementById('si-type').value='lesson';
   document.getElementById('si-grade').value='10';
-  document.getElementById('si-grp').value='all';
   document.getElementById('si-vis').value='hidden';
   document.getElementById('si-ln').value='';
   openModal('m-add-sess');
@@ -1606,7 +1599,6 @@ function editSess(e,id){
   document.getElementById('si-title').value=s.title||'';
   document.getElementById('si-type').value=s.type||'lesson';
   document.getElementById('si-grade').value=s.grade||'10';
-  document.getElementById('si-grp').value=s.group||'all';
   document.getElementById('si-zoom').value=s.zoom||'';
   document.getElementById('si-vis').value=s.zoomVis||'hidden';
   document.getElementById('si-rec').value=s.rec||'';
@@ -1622,7 +1614,6 @@ function saveSess(){
     title,
     type:document.getElementById('si-type').value,
     grade:document.getElementById('si-grade').value,
-    group:document.getElementById('si-grp').value,
     zoom:document.getElementById('si-zoom').value.trim(),
     zoomVis:document.getElementById('si-vis').value,
     rec:document.getElementById('si-rec').value.trim(),
@@ -2154,7 +2145,7 @@ function renderMySchedule(){
   const el=document.getElementById('my-sch-content'); if(!el) return;
   const myGrp=CU.group||'online';
   const today=new Date(); today.setHours(0,0,0,0);
-  const mySess=sessions.filter(s=>(s.group==='all'||s.group===myGrp)&&(!s.grade||s.grade===CU.grade)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const mySess=sessions.filter(s=>String(s.grade)===String(CU.grade)).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const upcoming=mySess.filter(s=>{try{return new Date(s.date)>=today}catch(e){return true;}});
   const past=mySess.filter(s=>{try{return new Date(s.date)<today}catch(e){return false;}});
   let html=`<div class="sh"><div class="st">Upcoming sessions</div></div>`;
