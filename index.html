@@ -1200,7 +1200,7 @@ function navTo(p){const el=document.querySelector(`.sbi[data-p="${p}"]`);if(el)n
 // ═══════════════════════════════════════════════════
 function gl(n){return lessonData[n]||{status:'pending',hwLink:'',hwMax:10,bookContent:'',sessNotes:'',recLink:''};}
 function gq(id){const q=QUIZZES.find(x=>x.id===id);return quizData[id]||{title:q?q.def:'',formLink:'',max:10,notes:''};}
-function doneCount(){return LESSONS.filter(l=>gl(l.n).status==='done').length;}
+function doneCount(){return LESSONS.filter(l=>gl(l.n).status==='done').length;} function visibleLessons(){if(CR==='teacher'||CR==='assistant')return LESSONS;return LESSONS.filter(l=>(l.grades||[]).map(String).includes(String(CU.grade)));} function visibleQuizzes(){if(CR==='teacher'||CR==='assistant')return QUIZZES;return QUIZZES.filter(q=>(q.grades||[]).map(String).includes(String(CU.grade)));}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function init2(n){return(n||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();}
 function showPwStr(inp,barId){
@@ -1314,8 +1314,8 @@ function renderDashboard(){
     const upSess=sessions.filter(s=>{
       try{return new Date(s.date)>=today&&String(s.grade)===String(CU.grade)}catch(e){return false}
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
-    document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">Upcoming sessions</div>`+
-      (upSess.length?upSess.map(s=>{
+    document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">My lesson progress</div>`+
+      visibleLessons().map(l=>{
         const tc=s.type==='lesson'?'var(--blue)':s.type==='review'?'var(--amber)':s.type==='quiz'?'var(--purple)':'var(--green)';
         const tl=s.type==='lesson'?'Session 1 — New lesson':s.type==='review'?'Session 2 — HW review':'Quiz / Exam';
         return`<div class="card cp" style="margin-bottom:8px;border-left:2px solid ${tc}">
@@ -1426,7 +1426,7 @@ function filt(f,el){CF=f;document.querySelectorAll('#cf .ftab').forEach(x=>x.cla
 function renderCurriculum(){
   const d=doneCount(); document.getElementById('cp-txt').textContent=d+'/'+LESSONS.length+' done';
   let html='';
-  LESSONS.forEach(l=>{
+  visibleLessons().forEach(l=>{
     if(CF!=='all'&&l.d!==CF) return;
     const ld=gl(l.n); const di=DI[l.d]||{}; const isOpen=openL===l.n;
     const sc=ld.status==='done'?'sp-d':ld.status==='progress'?'sp-i':'sp-p';
@@ -1440,7 +1440,7 @@ function renderCurriculum(){
       <span style="color:var(--text3);font-size:11px;margin-left:6px">${isOpen?'▲':'▼'}</span>
     </div>${isOpen?renderLB(l.n,ld):''}
     </div>`;
-    QUIZZES.filter(q=>q.after===l.n&&CF==='all').forEach(q=>{
+    visibleQuizzes().filter(q=>q.after===l.n&&CF==='all').forEach(q=>{
       const qd=gq(q.id);
       html+=`<div class="qdiv">
         <div><div style="font-size:13px;font-weight:600;color:var(--purple)">${esc(qd.title||q.def)}</div>
@@ -2185,8 +2185,8 @@ function renderMySchedule(){
     });
   }
   // Attendance summary
-  html+=`<hr class="d"><div class="st" style="margin-bottom:12px">My attendance</div>`;
-  html+=LESSONS.map(l=>{
+ html+=`<hr class="d"><div class="st" style="margin-bottom:12px">My attendance</div>`;
+  html+=visibleLessons().map(l=>{
     const att=CU.attendance&&CU.attendance[l.n];
     const paid=isPaid(CU.id,l.n);
     return`<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)">
@@ -2207,7 +2207,7 @@ function renderMyScores(){
   // Quizzes
   let html=`<div class="st" style="margin-bottom:12px">Quiz results</div>
   <div class="card" style="margin-bottom:18px"><table class="tbl"><thead><tr><th>Quiz</th><th>Score</th><th>Max</th><th>%</th><th>Note</th></tr></thead><tbody>`;
-  QUIZZES.forEach(q=>{
+  visibleQuizzes().forEach(q=>{
     const qd=gq(q.id);const sc=(qd.scores&&qd.scores[sid])||{};
     const raw=sc.score!==undefined&&sc.score!==''?+sc.score:null;
     const pct=raw!==null?Math.round(raw/(qd.max||10)*100):null;
@@ -2396,6 +2396,12 @@ function renderManageCourse(){
           </select>
           <input type="text" value="${esc(l.q||'1–2')}" style="width:70px" placeholder="q's" onchange="updateLesson(${i},'q',this.value)">
         </div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:10px;color:var(--text3)">Show to:</span>
+          ${gchip(hasGrade(l,'10'),'G10',`toggleLessonGrade(${i},'10')`)}
+          ${gchip(hasGrade(l,'11'),'G11',`toggleLessonGrade(${i},'11')`)}
+          ${gchip(hasGrade(l,'12'),'G12',`toggleLessonGrade(${i},'12')`)}
+        </div>
       </div>
       <button class="btn bxs bd" onclick="deleteLesson(${i})" style="flex-shrink:0;margin-top:2px">Del</button>
     </div>`).join('');
@@ -2417,6 +2423,12 @@ function renderManageCourse(){
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
           Max:<input type="number" value="${qd.max||10}" min="1" style="width:60px" onchange="sqF('${q.id}','max',+this.value)">
         </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--text3)">Show to:</span>
+        ${gchip(hasGrade(q,'10'),'G10',`toggleQuizGrade(${i},'10')`)}
+        ${gchip(hasGrade(q,'11'),'G11',`toggleQuizGrade(${i},'11')`)}
+        ${gchip(hasGrade(q,'12'),'G12',`toggleQuizGrade(${i},'12')`)}
       </div>
     </div>`;
   }).join('');
@@ -2452,6 +2464,24 @@ function updateQuizAfter(i,val){
   QUIZZES[i].after=val;
   sv('quizzes',QUIZZES);
   toast2('Quiz position saved');
+}
+function hasGrade(o,g){return (o.grades||[]).map(String).includes(String(g));}
+function gchip(on,label,onclick){
+  return `<span onclick="${onclick}" style="cursor:pointer;user-select:none;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;${on?'background:var(--green-bg);color:var(--green);border:1px solid var(--green-dim)':'background:transparent;color:var(--text3);border:1px solid var(--border2)'}">${on?'✓ ':''}${label}</span>`;
+}
+function toggleLessonGrade(i,g){
+  const l=LESSONS[i]; if(!l.grades) l.grades=[];
+  const gs=l.grades.map(String); const idx=gs.indexOf(String(g));
+  if(idx>=0) l.grades.splice(idx,1); else l.grades.push(String(g));
+  sv('lessons',LESSONS); renderManageCourse();
+  if(_curPage()==='curriculum') renderCurriculum();
+}
+function toggleQuizGrade(i,g){
+  const q=QUIZZES[i]; if(!q.grades) q.grades=[];
+  const gs=q.grades.map(String); const idx=gs.indexOf(String(g));
+  if(idx>=0) q.grades.splice(idx,1); else q.grades.push(String(g));
+  sv('quizzes',QUIZZES); renderManageCourse();
+  if(_curPage()==='curriculum') renderCurriculum();
 }
 function deleteQuiz(i){
   if(!confirm('Delete quiz "'+QUIZZES[i].def+'"?'))return;
