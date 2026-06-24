@@ -1314,8 +1314,8 @@ function renderDashboard(){
     const upSess=sessions.filter(s=>{
       try{return new Date(s.date)>=today&&String(s.grade)===String(CU.grade)}catch(e){return false}
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
-    document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">My lesson progress</div>`+
-      visibleLessons().map(l=>{
+    document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">Upcoming sessions</div>`+
+      (upSess.length?upSess.map(s=>{
         const tc=s.type==='lesson'?'var(--blue)':s.type==='review'?'var(--amber)':s.type==='quiz'?'var(--purple)':'var(--green)';
         const tl=s.type==='lesson'?'Session 1 — New lesson':s.type==='review'?'Session 2 — HW review':'Quiz / Exam';
         return`<div class="card cp" style="margin-bottom:8px;border-left:2px solid ${tc}">
@@ -1388,8 +1388,8 @@ function renderDashboard(){
           </div>
         </div>`;}).join(''):'<div class="empty" style="padding:16px 0">No upcoming sessions</div>');
 
-    document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">My lesson progress</div>`+
-      LESSONS.map(l=>{
+   document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">My lesson progress</div>`+
+      visibleLessons().map(l=>{
         const att2=CU.attendance&&CU.attendance[l.n];
         const paid=isPaid(CU.id,l.n);
         return`<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)">
