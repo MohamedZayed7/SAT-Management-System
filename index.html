@@ -1369,9 +1369,8 @@ function renderDashboard(){
 
     // Upcoming sessions
     const today=new Date(); today.setHours(0,0,0,0);
-    const myGrp=CU.group||'online';
     const upSess=sessions.filter(s=>{
-      try{return new Date(s.date)>=today&&(s.group==='all'||s.group===myGrp)}catch(e){return false}
+      try{return new Date(s.date)>=today&&String(s.grade)===String(CU.grade)}catch(e){return false}
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
 
     document.getElementById('dash-left').innerHTML=cdHtml+
