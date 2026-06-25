@@ -2107,7 +2107,7 @@ function renderSettings(){
       <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--white)">${esc(a.name)}</div>
         <div style="font-size:11px;color:var(--text3)">@${esc(a.user)} · ${esc(a.role||'Teacher')} · ${a.level==='assistant'?'Limited':'Full'} access</div></div>
       ${a.owner?'<span class="bge bgold">Owner</span>':''}
-      ${!a.owner?`<button class="btn bxs bd" onclick="delTeacher('${a.id}')">Remove</button>`:''}
+      ${(!a.owner && CR==='teacher')?`<button class="btn bxs bd" onclick="delTeacher('${a.id}')">Remove</button>`:''}
     </div>`).join('');
 }
 function saveTeacher(){
@@ -2121,7 +2121,7 @@ function saveTeacher(){
   teachers.push({id:'t'+Date.now(),name:n,user:u,pass:p,role:r||'Assistant',level:lvl,owner:false});
   sv('teachers',teachers);closeModal('m-add-teacher');renderSettings();toast2('Teacher added');
 }
-function delTeacher(id){if(!confirm('Remove?'))return;teachers=teachers.filter(a=>a.id!==id);sv('teachers',teachers);renderSettings();}
+function delTeacher(id){if(CR!=='teacher'){toast2('Only the teacher can remove accounts.');return;}if(!confirm('Remove?'))return;teachers=teachers.filter(a=>a.id!==id);sv('teachers',teachers);renderSettings();}
 function changePwd(){
   const cur=document.getElementById('cp-cur').value;
   const nw=document.getElementById('cp-new').value;
