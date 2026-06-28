@@ -2143,7 +2143,7 @@ function renderSettings(){
         <div style="flex:1">
           <div style="font-size:13px;font-weight:600;color:var(--white)">${esc(a.name)}</div>
           <div style="font-size:11px;color:var(--text3)">@${esc(a.user)} · ${esc(a.role||'Teacher')} · ${a.level==='assistant'?'Limited':'Full'} access</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Password: <span style="color:var(--text2)">${esc(a.pass||'—')}</span></div>
+          ${!a.owner?`<div style="font-size:11px;color:var(--text3);margin-top:2px">Password: <span style="color:var(--text2)">${esc(a.pass||'—')}</span></div>`:''}
         </div>
         ${a.owner?'<span class="bge bgold">Owner</span>':''}
         ${(!a.owner && CR==='teacher')?`<button class="btn bxs" onclick="openEditTeacherModal('${a.id}')">Edit</button>`:''}
