@@ -506,7 +506,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
         <div class="card cp" style="margin-bottom:14px">
           <div class="st" style="margin-bottom:14px">Teacher accounts</div>
           <div id="ta-list"></div>
-          <div style="margin-top:12px"><button class="btn" onclick="openModal('m-add-teacher')">+ Add teacher / assistant</button></div>
+          <div style="margin-top:12px"><button class="btn" onclick="openAddTeacherModal()">+ Add teacher / assistant</button></div>
         </div>
         <div class="card cp">
           <div class="st" style="margin-bottom:14px">Change password</div>
@@ -757,7 +757,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 
 <div class="ovl" id="m-add-teacher">
 <div class="modal">
-  <div class="mtit">Add teacher / assistant</div>
+  <div class="mtit" id="m-ta-title">Add teacher / assistant</div>
   <div class="fg"><label class="fl">Full name</label><input type="text" id="ta-n"></div>
   <div class="fg2">
     <div class="fg"><label class="fl">Username</label><input type="text" id="ta-u"></div>
@@ -2138,13 +2138,39 @@ function saveSett(){
 function renderSettings(){
   loadSettings();
   document.getElementById('ta-list').innerHTML=teachers.map(a=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--white)">${esc(a.name)}</div>
-        <div style="font-size:11px;color:var(--text3)">@${esc(a.user)} · ${esc(a.role||'Teacher')} · ${a.level==='assistant'?'Limited':'Full'} access</div></div>
-      ${a.owner?'<span class="bge bgold">Owner</span>':''}
-      ${(!a.owner && CR==='teacher')?`<button class="btn bxs bd" onclick="delTeacher('${a.id}')">Remove</button>`:''}
+    <div style="padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--white)">${esc(a.name)}</div>
+          <div style="font-size:11px;color:var(--text3)">@${esc(a.user)} · ${esc(a.role||'Teacher')} · ${a.level==='assistant'?'Limited':'Full'} access</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Password: <span style="color:var(--text2)">${esc(a.pass||'—')}</span></div>
+        </div>
+        ${a.owner?'<span class="bge bgold">Owner</span>':''}
+        ${(!a.owner && CR==='teacher')?`<button class="btn bxs" onclick="openEditTeacherModal('${a.id}')">Edit</button>`:''}
+        ${(!a.owner && CR==='teacher')?`<button class="btn bxs bd" onclick="delTeacher('${a.id}')">Remove</button>`:''}
+      </div>
     </div>`).join('');
 }
+function openAddTeacherModal(){
+  document.getElementById('m-ta-title').textContent='Add teacher / assistant';
+  document.getElementById('m-add-teacher')._eid=null;
+  ['ta-n','ta-u','ta-p','ta-r'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ta-lvl').value='assistant';
+  openModal('m-add-teacher');
+}
+
+function openEditTeacherModal(id){
+  const a=teachers.find(x=>x.id===id); if(!a) return;
+  document.getElementById('m-ta-title').textContent='Edit teacher / assistant';
+  document.getElementById('m-add-teacher')._eid=id;
+  document.getElementById('ta-n').value=a.name||'';
+  document.getElementById('ta-u').value=a.user||'';
+  document.getElementById('ta-p').value=a.pass||'';
+  document.getElementById('ta-r').value=a.role||'';
+  document.getElementById('ta-lvl').value=a.level||'assistant';
+  openModal('m-add-teacher');
+}
+
 function saveTeacher(){
   const n=document.getElementById('ta-n').value.trim();
   const u=document.getElementById('ta-u').value.trim();
@@ -2152,9 +2178,16 @@ function saveTeacher(){
   const r=document.getElementById('ta-r').value.trim();
   const lvl=document.getElementById('ta-lvl').value;
   if(!n||!u||!p){toast2('All fields required');return;}
-  if(teachers.find(a=>a.user===u)){toast2('Username taken');return;}
-  teachers.push({id:'t'+Date.now(),name:n,user:u,pass:p,role:r||'Assistant',level:lvl,owner:false});
-  sv('teachers',teachers);closeModal('m-add-teacher');renderSettings();toast2('Teacher added');
+  const eid=document.getElementById('m-add-teacher')._eid;
+  if(eid){
+    const a=teachers.find(x=>x.id===eid);
+    if(a) Object.assign(a,{name:n,user:u,pass:p,role:r||'Assistant',level:lvl});
+    document.getElementById('m-add-teacher')._eid=null;
+  } else {
+    if(teachers.find(a=>a.user===u)){toast2('Username taken');return;}
+    teachers.push({id:'t'+Date.now(),name:n,user:u,pass:p,role:r||'Assistant',level:lvl,owner:false});
+  }
+  sv('teachers',teachers);closeModal('m-add-teacher');renderSettings();toast2('Saved');
 }
 function delTeacher(id){if(CR!=='teacher'){toast2('Only the teacher can remove accounts.');return;}if(!confirm('Remove?'))return;teachers=teachers.filter(a=>a.id!==id);sv('teachers',teachers);renderSettings();}
 function changePwd(){
