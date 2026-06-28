@@ -380,6 +380,10 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       Settings
     </div>
     <!-- Student only -->
+<div class="sbi" data-p="faq" onclick="nav(this)">
+  <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6 6.5C6 5.67 6.9 5 8 5s2 .67 2 1.5c0 .7-.5 1.3-1.2 1.6L8 8.5V9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="11.5" r=".7" fill="currentColor"/></svg>
+  FAQ
+</div>
     <div class="sbi s-only" data-p="my-schedule" onclick="nav(this)" style="display:none">
       <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>
       My Schedule
@@ -588,7 +592,14 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   <div class="ph"><div><div class="ph-t">Payments</div><div class="ph-s">View fees and upload payment screenshot</div></div></div>
   <div class="pb3" id="my-payments-content"></div>
 </div>
-
+<!-- FAQ PAGE -->
+<div class="page" id="page-faq">
+  <div class="ph">
+    <div><div class="ph-t">FAQ — How it works</div><div class="ph-s">Bilingual EN + AR · editable from Manage Course</div></div>
+    <button class="btn bw" onclick="openAddFaqModal()" id="faq-add-btn" style="display:none">+ Add question</button>
+  </div>
+  <div class="pb3" id="faq-content"></div>
+</div>
 </div><!-- /main -->
 </div><!-- /app -->
 
@@ -832,7 +843,32 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
 </div>
 </div>
-
+<!-- FAQ ADD/EDIT MODAL -->
+<div class="ovl" id="m-faq">
+<div class="modal" style="max-width:640px">
+  <div class="mtit" id="m-faq-title">Add FAQ question</div>
+  <div class="fg"><label class="fl">Question (English) *</label><input type="text" id="faq-qen" placeholder="How does..."></div>
+  <div class="fg"><label class="fl">Question (Arabic) *</label><input type="text" id="faq-qar" placeholder="إزاي..." dir="rtl"></div>
+  <div class="fg"><label class="fl">Answer (English) *</label><textarea id="faq-aen" style="min-height:80px"></textarea></div>
+  <div class="fg"><label class="fl">Answer (Arabic) *</label><textarea id="faq-aar" style="min-height:80px" dir="rtl"></textarea></div>
+  <div class="fg"><label class="fl">Section</label>
+    <select id="faq-sec">
+      <option value="0">How the course works</option>
+      <option value="1">The Digital SAT — College Board basics</option>
+      <option value="2">New section...</option>
+    </select>
+  </div>
+  <div class="fg" id="faq-new-sec-wrap" style="display:none">
+    <label class="fl">New section name (English)</label><input type="text" id="faq-new-sec-en">
+    <label class="fl" style="margin-top:8px">New section name (Arabic)</label><input type="text" id="faq-new-sec-ar" dir="rtl">
+  </div>
+  <div class="mfoot">
+    <button class="btn bd bsm" id="faq-del-btn" style="display:none" onclick="deleteFaqItem()">Delete</button>
+    <button class="btn" onclick="closeModal('m-faq')">Cancel</button>
+    <button class="btn bw" onclick="saveFaqItem()">Save</button>
+  </div>
+</div>
+</div>
 <div class="toast" id="toast-el"></div>
 
 <script>
@@ -937,6 +973,7 @@ async function loadAllFromDB(){
   if(m.sessions)      sessions=m.sessions;
   if(m.notifications) notifications=m.notifications;
   if(m.settings)      settings=m.settings;
+  if(m.faqData)       faqData=m.faqData;
   Object.keys(m).filter(k=>k!=='session').forEach(k=>_lsSet(k,m[k])); // never overwrite local session from cloud
 }
 
@@ -1032,13 +1069,10 @@ function switchTab(t,el){
   el.classList.add('active');
   document.getElementById('lt-t').style.display=t==='teacher'?'block':'none';
   document.getElementById('lt-s').style.display=t==='student'?'block':'none';
-  document.getElementById('lt-su').style.display=t==='signup'?'block':'none';
   document.getElementById('lerr').textContent='';
-  const sm=document.getElementById('su-msg');if(sm)sm.textContent='';
   loginAttempts=0;lockoutUntil=0;
   if(document.getElementById('lattempts'))document.getElementById('lattempts').textContent='';
 }
-
 // ── SECURITY: brute force protection ──
 const MAX_ATTEMPTS=5,LOCKOUT_MS=300000;
 let loginAttempts=0,lockoutUntil=0;
@@ -1145,6 +1179,7 @@ function launchApp(){
   }
 
   if(CR==='teacher'||CR==='assistant') loadSettings();
+const faqBtn=document.getElementById('faq-add-btn');if(faqBtn)faqBtn.style.display=(CR==='teacher'||CR==='assistant')?'':'none';
   renderDashboard(); updateSbProg(); updateDots();
 }
 
@@ -1189,7 +1224,7 @@ function nav(el){
     'payments-admin':renderPaymentsAdmin, quizzes:renderQuizzes,
     exams:renderExams, notifications:renderNotifications,
     settings:renderSettings,'manage-course':renderManageCourse,'my-password':()=>{},'my-schedule':renderMySchedule,
-    'my-scores':renderMyScores,'my-payments':renderMyPayments
+    'my-scores':renderMyScores,'my-payments':renderMyPayments,'faq':renderFAQ
   };
   if(map[p]) map[p]();
 }
@@ -2560,7 +2595,160 @@ function resetToDefaults(){
   toast2('Reset to CB defaults');
 }
 
+// ═══════════════════════════════════════════════════
+// FAQ
+// ═══════════════════════════════════════════════════
+const DEFAULT_FAQ_DATA=[
+  {ten:`How the course works`,tar:`إزاي الكورس بيشتغل`,items:[
+    {qen:`How are lessons taught?`,aen:`All lessons are live on Zoom in small groups, organised by grade. Grade 10, 11, and 12 each follow their own track at their own pace — you only see the sessions, lessons, and quizzes for your grade.`,qar:`الحصص بتتشرح إزاي؟`,aar:`كل الحصص بتكون لايف على الزووم في مجموعات صغيرة، مقسّمة حسب الصف. كل صف (10 و11 و12) ليه مساره الخاص وبيمشي بسرعته — وانت بتشوف بس الحصص والدروس والكويزات الخاصة بصفك.`},
+    {qen:`How many sessions per week?`,aen:`Two sessions per week. Session 1 is a new lesson explanation. Session 2 reviews the previous homework, then starts the next lesson.`,qar:`كام حصة في الأسبوع؟`,aar:`حصتين في الأسبوع. الحصة الأولى شرح درس جديد. والحصة التانية مراجعة الواجب السابق، وبعدين نبدأ الدرس اللي بعده.`},
+    {qen:`Where are my Zoom links and schedule?`,aen:`In your "My Schedule" tab. The Join Zoom button appears once the teacher makes the link live, shortly before the session starts.`,qar:`هلاقي لينكات الزووم والمواعيد فين؟`,aar:`في تاب "My Schedule". زرار "Join Zoom" بيظهر أول ما المدرس يفعّل اللينك، قبل الحصة بشوية.`},
+    {qen:`Are sessions recorded?`,aen:`Yes. Every session is recorded and posted in the portal, so you can rewatch any lesson whenever you need.`,qar:`الحصص بتتسجّل؟`,aar:`أيوه. كل حصة بتتسجّل وبتتحط في البورتال، فتقدر تتفرّج على أي درس تاني في أي وقت.`},
+    {qen:`Where can I find the recordings?`,aen:`Inside the portal — open the lesson in Curriculum, or find the session under "My Schedule" (past sessions). The recording link is right there.`,qar:`هلاقي التسجيلات فين؟`,aar:`جوه البورتال — افتح الدرس من "Curriculum"، أو دوّر على الحصة في "My Schedule" (الحصص السابقة). هتلاقي لينك التسجيل هناك.`},
+    {qen:`Do I pay for the recordings?`,aen:`No — recordings are included free. You only pay for the session itself.`,qar:`بدفع عشان التسجيلات؟`,aar:`لأ — التسجيلات مجانية ومتضمنة. انت بتدفع تمن الحصة بس.`},
+    {qen:`What will we cover?`,aen:`The full official College Board Digital SAT Math syllabus — 20 skill areas across four domains: Algebra, Advanced Math, Problem-Solving & Data Analysis, and Geometry & Trigonometry.`,qar:`هنغطّي إيه؟`,aar:`منهج الـ Digital SAT Math الرسمي بالكامل من College Board — 20 مهارة في أربع مجالات.`},
+    {qen:`Is there homework?`,aen:`Yes. Most lessons have a homework set. Your results appear in your "My Scores" tab.`,qar:`في واجب؟`,aar:`أيوه. أغلب الدروس ليها واجب. ودرجاتك بتظهر في تاب "My Scores".`},
+    {qen:`What if I miss a session?`,aen:`No problem — every session is recorded. Open the recording in the portal to catch up.`,qar:`لو غبت عن حصة؟`,aar:`مفيش مشكلة — كل حصة متسجّلة. افتح التسجيل من البورتال وتابع اللي فاتك.`},
+    {qen:`How do payments and access work?`,aen:`Transfer the fee using the details in your "Payments" tab, then upload a screenshot. Once approved, the relevant sessions unlock.`,qar:`الدفع والوصول بيشتغلوا إزاي؟`,aar:`حوّل الرسوم بالبيانات اللي في تاب "Payments"، وارفع صورة للتحويل. أول ما المدرس يوافق، بتتفتحلك الحصص.`},
+    {qen:`How do I log into the portal?`,aen:`After you enrol, the teacher sends you a Student ID and password on WhatsApp. Open the portal, choose "Student login", and sign in.`,qar:`بدخل البورتال إزاي؟`,aar:`بعد ما تسجّل، المدرس هيبعتلك Student ID وباسورد على الواتساب. افتح البورتال، اختار "Student login"، وسجّل دخولك.`},
+  ]},
+  {ten:`The Digital SAT — College Board basics`,tar:`أساسيات الـ Digital SAT — من College Board`,items:[
+    {qen:`What is the Digital SAT?`,aen:`A digital SAT taken on College Board's Bluebook app on a laptop or tablet. About 2 hours and 14 minutes total.`,qar:`إيه هو الـ Digital SAT؟`,aar:`نسخة رقمية من الـ SAT، بتتعمل على تطبيق Bluebook بتاع College Board. الامتحان كله حوالي ساعتين و14 دقيقة.`},
+    {qen:`How is the Math section structured?`,aen:`44 questions in 70 minutes, split into two modules of 22 questions (about 35 minutes each).`,qar:`قسم الرياضيات متركّب إزاي؟`,aar:`44 سؤال في 70 دقيقة، مقسومين على موديولين، كل واحد 22 سؤال (حوالي 35 دقيقة لكل موديول).`},
+    {qen:`What does "adaptive" mean?`,aen:`How you do on Module 1 decides whether Module 2 is easier or harder. Doing well on Module 1 unlocks the higher-scoring Module 2.`,qar:`يعني إيه "adaptive"؟`,aar:`أداؤك في الموديول الأول بيحدد إذا كان الموديول التاني أسهل ولا أصعب. لما تعمل كويس في الموديول الأول، بيتفتحلك الموديول التاني الأعلى درجة.`},
+    {qen:`Can I use a calculator?`,aen:`Yes — allowed on the entire Math section. Bluebook has a built-in Desmos graphing calculator, and you may bring your own approved calculator.`,qar:`أقدر أستخدم آلة حاسبة؟`,aar:`أيوه — مسموح في قسم الرياضيات كله. Bluebook فيه Desmos جاهزة، وكمان تقدر تجيب آلتك المعتمدة.`},
+    {qen:`How is Math scored?`,aen:`200 to 800. Combined with Reading & Writing, your total SAT score is out of 1600.`,qar:`الرياضيات بتتحسب إزاي؟`,aar:`من 200 لـ 800. مع Reading & Writing، درجتك الكلية من 1600.`},
+    {qen:`When is the SAT and how do I register?`,aen:`Several Saturdays per year. Register at collegeboard.org. In Egypt, tests run through Amideast and authorised school centres. Fee is about $111 for Egyptian students — separate from course fees here.`,qar:`الـ SAT إمتى وبسجّل إزاي؟`,aar:`كذا يوم سبت في السنة. التسجيل على collegeboard.org. في مصر عن طريق Amideast والمراكز المعتمدة. الرسوم حوالي 111 دولار — منفصلة عن مصاريف الكورس.`},
+    {qen:`How many times can I take it?`,aen:`As many times as you want. Many universities superscore, so retaking can raise your application score.`,qar:`أقدر أدخله كام مرة؟`,aar:`زي ما انت عايز. كتير من الجامعات بتعمل superscore، فإعادة الامتحان ممكن ترفع درجة تقديمك.`},
+  ]},
+];
 
+let faqData=ld('faqData',DEFAULT_FAQ_DATA);
+let editFaqSec=null,editFaqItem=null;
+
+document.getElementById('faq-sec')?.addEventListener('change',function(){
+  document.getElementById('faq-new-sec-wrap').style.display=this.value==='2'?'block':'none';
+});
+
+function renderFAQ(){
+  const el=document.getElementById('faq-content'); if(!el) return;
+  let html='<div style="max-width:820px">';
+  faqData.forEach((sec,si)=>{
+    html+=`<div style="margin:20px 0 10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em">${esc(sec.ten)}</div>
+        <div dir="rtl" style="font-size:13px;font-weight:700;color:var(--gold);margin-top:2px">${esc(sec.tar)}</div>
+      </div>
+    </div>`;
+    sec.items.forEach((it,ii)=>{
+      html+=`<div class="card" style="margin-bottom:8px;overflow:hidden">
+        <div onclick="togFaq(this)" style="display:flex;align-items:flex-start;gap:10px;padding:13px 16px;cursor:pointer">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(it.qen)}</div>
+            <div dir="rtl" style="font-size:13px;font-weight:600;color:var(--text);margin-top:4px">${esc(it.qar)}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+            ${(CR==='teacher'||CR==='assistant')?`<button class="btn bxs" onclick="event.stopPropagation();openEditFaq(${si},${ii})">Edit</button>`:''}
+            <span class="faq-arrow" style="color:var(--text3);font-size:11px;padding-top:3px">▼</span>
+          </div>
+        </div>
+        <div style="display:none;padding:0 16px 14px">
+          <div style="font-size:13px;color:var(--text2);line-height:1.7">${it.aen}</div>
+          <div dir="rtl" style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">${it.aar}</div>
+        </div>
+      </div>`;
+    });
+  });
+  html+=`<div style="margin-top:18px;font-size:11px;color:var(--text3);line-height:1.7">
+    Exam format, fees, and dates can change — always confirm at collegeboard.org before your test.
+    <span dir="rtl" style="display:block;margin-top:4px">شكل الامتحان والرسوم والمواعيد ممكن تتغير — أكّد دايمًا على collegeboard.org قبل امتحانك.</span>
+  </div></div>`;
+  el.innerHTML=html;
+}
+
+function togFaq(el){
+  const body=el.nextElementSibling;
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  const ar=el.querySelector('.faq-arrow');if(ar)ar.textContent=open?'▼':'▲';
+}
+
+function openAddFaqModal(){
+  editFaqSec=null;editFaqItem=null;
+  document.getElementById('m-faq-title').textContent='Add FAQ question';
+  document.getElementById('faq-del-btn').style.display='none';
+  ['faq-qen','faq-qar','faq-aen','faq-aar'].forEach(id=>document.getElementById(id).value='');
+  // rebuild section dropdown
+  _buildSecDropdown();
+  document.getElementById('faq-new-sec-wrap').style.display='none';
+  openModal('m-faq');
+}
+
+function openEditFaq(si,ii){
+  editFaqSec=si;editFaqItem=ii;
+  const it=faqData[si].items[ii];
+  document.getElementById('m-faq-title').textContent='Edit FAQ question';
+  document.getElementById('faq-del-btn').style.display='';
+  document.getElementById('faq-qen').value=it.qen||'';
+  document.getElementById('faq-qar').value=it.qar||'';
+  document.getElementById('faq-aen').value=it.aen||'';
+  document.getElementById('faq-aar').value=it.aar||'';
+  _buildSecDropdown(si);
+  document.getElementById('faq-new-sec-wrap').style.display='none';
+  openModal('m-faq');
+}
+
+function _buildSecDropdown(selected){
+  const sel=document.getElementById('faq-sec');
+  sel.innerHTML=faqData.map((s,i)=>`<option value="${i}" ${i===selected?'selected':''}>${esc(s.ten)}</option>`).join('');
+  sel.innerHTML+=`<option value="new">+ New section...</option>`;
+}
+
+function saveFaqItem(){
+  const qen=document.getElementById('faq-qen').value.trim();
+  const qar=document.getElementById('faq-qar').value.trim();
+  const aen=document.getElementById('faq-aen').value.trim();
+  const aar=document.getElementById('faq-aar').value.trim();
+  if(!qen||!aen){toast2('English question and answer required');return;}
+  const secVal=document.getElementById('faq-sec').value;
+  let si;
+  if(secVal==='new'){
+    const ten=document.getElementById('faq-new-sec-en').value.trim();
+    const tar=document.getElementById('faq-new-sec-ar').value.trim();
+    if(!ten){toast2('Section name required');return;}
+    faqData.push({ten,tar,items:[]});
+    si=faqData.length-1;
+  } else {
+    si=+secVal;
+  }
+  const item={qen,qar,aen,aar};
+  if(editFaqSec!==null&&editFaqItem!==null){
+    // move between sections if changed
+    if(si!==editFaqSec){
+      faqData[editFaqSec].items.splice(editFaqItem,1);
+      faqData[si].items.push(item);
+    } else {
+      faqData[editFaqSec].items[editFaqItem]=item;
+    }
+  } else {
+    faqData[si].items.push(item);
+  }
+  sv('faqData',faqData);
+  closeModal('m-faq');
+  renderFAQ();
+  toast2('FAQ saved');
+}
+
+function deleteFaqItem(){
+  if(editFaqSec===null||editFaqItem===null)return;
+  if(!confirm('Delete this question?'))return;
+  faqData[editFaqSec].items.splice(editFaqItem,1);
+  if(!faqData[editFaqSec].items.length) faqData.splice(editFaqSec,1);
+  sv('faqData',faqData);
+  closeModal('m-faq');
+  renderFAQ();
+  toast2('Deleted');
+}
 // ═══════════════════════════════════════════════════
 // MOBILE HAMBURGER SIDEBAR
 // ═══════════════════════════════════════════════════
