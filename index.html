@@ -2480,32 +2480,41 @@ function renderManageCourse(){
     initLessonDrag();
   }
 
-  // Quizzes list
+// Quizzes list
   const ql=document.getElementById('manage-quizzes-list');
-  if(ql) ql.innerHTML=QUIZZES.map((q,i)=>{
-    const qd=gq(q.id);
-    return`<div class="manage-course-section" style="padding:12px 14px;margin-bottom:8px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span class="bge" style="background:${q.c||'var(--purple-bg)'};color:var(--purple)">${i+1}</span>
-        <input type="text" value="${esc(qd.title||q.def)}" style="flex:1" onchange="updateQuizTitle('${q.id}',this.value)">
-        <button class="btn bxs bd" onclick="deleteQuiz(${i})">Del</button>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
-          After L<input type="number" value="${q.after}" min="1" max="${LESSONS.length}" style="width:60px" onchange="updateQuizAfter(${i},+this.value)">
+  if(ql){
+    ql.innerHTML=QUIZZES.map((q,i)=>{
+      const qd=gq(q.id);
+      // Pick color based on which lesson the quiz falls after
+      const linkedLesson=LESSONS.find(l=>l.n===q.after);
+      const domain=linkedLesson?linkedLesson.d:'advmath';
+      const di=DI[domain]||DI['advmath'];
+      const dotColor=di.col;
+      const dotBg=domain==='algebra'?'var(--blue-bg)':domain==='advmath'?'var(--purple-bg)':domain==='psdata'?'var(--teal-bg)':'var(--amber-bg)';
+      return`<div class="manage-course-section" draggable="true" data-qidx="${i}" style="padding:12px 14px;margin-bottom:8px;transition:opacity .15s,transform .15s;border-left:3px solid ${dotColor}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div class="quiz-drag-handle" title="Drag to reorder" style="cursor:grab;font-size:16px;color:var(--text3);padding:2px 4px;user-select:none;line-height:1;flex-shrink:0">⠿</div>
+          <div style="width:10px;height:10px;border-radius:50%;background:${dotColor};flex-shrink:0"></div>
+          <input type="text" value="${esc(qd.title||q.def)}" style="flex:1" onchange="updateQuizTitle('${q.id}',this.value)">
+          <button class="btn bxs bd" onclick="deleteQuiz(${i})">Del</button>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
-          Max:<input type="number" value="${qd.max||10}" min="1" style="width:60px" onchange="sqF('${q.id}','max',+this.value)">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+            After L<input type="number" value="${q.after}" min="1" max="${LESSONS.length}" style="width:60px" onchange="updateQuizAfter(${i},+this.value)">
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+            Max:<input type="number" value="${qd.max||10}" min="1" style="width:60px" onchange="sqF('${q.id}','max',+this.value)">
+          </div>
         </div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">
-        <span style="font-size:10px;color:var(--text3)">Show to:</span>
-        ${gchip(hasGrade(q,'10'),'G10',`toggleQuizGrade(${i},'10')`)}
-        ${gchip(hasGrade(q,'11'),'G11',`toggleQuizGrade(${i},'11')`)}
-        ${gchip(hasGrade(q,'12'),'G12',`toggleQuizGrade(${i},'12')`)}
-      </div>
-    </div>`;
-  }).join('');
+        <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:10px;color:var(--text3)">Show to:</span>
+          ${gchip(hasGrade(q,'10'),'G10',`toggleQuizGrade(${i},'10')`)}
+          ${gchip(hasGrade(q,'11'),'G11',`toggleQuizGrade(${i},'11')`)}
+          ${gchip(hasGrade(q,'12'),'G12',`toggleQuizGrade(${i},'12')`)}
+        </div>
+      </div>`;
+    }).join('');
+    initQuizDrag();
 }
 
 function updateLesson(i,field,val){
@@ -2658,6 +2667,50 @@ function initLessonDrag(){
       const idx=+card.dataset.idx;
       overIdx=idx;
       container.querySelectorAll('[draggable="true"]').forEach(c=>{
+        c.style.borderTop='';
+        c.style.borderBottom='';
+      });
+      if(idx!==dragIdx){
+        if(idx>dragIdx) card.style.borderBottom='2px solid var(--white)';
+        else card.style.borderTop='2px solid var(--white)';
+      }
+    });
+  });
+}
+
+function initQuizDrag(){
+  const container=document.getElementById('manage-quizzes-list');
+  if(!container) return;
+  let dragIdx=null, overIdx=null;
+
+  container.querySelectorAll('[data-qidx]').forEach(card=>{
+    card.addEventListener('dragstart',e=>{
+      dragIdx=+card.dataset.qidx;
+      card.style.opacity='0.4';
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend',e=>{
+      card.style.opacity='1';
+      container.querySelectorAll('[data-qidx]').forEach(c=>{
+        c.style.borderTop='';
+        c.style.borderBottom='';
+      });
+      if(dragIdx!==null && overIdx!==null && dragIdx!==overIdx){
+        const moved=QUIZZES.splice(dragIdx,1)[0];
+        QUIZZES.splice(overIdx,0,moved);
+        sv('quizzes',QUIZZES);
+        renderManageCourse();
+        if(_curPage()==='curriculum') renderCurriculum();
+        toast2('Quiz order saved');
+      }
+      dragIdx=null; overIdx=null;
+    });
+    card.addEventListener('dragover',e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      const idx=+card.dataset.qidx;
+      overIdx=idx;
+      container.querySelectorAll('[data-qidx]').forEach(c=>{
         c.style.borderTop='';
         c.style.borderBottom='';
       });
