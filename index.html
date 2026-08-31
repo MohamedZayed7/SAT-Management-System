@@ -2453,26 +2453,32 @@ function renderManageCourse(){
 
   // Lessons list
   const ll=document.getElementById('manage-lessons-list');
-  if(ll) ll.innerHTML=LESSONS.map((l,i)=>`
-    <div class="manage-course-section" style="padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px">
-      <div style="min-width:24px;font-size:11px;font-weight:700;color:var(--text3);padding-top:2px">${l.n}</div>
-      <div style="flex:1">
-        <input type="text" value="${esc(l.title)}" style="margin-bottom:6px" onchange="updateLesson(${i},'title',this.value)">
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <select style="width:auto;flex:1" onchange="updateLesson(${i},'d',this.value)">
-            ${['algebra','advmath','psdata','geo'].map(d=>`<option value="${d}" ${l.d===d?'selected':''}>${DI[d]?.l||d}</option>`).join('')}
-          </select>
-          <input type="text" value="${esc(l.q||'1–2')}" style="width:70px" placeholder="q's" onchange="updateLesson(${i},'q',this.value)">
+  if(ll){
+    ll.innerHTML=LESSONS.map((l,i)=>`
+      <div class="manage-course-section" draggable="true" data-idx="${i}" style="padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;cursor:default;transition:opacity .15s,transform .15s">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+          <div class="drag-handle" title="Drag to reorder" style="cursor:grab;font-size:16px;color:var(--text3);padding:2px 4px;user-select:none;line-height:1">⠿</div>
+          <div style="font-size:11px;font-weight:700;color:var(--text3)">${l.n}</div>
         </div>
-        <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">
-          <span style="font-size:10px;color:var(--text3)">Show to:</span>
-          ${gchip(hasGrade(l,'10'),'G10',`toggleLessonGrade(${i},'10')`)}
-          ${gchip(hasGrade(l,'11'),'G11',`toggleLessonGrade(${i},'11')`)}
-          ${gchip(hasGrade(l,'12'),'G12',`toggleLessonGrade(${i},'12')`)}
+        <div style="flex:1">
+          <input type="text" value="${esc(l.title)}" style="margin-bottom:6px" onchange="updateLesson(${i},'title',this.value)">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select style="width:auto;flex:1" onchange="updateLesson(${i},'d',this.value)">
+              ${['algebra','advmath','psdata','geo'].map(d=>`<option value="${d}" ${l.d===d?'selected':''}>${DI[d]?.l||d}</option>`).join('')}
+            </select>
+            <input type="text" value="${esc(l.q||'1–2')}" style="width:70px" placeholder="q's" onchange="updateLesson(${i},'q',this.value)">
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <span style="font-size:10px;color:var(--text3)">Show to:</span>
+            ${gchip(hasGrade(l,'10'),'G10',`toggleLessonGrade(${i},'10')`)}
+            ${gchip(hasGrade(l,'11'),'G11',`toggleLessonGrade(${i},'11')`)}
+            ${gchip(hasGrade(l,'12'),'G12',`toggleLessonGrade(${i},'12')`)}
+          </div>
         </div>
-      </div>
-      <button class="btn bxs bd" onclick="deleteLesson(${i})" style="flex-shrink:0;margin-top:2px">Del</button>
-    </div>`).join('');
+        <button class="btn bxs bd" onclick="deleteLesson(${i})" style="flex-shrink:0;margin-top:2px">Del</button>
+      </div>`).join('');
+    initLessonDrag();
+  }
 
   // Quizzes list
   const ql=document.getElementById('manage-quizzes-list');
@@ -2615,6 +2621,52 @@ function saveQuizModal(){
   renderManageCourse();
   if(_curPage()==='curriculum') renderCurriculum();
   toast2('Quiz added');
+}
+
+function initLessonDrag(){
+  const container=document.getElementById('manage-lessons-list');
+  if(!container) return;
+  let dragIdx=null, overIdx=null;
+
+  container.querySelectorAll('[draggable="true"]').forEach(card=>{
+    card.addEventListener('dragstart',e=>{
+      dragIdx=+card.dataset.idx;
+      card.style.opacity='0.4';
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend',e=>{
+      card.style.opacity='1';
+      card.style.transform='';
+      container.querySelectorAll('[draggable="true"]').forEach(c=>{
+        c.style.borderTop='';
+        c.style.borderBottom='';
+      });
+      if(dragIdx!==null && overIdx!==null && dragIdx!==overIdx){
+        const moved=LESSONS.splice(dragIdx,1)[0];
+        LESSONS.splice(overIdx,0,moved);
+        LESSONS.forEach((l,i)=>l.n=i+1);
+        sv('lessons',LESSONS);
+        updateSbProg();
+        renderManageCourse();
+        toast2('Lesson order saved');
+      }
+      dragIdx=null; overIdx=null;
+    });
+    card.addEventListener('dragover',e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      const idx=+card.dataset.idx;
+      overIdx=idx;
+      container.querySelectorAll('[draggable="true"]').forEach(c=>{
+        c.style.borderTop='';
+        c.style.borderBottom='';
+      });
+      if(idx!==dragIdx){
+        if(idx>dragIdx) card.style.borderBottom='2px solid var(--white)';
+        else card.style.borderTop='2px solid var(--white)';
+      }
+    });
+  });
 }
 
 function resetToDefaults(){
