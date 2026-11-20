@@ -518,8 +518,8 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
 <!-- SCHEDULE -->
 <div class="page t-only" id="page-schedule">
   <div class="ph">
-    <div><div class="ph-t">Schedule &amp; Zoom Portal</div><div class="ph-s">Two sessions per week · toggle Zoom visibility per session</div></div>
-    <button class="btn bw" onclick="openAddSess()">+ Add session</button>
+    <div><div class="ph-t">Schedule &amp; Zoom Portal</div><div class="ph-s">Use "Repeat weekly" to add a whole schedule · Zoom opens automatically 15 min before</div></div>
+    <div style="display:flex;gap:8px"><button class="btn" onclick="openRepeatModal()">↻ Repeat weekly</button><button class="btn bw" onclick="openAddSess()">+ Add session</button></div>
   </div>
   <div class="pb3" id="schedule-list"></div>
 </div>
@@ -778,7 +778,7 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
   <div class="fg2">
     <div class="fg"><label class="fl">Zoom link</label><input type="url" id="si-zoom" placeholder="https://zoom.us/j/..."></div>
     <div class="fg"><label class="fl">Zoom visibility</label>
-      <select id="si-vis"><option value="hidden">Hidden (students can't see yet)</option><option value="live">Live (visible to students)</option></select></div>
+      <select id="si-vis"><option value="auto">Auto — opens 15 min before</option><option value="hidden">Hidden (students can't see yet)</option><option value="live">Live now (visible to students)</option></select></div>
   </div>
   <div class="fg2">
     <div class="fg"><label class="fl">Recording link (add after session)</label><input type="url" id="si-rec" placeholder="https://drive.google.com/..."></div>
@@ -824,6 +824,28 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
   <div class="mtit">Send login details</div>
   <div id="share-body"></div>
   <div class="mfoot" id="share-foot"></div>
+</div>
+</div>
+
+<div class="ovl" id="m-repeat">
+<div class="modal" style="max-width:600px">
+  <div class="mtit">Repeat weekly</div>
+  <div class="fg2">
+    <div class="fg"><label class="fl">Group</label><select id="rp-class" onchange="document.getElementById('rp-first').value=nextLessonFor(this.value)"></select></div>
+    <div class="fg"><label class="fl">First lesson # <span style="font-size:11px;color:var(--text3)">(0 = no lesson link)</span></label><input type="number" id="rp-first" min="0"></div>
+  </div>
+  <div id="rp-rows"></div>
+  <button type="button" class="btn bsm" style="margin-bottom:12px" onclick="addRepeatRow(6,'16:30','lesson');repeatPreview()">+ Add day</button>
+  <div class="fg2">
+    <div class="fg"><label class="fl">From</label><input type="date" id="rp-start" onchange="repeatPreview()"></div>
+    <div class="fg"><label class="fl">Until</label><input type="date" id="rp-end" onchange="repeatPreview()"></div>
+  </div>
+  <div class="fg2">
+    <div class="fg"><label class="fl">Zoom link (same for all)</label><input type="url" id="rp-zoom" placeholder="https://zoom.us/j/..."></div>
+    <div class="fg"><label class="fl">Zoom visibility</label><select id="rp-vis"><option value="auto">Auto — opens 15 min before</option><option value="hidden">Hidden</option></select></div>
+  </div>
+  <div id="rp-count" style="font-size:12px;color:var(--accent);margin-top:4px"></div>
+  <div class="mfoot"><button class="btn" onclick="closeModal('m-repeat')">Cancel</button><button class="btn bw" onclick="saveRepeat()">Create sessions</button></div>
 </div>
 </div>
 
@@ -1440,7 +1462,7 @@ function renderDashboard(){
         return`<div class="card cp" style="margin-bottom:8px;border-left:2px solid ${tc}">
           <div style="font-size:13px;font-weight:600">${esc(s.title)}</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.date)} ${esc(s.time||'')} · ${s.classId?esc(clsName(s.classId)):s.grade?'Grade '+esc(s.grade):'No group'} · <span style="color:${tc}">${tl}</span></div>
-          ${s.zoomVis==='live'&&s.zoom?'<span class="bge bgr" style="margin-top:5px">Zoom live</span>':''}
+          ${s.zoom?'<div style="margin-top:5px">'+zoomBadge(s)+'</div>':''}
         </div>`;}).join(''):'<div class="empty" style="padding:16px 0">No upcoming sessions</div>');
 
   } else {
@@ -1506,9 +1528,7 @@ function renderDashboard(){
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
             <div><div style="font-size:13px;font-weight:600">${esc(s.title)}</div>
             <div style="font-size:11px;color:var(--text3);margin-top:2px">${esc(s.date)} ${esc(s.time||'')}</div></div>
-            ${paid&&s.zoomVis==='live'&&s.zoom?`<a href="${esc(s.zoom)}" target="_blank"><button class="btn bsm bblu">Join Zoom</button></a>`:
-              s.zoomVis==='hidden'?'<span class="bge bgray">Link coming soon</span>':
-              !paid?'<span class="bge br">Payment required</span>':''}
+            ${!paid?'<span class="bge br">Payment required</span>':studentZoomBtn(s,paid)}
           </div>
         </div>`;}).join(''):'<div class="empty" style="padding:16px 0">No upcoming sessions</div>');
 
@@ -1675,8 +1695,9 @@ function buildSessCard(s,isPast){
         <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(s.title)}</div>
         <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.classId?esc(clsName(s.classId)||'Deleted group'):s.grade?'Grade '+esc(s.grade):'<span style="color:var(--red)">No group — won\'t show to anyone</span>'} · <span style="color:${tc}">${tl}</span></div>
         <div style="margin-top:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          ${s.zoom?`<span class="zoom-badge ${s.zoomVis==='live'?'zoom-live':'zoom-hidden'}">${s.zoomVis==='live'?'Zoom live':'Zoom hidden'}</span>
-          <button class="btn bxs" onclick="toggleZoom(event,'${s.id}')">${s.zoomVis==='live'?'Hide link':'Make live'}</button>`:'<span style="font-size:11px;color:var(--text3)">No Zoom link</span>'}
+          ${s.zoom?`${zoomBadge(s)}
+          <select class="bxs" style="width:auto;padding:3px 6px;font-size:11px" onclick="event.stopPropagation()" onchange="setZoomVis('${s.id}',this.value)">
+            <option value="auto" ${s.zoomVis==='auto'?'selected':''}>Auto (15 min before)</option><option value="live" ${s.zoomVis==='live'?'selected':''}>Live now</option><option value="hidden" ${s.zoomVis==='hidden'||!s.zoomVis?'selected':''}>Hidden</option></select>`:'<span style="font-size:11px;color:var(--text3)">No Zoom link</span>'}
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
@@ -1696,6 +1717,8 @@ function buildSessCard(s,isPast){
   </div>`;
 }
 
+function setZoomVis(id,v){const s=sessions.find(x=>x.id===id);if(!s)return;s.zoomVis=v;sv('sessions',sessions);renderSchedule();
+  toast2(v==='auto'?'Zoom link will open 15 min before the session':v==='live'?'Zoom link is live for paid students':'Zoom link hidden');}
 function togSess(id){openSess=(openSess===id)?null:id; renderSchedule();}
 function toggleZoom(e,id){
   e.stopPropagation();
@@ -1714,7 +1737,7 @@ function openAddSess(){
   document.getElementById('si-time').value='17:00';
   document.getElementById('si-type').value='lesson';
   fillClassSelect('si-class');
-  document.getElementById('si-vis').value='hidden';
+  document.getElementById('si-vis').value='auto';
   document.getElementById('si-ln').value='';
   openModal('m-add-sess');
 }
@@ -2442,6 +2465,80 @@ async function viewBB(id){toast2('Loading screenshot...');const {data,error}=awa
   document.getElementById('m-sc-body').innerHTML=`<img src="${esc(data)}" style="max-width:100%;border-radius:var(--r);display:block">`;
   document.getElementById('m-sc-foot').innerHTML=`<button class="btn bw" onclick="closeModal('m-screenshot')">Close</button>`; openModal('m-screenshot');}
 
+// ═══════════════════════════════════════════════════
+// ZOOM: automatic visibility + REPEAT WEEKLY sessions
+// ═══════════════════════════════════════════════════
+const ZOOM_OPEN_MIN=15, ZOOM_CLOSE_MIN=180;
+function sessStart(s){if(!s.date)return null;const d=new Date(s.date+'T'+(s.time||'00:00'));return isNaN(d)?null:d;}
+function zoomLive(s){
+  if(!s.zoom)return false;
+  if(s.zoomVis==='live')return true;
+  if(s.zoomVis!=='auto')return false;
+  const st=sessStart(s); if(!st)return false; const now=Date.now();
+  return now>=st-ZOOM_OPEN_MIN*60000 && now<=+st+ZOOM_CLOSE_MIN*60000;
+}
+function zoomState(s){return !s.zoom?'none':s.zoomVis==='live'?'live':s.zoomVis==='auto'?(zoomLive(s)?'open':'auto'):'hidden';}
+function zoomBadge(s){const z=zoomState(s);
+  return z==='live'||z==='open'?'<span class="zoom-badge zoom-live">'+(z==='open'?'Zoom open now (auto)':'Zoom live')+'</span>'
+    :z==='auto'?'<span class="zoom-badge zoom-hidden">Opens 15 min before</span>':'<span class="zoom-badge zoom-hidden">Zoom hidden</span>';}
+function studentZoomBtn(s,paid){
+  if(!s.zoom&&s.zoomVis!=='auto')return '';
+  if(!paid)return '';
+  if(zoomLive(s))return `<a href="${esc(s.zoom)}" target="_blank" rel="noopener"><button class="btn bsm bblu">Join Zoom</button></a>`;
+  if(s.zoomVis==='auto'){const st=sessStart(s);const op=st?new Date(st-ZOOM_OPEN_MIN*60000):null;
+    return `<span class="bge bgray">Link opens ${op?op.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'15 min before'}</span>`;}
+  return '<span class="bge bgray">Link coming soon</span>';
+}
+// refresh time-based buttons every minute (no network use)
+setInterval(()=>{if(!CU)return;const p=_curPage();if(['dashboard','my-schedule','schedule'].includes(p))rerenderCurrent();},60000);
+
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function openRepeatModal(){
+  fillClassSelect('rp-class');
+  const t=new Date(); document.getElementById('rp-start').value=ymd(t);
+  const e=new Date(t); e.setDate(e.getDate()+42); document.getElementById('rp-end').value=ymd(e);
+  document.getElementById('rp-rows').innerHTML='';
+  addRepeatRow(6,'16:30','lesson'); addRepeatRow(2,'18:15','review');
+  const cid=document.getElementById('rp-class').value; document.getElementById('rp-first').value=nextLessonFor(cid);
+  repeatPreview(); openModal('m-repeat');
+}
+function nextLessonFor(cid){const used=sessions.filter(s=>s.classId===cid&&+s.lessonNum>0).map(s=>+s.lessonNum);return used.length?Math.max(...used)+1:1;}
+function addRepeatRow(day,time,type){
+  const r=document.createElement('div'); r.className='fg3 rp-row'; r.style.alignItems='end';
+  r.innerHTML=`<div class="fg"><label class="fl">Day</label><select class="rp-day" onchange="repeatPreview()">${DAY_NAMES.map((d,i)=>`<option value="${i}" ${i===day?'selected':''}>${d}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fl">Time</label><input type="time" class="rp-time" value="${time}" onchange="repeatPreview()"></div>
+    <div class="fg" style="display:flex;gap:6px;align-items:end"><div style="flex:1"><label class="fl">Type</label><select class="rp-type"><option value="lesson" ${type==='lesson'?'selected':''}>New lesson</option><option value="review" ${type==='review'?'selected':''}>HW review + next lesson</option><option value="quiz">Quiz</option></select></div>
+    <button type="button" class="btn bxs bd" style="margin-bottom:2px" onclick="this.closest('.rp-row').remove();repeatPreview()">×</button></div>`;
+  document.getElementById('rp-rows').appendChild(r);
+}
+function repeatDates(){
+  const st=new Date(document.getElementById('rp-start').value+'T00:00'), en=new Date(document.getElementById('rp-end').value+'T23:59');
+  const rows=[...document.querySelectorAll('.rp-row')].map(r=>({day:+r.querySelector('.rp-day').value,time:r.querySelector('.rp-time').value,type:r.querySelector('.rp-type').value}));
+  const out=[]; if(isNaN(st)||isNaN(en)||!rows.length)return out;
+  for(let d=new Date(st);d<=en&&out.length<120;d.setDate(d.getDate()+1)){rows.filter(r=>r.day===d.getDay()).forEach(r=>out.push({date:ymd(d),time:r.time,type:r.type}));}
+  return out.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+}
+function repeatPreview(){const n=repeatDates().length;document.getElementById('rp-count').textContent=n?n+' session'+(n!==1?'s':'')+' will be created':'No sessions in this date range';}
+function saveRepeat(){
+  const cid=document.getElementById('rp-class').value; if(!cid){toast2('Choose a group');return;}
+  const list=repeatDates(); if(!list.length){toast2('No sessions in this date range');return;}
+  const zoom=document.getElementById('rp-zoom').value.trim(), vis=document.getElementById('rp-vis').value;
+  let ln=+document.getElementById('rp-first').value||0; const grade=(clsById(cid)||{}).grade||'';
+  const vl=LESSONS.filter(l=>(l.grades||[]).map(String).includes(String(grade))||!grade).map(l=>l.n);
+  let idx=Math.max(0,vl.indexOf(ln)); let skipped=0;
+  list.forEach((x,i)=>{
+    if(sessions.some(s=>s.classId===cid&&s.date===x.date&&s.time===x.time)){skipped++;return;}
+    const n=ln?(vl[idx]??null):null; idx++;
+    const L=LESSONS.find(l=>l.n===n);
+    sessions.push({id:'s'+Date.now()+'_'+i,date:x.date,time:x.time,type:x.type,classId:cid,grade,
+      title:n?('Lesson '+n+(L?': '+L.title:'')):(x.type==='review'?'HW review + next lesson':'New lesson'),
+      zoom,zoomVis:vis,rec:'',lessonNum:n});
+  });
+  sv('sessions',sessions); closeModal('m-repeat'); renderSchedule();
+  toast2((list.length-skipped)+' sessions added'+(skipped?' ('+skipped+' already existed)':''));
+}
+
 const PAGE_RENDER={
   dashboard:()=>renderDashboard(), curriculum:()=>renderCurriculum(),
   schedule:()=>renderSchedule(), students:()=>renderStudents(),
@@ -2597,8 +2694,7 @@ function renderMySchedule(){
           <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · <span style="color:${tc}">${tl}</span></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-          ${paid&&s.zoomVis==='live'&&s.zoom?`<a href="${esc(s.zoom)}" target="_blank"><button class="btn bsm bblu">Join Zoom</button></a>`:
-            s.zoomVis==='hidden'?'<span class="bge bgray">Link coming soon</span>':''}
+          ${studentZoomBtn(s,paid)}
           ${!paid?`<span class="bge br">Payment required</span>
             <button class="btn bxs bamb" onclick="navTo('my-payments')">Pay now</button>`:''}
           ${paid&&s.rec?`<a href="${esc(s.rec)}" target="_blank"><button class="btn bxs">Recording</button></a>`:''}
