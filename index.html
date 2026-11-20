@@ -365,6 +365,11 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
 .lst .ring{width:18px;height:18px;border-radius:50%;background:conic-gradient(var(--accent) 50%,var(--border2) 0)}
 .qdiv.qz{background:transparent;border:1px dashed var(--border2)}
 @media(max-width:768px){.lrow.dpr .ltit{font-size:13px}.dtag{display:none}}
+/* activity + group colours */
+.actb{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);white-space:nowrap}.actb i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.gchip{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;border:1px solid var(--gc);color:var(--text)}.gchip i{width:8px;height:8px;border-radius:50%;background:var(--gc)}
+.gcard{border-top:3px solid var(--gc,var(--accent))}.gcard .seats span.f{background:var(--gc,var(--accent))}
+.gsw{width:24px;height:24px;border-radius:50%;display:inline-block;cursor:pointer;border:3px solid transparent;margin:0 4px 4px 0;transition:transform .12s}.gsw.on{border-color:var(--white)}.gsw:active{transform:scale(.9)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 <!-- Supabase JS v2 -->
@@ -1188,7 +1193,7 @@ async function loadAllFromDB(){
   settings=m.settings||settings; if(m.faqData)faqData=m.faqData;
   extras=m.extras||[]; tests=m.tests||null; testScores=m.testScores||{};
   classes=m.classes||[]; classProgress=m.classProgress||{}; myRate=m.myRate||null;
-  await loadBB();
+  await Promise.all([loadBB(),loadActivity()]);
   // keep CU pointing at the fresh record
   if(CU){const fresh=(CR==='student'?students:teachers).find(x=>x.id===CU.id);if(fresh)CU=fresh;}
   return true;
@@ -1489,10 +1494,14 @@ function renderDashboard(){
 
     const recDone=LESSONS.filter(l=>lessonStatus(l.n)==='done').slice(-4).reverse();
     const grpHtml=classes.length?`<div class="st" style="margin-bottom:10px">Groups</div>`+classes.map(c=>{const dc=doneCount(c.id);const n=students.filter(x=>x.classId===c.id).length;
-      return`<div class="card cp" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px"><span style="font-weight:600">${esc(c.name)}</span><span style="color:var(--text3)">${n} student${n!==1?'s':''}${c.satDate?' · '+esc((SAT_DATES.find(x=>x.d===c.satDate)||{}).l||c.satDate):''}</span></div>
-        <div class="prw" style="margin-top:8px"><div class="prb pr-w" style="width:${Math.round(dc/(LESSONS.length||1)*100)}%"></div></div>
+      return`<div class="card cp" style="margin-bottom:8px;border-left:3px solid ${gColour(c.id)}"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px"><span style="font-weight:600">${esc(c.name)}</span><span style="color:var(--text3)">${n} student${n!==1?'s':''}${c.satDate?' · '+esc((SAT_DATES.find(x=>x.d===c.satDate)||{}).l||c.satDate):''}</span></div>
+        <div class="prw" style="margin-top:8px"><div class="prb" style="background:${gColour(c.id)};width:${Math.round(dc/(LESSONS.length||1)*100)}%"></div></div>
         <div style="font-size:11px;color:var(--text3);margin-top:5px">${dc} / ${LESSONS.length} lessons done</div></div>`;}).join('')+'<div style="height:10px"></div>':'';
-    document.getElementById('dash-left').innerHTML=grpHtml+`<div class="st" style="margin-bottom:10px">Recent lessons${clsName(myClassId())?' — '+esc(clsName(myClassId())):''}</div>`+
+    const never=students.filter(s=>activity(s.id).k==='never'), online=students.filter(s=>activity(s.id).k==='online');
+    const actHtml=`<div class="card cp" style="margin-bottom:14px;cursor:pointer" onclick="navTo('students')">
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="st">Student logins</span><span class="actb"><i style="background:var(--green)"></i>${online.length} active now</span></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px">${students.length-never.length} of ${students.length} have logged in${never.length?` · <span style="color:var(--red)">Never: ${never.slice(0,5).map(s=>esc(s.name.split(' ')[0])).join(', ')}${never.length>5?' +'+(never.length-5):''}</span>`:''}</div></div>`;
+    document.getElementById('dash-left').innerHTML=actHtml+grpHtml+`<div class="st" style="margin-bottom:10px">Recent lessons${clsName(myClassId())?' — '+esc(clsName(myClassId())):''}</div>`+
       (recDone.length?recDone.map(l=>`<div class="card cp" style="margin-bottom:8px;display:flex;align-items:center;gap:9px">
         <span class="bge ${DI[l.d]?.c||'bgray'}">L${l.n}</span>
         <span style="font-size:13px;font-weight:500">${esc(l.title)}</span>
@@ -1737,12 +1746,12 @@ function buildSessCard(s,isPast){
   const tc=s.type==='lesson'?'var(--blue)':s.type==='review'?'var(--amber)':s.type==='quiz'?'var(--purple)':'var(--green)';
   const tl=s.type==='lesson'?'Session 1 — New lesson':s.type==='review'?'Session 2 — HW review':s.type==='quiz'?'Quiz':'Full exam';
   const isOpen=openSess===s.id;
-  return`<div class="card" style="margin-bottom:10px;border-left:3px solid ${tc}${isPast?';opacity:.6':''}">
+  return`<div class="card" style="margin-bottom:10px;border-left:3px solid ${s.classId?gColour(s.classId):tc}${isPast?';opacity:.6':''}">
     <div class="sess-card" style="cursor:pointer" onclick="togSess('${s.id}')">
       <div class="sess-date"><div class="sess-day">${day}</div><div class="sess-mon">${mon}</div></div>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(s.title)}${(s.studentIds||[]).length?` <span class="bge bgold">Private: ${esc(s.studentIds.map(id=>((students.find(x=>x.id===id)||{}).name||id).split(' ')[0]).join(', '))}</span>`:''}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.classId?esc(clsName(s.classId)||'Deleted group'):s.grade?'Grade '+esc(s.grade):'<span style="color:var(--red)">No group — won\'t show to anyone</span>'} · <span style="color:${tc}">${tl}</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.classId?(clsName(s.classId)?gChip(s.classId):'Deleted group'):s.grade?'Grade '+esc(s.grade):'<span style="color:var(--red)">No group — won\'t show to anyone</span>'} · <span style="color:${tc}">${tl}</span></div>
         <div style="margin-top:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           ${s.zoom?`${zoomBadge(s)}
           <select class="bxs" style="width:auto;padding:3px 6px;font-size:11px" onclick="event.stopPropagation()" onchange="setZoomVis('${s.id}',this.value)">
@@ -1844,11 +1853,12 @@ function renderStudents(){
       <div class="sname">${esc(s.name)}</div>
       <div class="smeta">${esc(s.id)} · ${esc(s.phone||'—')}</div>
       <div style="margin-top:9px;display:flex;gap:5px;flex-wrap:wrap">
-       <span class="bge bgold">${s.classId?esc(clsName(s.classId)):'G'+esc(s.grade||'?')}</span>
+       ${s.classId?gChip(s.classId):'<span class="bge bgold">G'+esc(s.grade||'?')+'</span>'}
         <span class="bge ${s.group==='online'?'bb':s.group==='physical'?'bgr':'bp'}">${s.group||''}</span>
         ${payStatusBadge(s.id)}
         <span class="bge bgray">${getAttCount(s.id)} sessions</span>
       </div>
+      <div style="margin-top:8px">${actBadge(s.id)}</div>
     </div>`).join('');
 }
 
@@ -1931,6 +1941,9 @@ function openStuView(sid){
     </div>
     <div class="fg2" style="margin-bottom:14px">
       <div><div style="font-size:11px;color:var(--text3)">Phone</div><div style="font-size:13px;margin-top:3px">${esc(s.phone)||'—'}</div></div>
+      <div><div style="font-size:11px;color:var(--text3)">Portal login</div><div style="margin-top:4px">${actBadge(s.id)}${loginInfo[s.id]&&loginInfo[s.id].last?`<div style="font-size:11px;color:var(--text3);margin-top:3px">${loginInfo[s.id].count} login${loginInfo[s.id].count!==1?'s':''} · last login ${ago(loginInfo[s.id].last)}</div>`:''}</div></div>
+    </div>
+    <div class="fg2" style="margin-bottom:14px">
       <div><div style="font-size:11px;color:var(--text3)">Portal password</div><div style="font-size:12px;margin-top:3px;color:var(--text3)">Hidden for security · use Edit to set a new one</div></div>
     </div>
     <div class="fg2" style="margin-bottom:14px">
@@ -2634,7 +2647,7 @@ function renderGroups(){
   const el=document.getElementById('groups-content'); if(!el)return;
   if(!selGroup||!clsById(selGroup))selGroup=(classes[0]||{}).id||'';
   const cards=classes.map(c=>{const n=gMembers(c.id).length,mx=gMax(c),tmp=gType(c)==='temporary';
-    return `<div class="card cp gcard ${selGroup===c.id?'gsel':''}" onclick="selGroup='${c.id}';renderGroups()">
+    return `<div class="card cp gcard ${selGroup===c.id?'gsel':''}" style="--gc:${gColour(c.id)}" onclick="selGroup='${c.id}';renderGroups()">
       <span class="gtype ${tmp?'tmp':''}">${tmp?'Temporary':'Trial group'}</span>
       <div style="font-weight:600;font-size:14px;margin-top:6px">${esc(c.name)}</div>
       <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.satDate?esc(satName(c.satDate)):'No SAT date'} · G${esc(c.grade||'?')}</div>
@@ -2652,6 +2665,8 @@ function renderGroups(){
       <div style="display:flex;gap:6px"><button class="btn bsm" onclick="openAddStudent('${c.id}')">+ Add student</button>
       ${mem.length?'':`<button class="btn bsm bd" onclick="delClass('${c.id}');renderGroups()">Delete group</button>`}</div>
     </div>
+    <div class="fg"><label class="fl">Group colour</label><div>${GROUP_COLOURS.map(col=>`<span class="gsw ${gColour(c.id).toLowerCase()===col?'on':''}" style="background:${col}" onclick="updClass('${c.id}','color','${col}');renderGroups()"></span>`).join('')}
+      <label class="gsw" title="Custom colour" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);position:relative;overflow:hidden"><input type="color" value="${esc(gColour(c.id))}" onchange="updClass('${c.id}','color',this.value);renderGroups()" style="opacity:0;position:absolute;inset:0;cursor:pointer"></label></div></div>
     <div class="fg3">
       <div class="fg"><label class="fl">Name</label><input type="text" value="${esc(c.name)}" onchange="updClass('${c.id}','name',this.value);renderGroups()"></div>
       <div class="fg"><label class="fl">Type</label><select onchange="updClass('${c.id}','type',this.value);renderGroups()">
@@ -2672,8 +2687,8 @@ function renderGroups(){
       <div class="fg" style="align-self:end;font-size:12px;color:var(--accent);padding-bottom:10px">${esc(gPriceLabel(c))}</div>
     </div>
     <div class="st" style="margin:6px 0 8px">Students (${mem.length}${tmp?'':' / '+gMax(c)})</div>
-    ${mem.length?`<table class="tbl"><thead><tr><th>Name</th><th>ID</th>${tmp?'<th>Attends</th><th>Lessons</th>':''}<th>Price</th><th>Move to</th></tr></thead><tbody>
-      ${mem.map(s=>`<tr><td style="font-weight:600">${esc(s.name)}</td><td>${esc(s.id)}</td>
+    ${mem.length?`<table class="tbl"><thead><tr><th>Name</th><th>ID</th><th>Login</th>${tmp?'<th>Attends</th><th>Lessons</th>':''}<th>Price</th><th>Move to</th></tr></thead><tbody>
+      ${mem.map(s=>`<tr><td style="font-weight:600">${esc(s.name)}</td><td>${esc(s.id)}</td><td>${actBadge(s.id)}</td>
         ${tmp?`<td>${s.hostClassId?esc(clsName(s.hostClassId)):'Own sessions'}</td><td>${(s.allowedLessons||[]).length?esc(fmtLessons(s.allowedLessons)):'All'}</td>`:''}
         <td>${+s.price?(+s.price)+' EGP (custom)':'Group price'}</td>
         <td><select style="width:auto" onchange="moveStudent('${s.id}',this.value)"><option value="">—</option>${classes.filter(x=>x.id!==c.id).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></td></tr>`).join('')}
@@ -2720,6 +2735,24 @@ function onStuClassChange(){
   const c=clsById(document.getElementById('st-class').value); const tmp=gType(c)==='temporary';
   document.getElementById('st-temp').style.display=tmp?'':'none';
 }
+
+// ═══════════════════════════════════════════════════
+// LOGIN ACTIVITY + GROUP COLOURS
+// ═══════════════════════════════════════════════════
+let loginInfo={};
+async function loadActivity(){if(CR==='student'||!TOKEN)return;const {data,error}=await rpc('login_activity',{p_token:TOKEN});if(!error&&data)loginInfo=data;}
+// students: tiny heartbeat every 4 minutes while the page is open and visible
+setInterval(()=>{if(CR==='student'&&TOKEN&&document.visibilityState==='visible'&&navigator.onLine)DB.rpc('ping',{p_token:TOKEN}).then(()=>{},()=>{});},240000);
+function ago(t){const m=Math.round((Date.now()-new Date(t))/60000);if(m<1)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+' h ago';const d=Math.round(h/24);return d===1?'yesterday':d+' days ago';}
+function activity(sid){const a=loginInfo[sid];if(!a||!a.last)return {k:'never',t:'Never logged in'};
+  const seen=a.seen&&Date.now()-new Date(a.seen)<5*60000;
+  return seen?{k:'online',t:'Active now'}:{k:'seen',t:'Last seen '+ago(a.seen||a.last),n:a.count};}
+function actBadge(sid){const a=activity(sid);
+  const c=a.k==='online'?'var(--green)':a.k==='never'?'var(--red)':'var(--text3)';
+  return `<span class="actb" title="${a.n?a.n+' login'+(a.n!==1?'s':''):''}"><i style="background:${c}"></i>${esc(a.t)}</span>`;}
+const GROUP_COLOURS=['#c9a84c','#b9bdc6','#a8743a','#2f9e74','#3b6fd8','#c2414b','#8b5cf6','#14b8a6','#f97352','#6b707a'];
+function gColour(id){const c=clsById(id);if(c&&c.color)return c.color;const i=Math.max(0,classes.findIndex(x=>x.id===id));return GROUP_COLOURS[i%GROUP_COLOURS.length];}
+function gChip(id){if(!id)return '';const col=gColour(id);return `<span class="gchip" style="--gc:${col}"><i></i>${esc(clsName(id)||'—')}</span>`;}
 
 const PAGE_RENDER={
   dashboard:()=>renderDashboard(), curriculum:()=>renderCurriculum(),
