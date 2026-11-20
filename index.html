@@ -328,7 +328,10 @@ input[type=range]{accent-color:var(--accent);padding:0;border:none;background:tr
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 <!-- Supabase JS v2 -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://esgebnchiaqwmdbpdrdj.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<!-- pinned version: a new library release can't silently break the site -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -577,15 +580,15 @@ input[type=range]{accent-color:var(--accent);padding:0;border:none;background:tr
       <div class="card cp" id="brand-card" style="margin-bottom:14px"></div>
       <div class="card cp">
         <div class="st" style="margin-bottom:14px">Payment details (displayed to students)</div>
-        <div class="fg"><label class="fl">Instapay number / name</label><input type="text" id="ip-num" placeholder="01X XXXX XXXX — Mohamed Zayed" oninput="saveSett()"></div>
-        <div class="fg"><label class="fl">Wallet 1 (Vodafone / Orange etc.)</label><input type="text" id="ip-w1" placeholder="01X XXXX XXXX — Vodafone Cash" oninput="saveSett()"></div>
-        <div class="fg"><label class="fl">Wallet 2 (optional)</label><input type="text" id="ip-w2" placeholder="01X XXXX XXXX" oninput="saveSett()"></div>
+        <div class="fg"><label class="fl">Instapay number / name</label><input type="text" id="ip-num" placeholder="01X XXXX XXXX — Mohamed Zayed" onchange="saveSett()"></div>
+        <div class="fg"><label class="fl">Wallet 1 (Vodafone / Orange etc.)</label><input type="text" id="ip-w1" placeholder="01X XXXX XXXX — Vodafone Cash" onchange="saveSett()"></div>
+        <div class="fg"><label class="fl">Wallet 2 (optional)</label><input type="text" id="ip-w2" placeholder="01X XXXX XXXX" onchange="saveSett()"></div>
         <div class="fg2">
-          <div class="fg"><label class="fl">Session fee (EGP)</label><input type="number" id="sess-fee-s" placeholder="500" min="0" oninput="saveSett()"></div>
-          <div class="fg"><label class="fl">Course total fee (EGP)</label><input type="number" id="course-fee-s" placeholder="8000" min="0" oninput="saveSett()"></div>
+          <div class="fg"><label class="fl">Session fee (EGP)</label><input type="number" id="sess-fee-s" placeholder="500" min="0" onchange="saveSett()"></div>
+          <div class="fg"><label class="fl">Course total fee (EGP)</label><input type="number" id="course-fee-s" placeholder="8000" min="0" onchange="saveSett()"></div>
         </div>
         <div class="fg"><label class="fl">Payment instructions (shown to students)</label>
-          <textarea id="pay-instr-s" placeholder="Send transfer to Instapay: 01X XXXX XXXX — then upload screenshot here." oninput="saveSett()"></textarea></div>
+          <textarea id="pay-instr-s" placeholder="Send transfer to Instapay: 01X XXXX XXXX — then upload screenshot here." onchange="saveSett()"></textarea></div>
         <button class="btn bw" onclick="saveSett();toast2('Settings saved')">Save settings</button>
       </div>
       </div>
@@ -1015,27 +1018,47 @@ const K='mz4_';
 function _lsSet(k,v){try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}}
 function _lsGet(k,d){try{const v=localStorage.getItem(K+k);return v!==null?JSON.parse(v):d}catch(e){return d}}
 try{Object.keys(localStorage).filter(x=>x.startsWith(K)&&![K+'token',K+'theme',K+'brand'].includes(x)).forEach(x=>localStorage.removeItem(x));}catch(e){} // wipe old caches (they held passwords)
-let TOKEN=_lsGet('token',null);
+let TOKEN=_lsGet('token',null), RT_OK=false;
 function ld(k,d){return d;}
 
 // ── Secure server calls (every call carries the login token) ──
+const RETRY_SAFE=new Set(['app_load_v2','pr_list','bb_list','bb_model','me','app_save','pr_image','bb_image','public_brand','pr_approve','pr_reject','bb_decide','logout']);
+function _netErr(e){return !!e&&(/fetch|network|Failed|timeout|Load failed|503|502|504/i.test(e.message||'')||!e.code);}
 async function rpc(fn,args){
   if(!DB) return {data:null,error:{message:'Not connected'}};
-  const res=await DB.rpc(fn,args);
+  let res, tries=RETRY_SAFE.has(fn)?3:1;
+  for(let i=0;i<tries;i++){
+    try{res=await DB.rpc(fn,args);}catch(e){res={data:null,error:{message:String(e&&e.message||e)}};}
+    if(!res.error||!_netErr(res.error)||i===tries-1)break;
+    await new Promise(r=>setTimeout(r,[600,1500][i]));   // weak mobile signal: wait and try again
+  }
   if(res.error&&/not_logged_in/.test(res.error.message||'')&&CU){toast2('Your login expired — please sign in again');logout();}
   return res;
 }
-const _lastSave={};
-// sv(): save one data key on the server (staff only)
+const _lastSave={}, _pendSave={}, _saveT={};
+// sv(): save one data key on the server (staff only). Rapid edits are grouped into one save.
 function sv(k,v){
   if(k==='session'||k==='payRequests') return;
   if(CR==='student'||!TOKEN) return;
-  _lastSave[k]=Date.now();
-  const copy=JSON.parse(JSON.stringify(v));
-  rpc('app_save',{p_token:TOKEN,p_key:k,p_value:copy}).then(({error})=>{
-    if(error){console.warn('save',k,error.message);toast2('Save failed — please check your connection and try again');}
+  _pendSave[k]=JSON.parse(JSON.stringify(v)); _lastSave[k]=Date.now();
+  clearTimeout(_saveT[k]); _saveT[k]=setTimeout(()=>_flushSave(k),450);
+}
+function _flushSave(k){
+  if(!(k in _pendSave))return; const val=_pendSave[k]; delete _pendSave[k]; _lastSave[k]=Date.now();
+  rpc('app_save',{p_token:TOKEN,p_key:k,p_value:val}).then(({error})=>{
+    _lastSave[k]=Date.now();
+    if(error){console.warn('save',k,error.message);_pendSave[k]=_pendSave[k]||val;
+      toast2(navigator.onLine?'Save failed — retrying when connection is back':'No internet — your change will save when you reconnect');}
   });
 }
+function flushAllSaves(){Object.keys(_pendSave).forEach(k=>{clearTimeout(_saveT[k]);_flushSave(k);});}
+addEventListener('pagehide',flushAllSaves);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushAllSaves();});
+function _netBanner(on){let b=document.getElementById('net-banner');
+  if(!b){b=document.createElement('div');b.id='net-banner';b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:400;background:var(--amber);color:#1b1b1b;text-align:center;font-size:12px;font-weight:600;padding:6px;transform:translateY(-100%);transition:transform .25s';b.textContent='No internet connection — showing the last loaded data';document.body.appendChild(b);}
+  b.style.transform=on?'translateY(0)':'translateY(-100%)';}
+addEventListener('offline',()=>_netBanner(true));
+addEventListener('online',()=>{_netBanner(false);flushAllSaves();syncNow();});
 
 // ── PAYMENT REQUESTS ──
 function _fmtTs(t){return t?new Date(t).toLocaleString('en-GB'):'';}
@@ -1111,7 +1134,12 @@ function handleChange(payload){
     rerenderCurrent();
   },400);
 }
-async function syncNow(){ if(!CU)return; await Promise.all([loadAllFromDB(),loadPayRequests()]); rerenderCurrent(); }
+async function syncNow(){
+  if(!CU)return;
+  const last=Math.max(0,...Object.values(_lastSave));
+  if(Object.keys(_pendSave).length||Date.now()-last<3000){setTimeout(syncNow,1500);return;} // let my own save finish first
+  await Promise.all([loadAllFromDB(),loadPayRequests()]); rerenderCurrent();
+}
 
 // Connect to Supabase
 async function initDB(){
@@ -1122,7 +1150,8 @@ async function initDB(){
     DB_READY=true;
     DB.channel('changes')
       .on('postgres_changes',{event:'*',schema:'public',table:'app_changes'},handleChange)
-      .subscribe(s=>console.log('Realtime:',s));
+      .subscribe(s=>{RT_OK=(s==='SUBSCRIBED');console.log('Realtime:',s);});
+    setInterval(()=>{if(!RT_OK&&CU&&document.visibilityState==='visible'&&navigator.onLine)syncNow();},60000);
     // Catch up when a phone/laptop comes back to the tab (mobile browsers pause realtime in background)
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow();});
   }catch(err){
