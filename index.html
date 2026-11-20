@@ -325,6 +325,19 @@ input[type=range]{accent-color:var(--accent);padding:0;border:none;background:tr
 .seg .on{background:var(--accent);color:var(--on-accent);font-weight:600}
 .sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;display:inline-block;margin:0 6px 6px 0;transition:transform .12s}.sw.on{border-color:var(--white)}.sw:active{transform:scale(.9)}
 .thsw{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px}
+/* ── Students: one palette (main colour + neutrals) ── */
+body[data-role=student] .bge.bgr,body[data-role=student] .bge.bb,body[data-role=student] .bge.bp,
+body[data-role=student] .bge.bt,body[data-role=student] .bge.ba,body[data-role=student] .bge.bgold{background:var(--gold-bg);color:var(--accent)}
+body[data-role=student] .bge.br{background:var(--card3);color:var(--text3)}
+body[data-role=student] .lnum{color:var(--accent)!important}
+body[data-role=student] .card[style*="border-left"]{border-left-color:var(--accent)!important}
+body[data-role=student] .btn.bblu,body[data-role=student] .btn.bg2,body[data-role=student] .btn.bamb{background:var(--gold-bg);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+body[data-role=student] .lock-box strong{color:var(--accent)!important}
+body[data-role=student] .tbl td[style*="var(--green)"],body[data-role=student] .tbl td[style*="var(--amber)"]{color:var(--accent)!important}
+body[data-role=student] .tbl td[style*="var(--red)"]{color:var(--text3)!important}
+body[data-role=student] .qdiv{background:var(--card);border-color:var(--border2)}
+body[data-role=student] .qdiv div[style*="color:var(--purple)"]{color:var(--accent)!important}
+body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--text3)!important}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 <!-- Supabase JS v2 -->
@@ -1250,13 +1263,13 @@ function launchApp(){
 
   if(CR==='teacher'||CR==='assistant') loadSettings();
 const faqBtn=document.getElementById('faq-add-btn');if(faqBtn)faqBtn.style.display=(CR==='teacher'||CR==='assistant')?'':'none';
-  applyBrand(); buildBnav(); renderDashboard(); updateSbProg(); updateDots(); animateIn();
+  document.body.dataset.role=CR||''; applyBrand(); buildBnav(); renderDashboard(); updateSbProg(); updateDots(); animateIn();
 }
 
 function logout(){
   if(TOKEN&&DB)DB.rpc('logout',{p_token:TOKEN}).then(()=>{},()=>{});
   TOKEN=null; _lsSet('token',null); CU=null; CR=null;
-  students=[];teachers=[];payments=[];payRequests=[];notifications=[]; // clear data from memory
+  students=[];teachers=[];payments=[];payRequests=[];notifications=[]; document.body.dataset.role=''; // clear data from memory
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('lu').value=''; document.getElementById('lp').value='';
@@ -1507,7 +1520,7 @@ function renderDashboard(){
           <span class="bge ${DI[l.d]?.c||'bgray'}" style="font-size:9px;min-width:24px;justify-content:center">L${l.n}</span>
           <span style="font-size:12px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.title)}</span>
           <span class="bge ${att2?'bgr':'bgray'}" style="flex-shrink:0">${att2?'Attended':!open?'Upcoming':'—'}</span>
-          ${open&&!paid?'<span class="bge br" style="font-size:9px;flex-shrink:0">Locked</span>':''}
+          ${open&&!paid?'<span class="bge br" style="font-size:9px;flex-shrink:0">🔒 Locked</span>':''}
         </div>`;}).join('');
 
     if(cdTarget){
@@ -2615,7 +2628,7 @@ function renderMySchedule(){
       <span class="bge ${DI[l.d]?.c||'bgray'}" style="font-size:9px;min-width:24px;justify-content:center">L${l.n}</span>
       <span style="font-size:12px;flex:1;color:var(--text)">${esc(l.title)}</span>
       <span class="bge ${att?'bgr':'bgray'}">${att?'Attended':open?'Not yet':'Upcoming'}</span>
-      ${open&&!paid?'<span class="bge br" style="font-size:9px">Locked</span>':''}
+      ${open&&!paid?'<span class="bge br" style="font-size:9px">🔒 Locked</span>':''}
     </div>`;}).join('');
   el.innerHTML=html;
 }
