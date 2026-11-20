@@ -313,10 +313,10 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       <input class="li" id="lp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
       <button class="lbtn" onclick="doLogin()">Sign in</button>
     </div>
-    <!-- STUDENT LOGIN (accepts email or legacy ID) -->
+    <!-- STUDENT LOGIN -->
     <div id="lt-s" style="display:none">
-      <label class="ll">Email or Student ID</label>
-      <input class="li" id="lsi" type="text" placeholder="your@email.com or S001" autocomplete="username">
+      <label class="ll">Student ID</label>
+      <input class="li" id="lsi" type="text" placeholder="e.g. 105" autocomplete="username">
       <label class="ll">Password</label>
       <input class="li" id="lsp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doStudentLogin()">
       <button class="lbtn" onclick="doStudentLogin()">Sign in</button>
@@ -362,9 +362,13 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6 6.5C6 5.67 6.9 5 8 5s2 .67 2 1.5c0 .7-.5 1.3-1.2 1.6L8 8.5V9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="11.5" r=".7" fill="currentColor"/></svg>
       Quizzes
     </div>
-    <div class="sbi t-only" data-p="exams" onclick="nav(this)">
+    <div class="sbi t-only" data-p="tests" onclick="nav(this)">
       <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="4.5" y1="8" x2="11.5" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 5l1.5 1.5L8.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Past Exams
+      Tests
+    </div>
+    <div class="sbi t-only" data-p="extras-admin" onclick="nav(this)">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v6M5 8h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Extra sessions
     </div>
     <div class="sbi t-only" data-p="notifications" onclick="nav(this)">
       <svg viewBox="0 0 16 16" fill="none"><path d="M8 1C5.24 1 3 3.24 3 6v4l-1.5 2h13L13 10V6c0-2.76-2.24-5-5-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 13.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
@@ -388,6 +392,14 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>
       My Schedule
     </div>
+    <div class="sbi s-only" data-p="my-tests" onclick="nav(this)" style="display:none">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="4.5" y1="8" x2="11.5" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 5l1.5 1.5L8.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Tests
+    </div>
+    <div class="sbi s-only" data-p="my-extras" onclick="nav(this)" style="display:none">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v6M5 8h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Extra sessions
+    </div>
     <div class="sbi s-only" data-p="my-scores" onclick="nav(this)" style="display:none">
       <svg viewBox="0 0 16 16" fill="none"><polyline points="2,12 5,8 9,10 14,4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       My Scores
@@ -404,7 +416,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   <div class="sb-foot">
     <div class="sb-user" id="sb-user"></div>
     <div class="sb-id" id="sb-id-label"></div>
-    <div class="sbpt" id="sbpt">0 / 20 lessons</div>
+    <div class="sbpt" id="sbpt"></div>
     <div class="pw"><div class="pb2" id="sbpb"></div></div>
     <div class="logout" onclick="logout()">Sign out</div>
   </div>
@@ -424,8 +436,9 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 <!-- CURRICULUM -->
 <div class="page" id="page-curriculum">
   <div class="ph">
-    <div><div class="ph-t">Curriculum — 20 Lessons</div><div class="ph-s">Official College Board Digital SAT Math skill areas</div></div>
+    <div><div class="ph-t" id="curr-title">Curriculum</div><div class="ph-s">Official College Board Digital SAT Math skill areas</div></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="curr-class" class="t-only" style="width:auto;min-width:170px" onchange="curClass=this.value;renderCurriculum()"></select>
       <span id="cp-txt" style="font-size:12px;color:var(--text3)"></span>
       <div class="ftabs" id="cf">
         <div class="ftab active" onclick="filt('all',this)">All</div>
@@ -451,8 +464,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 <!-- STUDENTS -->
 <div class="page t-only" id="page-students">
   <div class="ph">
-    <div><div class="ph-t">Students</div><div class="ph-s">Triple name required · payment gate enforced</div></div>
-    <button class="btn bw" onclick="openAddStudent()">+ Add student</button>
+    <div><div class="ph-t">Students</div><div class="ph-s">Triple name required · each student belongs to one group</div></div>
+    <div style="display:flex;gap:8px"><button class="btn" onclick="openClassesModal()">Groups</button><button class="btn bw" onclick="openAddStudent()">+ Add student</button></div>
   </div>
   <div class="pb3"><div class="sgrid" id="students-list"></div></div>
 </div>
@@ -481,13 +494,23 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   <div class="pb3" id="quizzes-list"></div>
 </div>
 
-<!-- EXAMS -->
-<div class="page t-only" id="page-exams">
+<!-- TESTS (book tests) -->
+<div class="page t-only" id="page-tests">
   <div class="ph">
-    <div><div class="ph-t">Past SAT Exams</div><div class="ph-s">Bluebook Official Tests — after full curriculum</div></div>
-    <button class="btn" onclick="openModal('m-add-exam')">+ Add exam</button>
+    <div><div class="ph-t">Tests</div><div class="ph-s">Your book's tests · open them per group · enter scores</div></div>
+    <div style="display:flex;gap:8px;align-items:center"><select id="tests-class" style="width:auto;min-width:170px" onchange="curClass=this.value;renderTests()"></select>
+    <button class="btn bw" onclick="addTest()">+ Add test</button></div>
   </div>
-  <div class="pb3" id="exams-list"></div>
+  <div class="pb3" id="tests-list"></div>
+</div>
+
+<!-- EXTRA SESSIONS (teacher) -->
+<div class="page t-only" id="page-extras-admin">
+  <div class="ph">
+    <div><div class="ph-t">Extra sessions</div><div class="ph-s">Paid sessions outside the curriculum · students pay per session</div></div>
+    <button class="btn bw" onclick="openExtraModal(null)">+ Add extra session</button>
+  </div>
+  <div class="pb3" id="extras-list"></div>
 </div>
 
 <!-- NOTIFICATIONS -->
@@ -581,9 +604,21 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
 </div>
 
+<!-- MY TESTS (student) -->
+<div class="page" id="page-my-tests" data-role="student">
+  <div class="ph"><div><div class="ph-t">Tests</div><div class="ph-s">Tests from the course book and your scores</div></div></div>
+  <div class="pb3" id="my-tests-content"></div>
+</div>
+
+<!-- MY EXTRA SESSIONS (student) -->
+<div class="page" id="page-my-extras" data-role="student">
+  <div class="ph"><div><div class="ph-t">Extra sessions</div><div class="ph-s">Optional paid sessions for your group</div></div></div>
+  <div class="pb3" id="my-extras-content"></div>
+</div>
+
 <!-- MY SCORES (student) -->
 <div class="page" id="page-my-scores" data-role="student">
-  <div class="ph"><div><div class="ph-t">My Scores</div><div class="ph-s">Homework, quiz, and exam results</div></div></div>
+  <div class="ph"><div><div class="ph-t">My Scores</div><div class="ph-s">Quiz and test results</div></div></div>
   <div class="pb3" id="my-scores-content"></div>
 </div>
 
@@ -614,10 +649,10 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     <div class="fg"><label class="fl">Phone <span style="color:var(--red)">*</span></label><input type="tel" id="st-phone" placeholder="+20 1XX XXX XXXX"></div>
   </div>
   <div class="fg2">
-    <div class="fg"><label class="fl">Login password <span style="color:var(--red)">*</span> <span style="font-size:11px;color:var(--text3)">(min 6 chars)</span></label>
-      <input type="text" id="st-pw" placeholder="Set a secure password" oninput="showPwStr(this,'st-pw-str')">
+    <div class="fg"><label class="fl">Login password <span id="st-pw-req" style="color:var(--red)">*</span> <span id="st-pw-hint" style="font-size:11px;color:var(--text3)">(min 6 chars)</span></label>
+      <input type="text" id="st-pw" placeholder="Set a secure password" autocomplete="new-password" oninput="showPwStr(this,'st-pw-str')">
       <div id="st-pw-str" class="pw-str" style="width:0"></div></div>
-    <div class="fg"><label class="fl">Group</label>
+    <div class="fg"><label class="fl">Mode</label>
       <select id="st-grp"><option value="online">Online</option><option value="physical">Physical</option><option value="both">Online + Physical</option></select></div>
   </div>
  <div class="fg3">
@@ -640,6 +675,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
         <option value="custom">Custom date...</option>
       </select></div>
   </div>
+  <div class="fg"><label class="fl">Group (class) <span style="color:var(--red)">*</span> <span style="font-size:11px;color:var(--text3)">sessions, progress &amp; tests follow the group</span></label>
+    <select id="st-class"></select></div>
   <div class="fg" id="st-sat-cw" style="display:none"><label class="fl">Custom SAT date</label><input type="date" id="st-sat-c"></div>
   <div class="fg"><label class="fl">Notes</label><textarea id="st-notes" style="min-height:52px"></textarea></div>
   <div class="mfoot">
@@ -687,12 +724,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
         <option value="quiz">Quiz session</option>
         <option value="exam">Full exam</option>
       </select></div>
-   <div class="fg"><label class="fl">Grade</label>
-      <select id="si-grade">
-        <option value="10">Grade 10</option>
-        <option value="11">Grade 11</option>
-        <option value="12">Grade 12</option>
-      </select></div>
+   <div class="fg"><label class="fl">Group</label>
+      <select id="si-class"></select></div>
   </div>
   <div class="fg2">
     <div class="fg"><label class="fl">Zoom link</label><input type="url" id="si-zoom" placeholder="https://zoom.us/j/..."></div>
@@ -730,6 +763,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       </select></div>
     <div class="fg"><label class="fl">Unlocks lesson # (0 = general)</label><input type="number" id="pay-lesson" min="0" placeholder="0"></div>
   </div>
+  <div class="fg"><label class="fl">Or: for extra session</label><select id="pay-extra"></select></div>
   <div class="fg"><label class="fl">Note</label><input type="text" id="pay-note" placeholder="Installment / reference..."></div>
   <div class="mfoot">
     <button class="btn" onclick="closeModal('m-pay')">Cancel</button>
@@ -738,19 +772,43 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 </div>
 </div>
 
-<div class="ovl" id="m-add-exam">
-<div class="modal">
-  <div class="mtit">Add SAT exam</div>
-  <div class="fg"><label class="fl">Title</label><input type="text" id="ei-t" placeholder="Bluebook Official Test 5"></div>
-  <div class="fg3">
-    <div class="fg"><label class="fl">Date</label><input type="date" id="ei-d"></div>
-    <div class="fg"><label class="fl">Max score (Math)</label><input type="number" id="ei-m" value="800"></div>
-    <div class="fg"><label class="fl">Recording link</label><input type="url" id="ei-r" placeholder="Drive..."></div>
+<!-- GROUPS modal -->
+<div class="ovl" id="m-classes">
+<div class="modal" style="max-width:620px">
+  <div class="mtit">Groups</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Each group has its own sessions, Zoom links, lesson progress and tests. Example: "G11 — December" and "G11 — March".</div>
+  <div id="classes-list"></div>
+  <div class="fg3" style="margin-top:12px;align-items:end">
+    <div class="fg"><label class="fl">New group name</label><input type="text" id="cl-name" placeholder="G11 — March"></div>
+    <div class="fg"><label class="fl">Grade</label><select id="cl-grade"><option value="10">Grade 10</option><option value="11" selected>Grade 11</option><option value="12">Grade 12</option></select></div>
+    <div class="fg"><label class="fl">Target SAT</label><select id="cl-sat"></select></div>
   </div>
-  <div class="fg"><label class="fl">Notes</label><textarea id="ei-n" style="min-height:52px"></textarea></div>
+  <div class="mfoot"><button class="btn" onclick="closeModal('m-classes')">Close</button><button class="btn bw" onclick="addClass()">+ Add group</button></div>
+</div>
+</div>
+
+<!-- EXTRA SESSION modal -->
+<div class="ovl" id="m-extra">
+<div class="modal">
+  <div class="mtit" id="m-extra-title">Add extra session</div>
+  <div class="fg"><label class="fl">Title *</label><input type="text" id="ex-title" placeholder="e.g. December test final revision"></div>
+  <div class="fg3">
+    <div class="fg"><label class="fl">Date</label><input type="date" id="ex-date"></div>
+    <div class="fg"><label class="fl">Time</label><input type="time" id="ex-time" value="17:00"></div>
+    <div class="fg"><label class="fl">Price (EGP) *</label><input type="number" id="ex-price" min="0" placeholder="450"></div>
+  </div>
+  <div class="fg"><label class="fl">Description</label><textarea id="ex-desc" style="min-height:52px" placeholder="What will be covered"></textarea></div>
+  <div class="fg"><label class="fl">Open to groups</label><div id="ex-classes" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+  <div class="fg2">
+    <div class="fg"><label class="fl">Zoom link</label><input type="url" id="ex-zoom" placeholder="https://zoom.us/j/..."></div>
+    <div class="fg"><label class="fl">Zoom visibility</label><select id="ex-vis"><option value="hidden">Hidden</option><option value="live">Live (paid students only)</option></select></div>
+  </div>
+  <div class="fg"><label class="fl">Recording link (after the session)</label><input type="url" id="ex-rec" placeholder="https://drive.google.com/..."></div>
   <div class="mfoot">
-    <button class="btn" onclick="closeModal('m-add-exam')">Cancel</button>
-    <button class="btn bw" onclick="saveExam()">Add exam</button>
+    <button class="btn bd bsm" id="ex-del" style="display:none" onclick="deleteExtra()">Delete</button>
+    <div style="flex:1"></div>
+    <button class="btn" onclick="closeModal('m-extra')">Cancel</button>
+    <button class="btn bw" onclick="saveExtra()">Save</button>
   </div>
 </div>
 </div>
@@ -934,129 +992,141 @@ const SUPA_KEY='sb_publishable_IYqm3-PGDIi4t64vGBEzWQ_b-GUXZtT';
 let DB=null;
 let DB_READY=false;
 
-// localStorage prefix (used ONLY for session token & fast cache)
+// localStorage: ONLY the login token is kept on the device (no cached data, no passwords)
 const K='mz4_';
 function _lsSet(k,v){try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}}
 function _lsGet(k,d){try{const v=localStorage.getItem(K+k);return v!==null?JSON.parse(v):d}catch(e){return d}}
+try{Object.keys(localStorage).filter(x=>x.startsWith(K)&&x!==K+'token').forEach(x=>localStorage.removeItem(x));}catch(e){} // wipe old caches (they held passwords)
+let TOKEN=_lsGet('token',null);
+function ld(k,d){return d;}
 
-// sv(): write in-memory + localStorage cache + Supabase (non-blocking)
-// SESSION KEY IS INTENTIONALLY EXCLUDED FROM SUPABASE — it is device-local only.
+// ── Secure server calls (every call carries the login token) ──
+async function rpc(fn,args){
+  if(!DB) return {data:null,error:{message:'Not connected'}};
+  const res=await DB.rpc(fn,args);
+  if(res.error&&/not_logged_in/.test(res.error.message||'')&&CU){toast2('Your login expired — please sign in again');logout();}
+  return res;
+}
+const _lastSave={};
+// sv(): save one data key on the server (staff only)
 function sv(k,v){
-  _lsSet(k,v);
-  if(k==='session') return; // never sync session token to cloud
-  if(DB_READY&&DB){
-    DB.from('app_data')
-      .upsert({key:k,value:v,updated_at:new Date().toISOString()},{onConflict:'key'})
-      .then(({error})=>{if(error)console.warn('DB write',k,error.message);});
-  }
+  if(k==='session'||k==='payRequests') return;
+  if(CR==='student'||!TOKEN) return;
+  _lastSave[k]=Date.now();
+  const copy=JSON.parse(JSON.stringify(v));
+  rpc('app_save',{p_token:TOKEN,p_key:k,p_value:copy}).then(({error})=>{
+    if(error){console.warn('save',k,error.message);toast2('Save failed — please check your connection and try again');}
+  });
 }
-// ld(): read from localStorage cache (runtime state uses in-memory vars)
-function ld(k,d){return _lsGet(k,d);}
 
-// Load all app state fresh from Supabase
+// ── PAYMENT REQUESTS ──
+function _fmtTs(t){return t?new Date(t).toLocaleString('en-GB'):'';}
+function mapPR(r){return{id:r.id,studentId:r.student_id,studentName:r.student_name,amount:+r.amount||0,method:r.method,
+  lesson:r.lesson,extraId:r.extra_id||null,note:r.note,screenshot:true,date:r.date,status:r.status,
+  submittedAt:_fmtTs(r.submitted_at),approvedAt:_fmtTs(r.approved_at),_ts:r.submitted_at};}
+function upsertLocalPR(row){
+  const m=mapPR(row); const i=payRequests.findIndex(x=>x.id===m.id);
+  if(i>=0)payRequests[i]=m; else payRequests.push(m);
+  payRequests.sort((a,b)=>new Date(a._ts)-new Date(b._ts));
+}
+async function loadPayRequests(){
+  if(!TOKEN)return;
+  const {data,error}=await rpc('pr_list',{p_token:TOKEN});
+  if(error){console.warn('pr_list:',error.message);return;}
+  payRequests=(data||[]).map(mapPR);
+}
+// Phone screenshots → small JPEG data URL (fast upload on mobile data)
+function compressImage(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(); const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const max=1400; let w=img.width,h=img.height;
+      if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,w,h);g.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg',0.8));
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);
+      // browser can't decode (e.g. HEIC on some phones): send as-is if small enough
+      const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);};
+    img.src=url;
+  });
+}
+
+// Load all app data the logged-in user is allowed to see
 async function loadAllFromDB(){
-  if(!DB)return;
-  const {data,error}=await DB.from('app_data').select('key,value');
-  if(error){console.warn('DB load:',error.message);return;}
-  if(!data||!data.length)return;
-  const m={};data.forEach(r=>{m[r.key]=r.value;});
-  if(m.students)      students=m.students;
-  if(m.teachers)      teachers=m.teachers;
-  if(m.lessons)       LESSONS=m.lessons;
-  if(m.quizzes)       QUIZZES=m.quizzes;
-  if(m.lessonData)    lessonData=m.lessonData;
-  if(m.quizData)      quizData=m.quizData;
-  if(m.examList)      examList=m.examList;
-  if(m.examScores)    examScores=m.examScores;
-  if(m.payments)      payments=m.payments;
-  if(m.payRequests)   payRequests=m.payRequests;
-  if(m.sessions)      sessions=m.sessions;
-  if(m.notifications) notifications=m.notifications;
-  if(m.settings)      settings=m.settings;
-  if(m.faqData)       faqData=m.faqData;
-  Object.keys(m).filter(k=>k!=='session').forEach(k=>_lsSet(k,m[k])); // never overwrite local session from cloud
+  if(!TOKEN)return false;
+  const {data:m,error}=await rpc('app_load',{p_token:TOKEN});
+  if(error||!m){console.warn('DB load:',error&&error.message);return false;}
+  students=m.students||[]; teachers=m.teachers||[];
+  if(m.lessons)LESSONS=m.lessons; if(m.quizzes)QUIZZES=m.quizzes;
+  lessonData=m.lessonData||{}; quizData=m.quizData||{};
+  payments=m.payments||[]; sessions=m.sessions||[]; notifications=m.notifications||[];
+  settings=m.settings||settings; if(m.faqData)faqData=m.faqData;
+  extras=m.extras||[]; tests=m.tests||null; testScores=m.testScores||{};
+  classes=m.classes||[]; classProgress=m.classProgress||{};
+  // keep CU pointing at the fresh record
+  if(CU){const fresh=(CR==='student'?students:teachers).find(x=>x.id===CU.id);if(fresh)CU=fresh;}
+  return true;
 }
 
-// Real-time handler — updates memory + re-renders active page
+// Live updates: the server only says WHICH data changed; we then re-fetch it securely
 function _curPage(){const e=document.querySelector('.sbi.active');return e?e.dataset.p:'';}
-function handleRealtime(payload){
-  if(!payload||!payload.new)return;
-  const {key:k,value:v}=payload.new;
-  const pg=_curPage();
-  switch(k){
-    case 'students':      students=v;      if(pg==='students')renderStudents();break;
-    case 'teachers':      teachers=v;      break;
-    case 'lessons':       LESSONS=v;       if(pg==='curriculum')renderCurriculum();if(pg==='manage-course')renderManageCourse();break;
-    case 'quizzes':       QUIZZES=v;       if(pg==='curriculum')renderCurriculum();if(pg==='manage-course')renderManageCourse();break;
-    case 'lessonData':    lessonData=v;    if(pg==='curriculum')renderCurriculum();break;
-    case 'quizData':      quizData=v;      if(pg==='quizzes')renderQuizzes();break;
-    case 'examList':      examList=v;      if(pg==='exams')renderExams();break;
-    case 'examScores':    examScores=v;    if(pg==='exams')renderExams();break;
-    case 'payments':      payments=v;      if(pg==='payments-admin')renderPaymentsAdmin();break;
-    case 'payRequests':   payRequests=v;   updateDots();if(pg==='payments-admin')renderPaymentsAdmin();break;
-    case 'sessions':      sessions=v;      if(pg==='schedule')renderSchedule();if(pg==='dashboard')renderDashboard();break;
-    case 'notifications': notifications=v; updateDots();if(pg==='notifications')renderNotifications();break;
-    case 'settings':      settings=v;      break;
-  }
-  updateSbProg();
+function rerenderCurrent(){
+  const a=document.activeElement;
+  if(a&&a.closest&&a.closest('.main')&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return; // don't disturb typing
+  const el=document.querySelector('.sbi.active'); if(el&&CU){const p=el.dataset.p;const f=PAGE_RENDER[p];if(f)f();}
+  updateDots(); updateSbProg();
 }
+let _syncT=null,_syncKeys=new Set();
+function handleChange(payload){
+  if(!CU||!payload||!payload.new)return;
+  const k=payload.new.key;
+  if(_lastSave[k]&&Date.now()-_lastSave[k]<3000)return; // our own save echoing back
+  _syncKeys.add(k); clearTimeout(_syncT);
+  _syncT=setTimeout(async()=>{
+    const ks=[..._syncKeys]; _syncKeys.clear();
+    if(ks.includes('pay_requests'))await loadPayRequests();
+    if(ks.some(x=>x!=='pay_requests'))await loadAllFromDB();
+    rerenderCurrent();
+  },400);
+}
+async function syncNow(){ if(!CU)return; await Promise.all([loadAllFromDB(),loadPayRequests()]); rerenderCurrent(); }
 
-// Init Supabase, load data, subscribe to real-time
+// Connect to Supabase
 async function initDB(){
   document.getElementById('db-loading').classList.remove('hidden');
   document.getElementById('db-load-msg').textContent='Connecting...';
   try{
-    DB=window.supabase.createClient(SUPA_URL,SUPA_KEY,{
-      realtime:{params:{eventsPerSecond:10}}
-    });
-
-    // ── Supabase Auth state listener ──
-    // Handles: token refresh keeping students logged in, SIGNED_OUT forcing re-login
-    DB.auth.onAuthStateChange((event,session)=>{
-      if(event==='SIGNED_OUT' && CR==='student'){
-        logout(); // revoked or expired — force re-login
-      }
-      if(event==='TOKEN_REFRESHED' && session && CR==='student' && CU){
-        // Token silently refreshed — session remains valid, nothing needed
-        _lsSet('session',{type:'student',id:CU.id,ts:Date.now()});
-      }
-    });
-
-    document.getElementById('db-load-msg').textContent='Loading data...';
-    await loadAllFromDB();
+    DB=window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:false},realtime:{params:{eventsPerSecond:10}}});
     DB_READY=true;
-    DB.channel('realtime_sync')
-      .on('postgres_changes',{event:'*',schema:'public',table:'app_data'},handleRealtime)
+    DB.channel('changes')
+      .on('postgres_changes',{event:'*',schema:'public',table:'app_changes'},handleChange)
       .subscribe(s=>console.log('Realtime:',s));
-    document.getElementById('db-loading').classList.add('hidden');
+    // Catch up when a phone/laptop comes back to the tab (mobile browsers pause realtime in background)
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow();});
   }catch(err){
-    console.warn('Supabase unavailable, using localStorage:',err);
-    document.getElementById('db-load-msg').textContent='Offline mode';
-    setTimeout(()=>document.getElementById('db-loading').classList.add('hidden'),1500);
+    console.warn('Supabase unavailable:',err);
+    document.getElementById('db-load-msg').textContent='Cannot connect — check your internet and refresh';
+    return;
   }
+  document.getElementById('db-loading').classList.add('hidden');
 }
 
 // ── IN-MEMORY STATE (initialized from localStorage cache, then Supabase overwrites on load) ──
 let students      = ld('students',[]);
 let lessonData    = ld('lessonData',{});
 let quizData      = ld('quizData',{});
-let examList      = ld('examList',[
-  {id:'e1',title:'Bluebook Official Test 1',date:'',max:800,notes:'',rec:''},
-  {id:'e2',title:'Bluebook Official Test 2',date:'',max:800,notes:'',rec:''},
-  {id:'e3',title:'Bluebook Official Test 3',date:'',max:800,notes:'',rec:''},
-  {id:'e4',title:'Bluebook Official Test 4',date:'',max:800,notes:'',rec:''},
-  {id:'e5',title:'Bluebook Official Test 5',date:'',max:800,notes:'',rec:''},
-  {id:'e6',title:'Bluebook Official Test 6',date:'',max:800,notes:'',rec:''},
-  {id:'e7',title:'Bluebook Official Test 7',date:'',max:800,notes:'',rec:''},
-  {id:'e8',title:'Bluebook Official Test 8',date:'',max:800,notes:'',rec:''},
-  {id:'e9',title:'Bluebook Official Test 11',date:'',max:800,notes:'',rec:''},
-]);
-let examScores    = ld('examScores',{});
 let payments      = ld('payments',[]);
-let payRequests   = ld('payRequests',[]);
+let payRequests   = [];
 let sessions      = ld('sessions',[]);
 let notifications = ld('notifications',[]);
-let teachers      = ld('teachers',[{id:'t0',name:'Mohamed Zayed',user:'mzayed',pass:'admin123',role:'SAT Math Teacher',level:'owner',owner:true}]);
+let teachers      = [];
+let classes       = [];   // groups, e.g. {id:'c1',name:'G11 — December',grade:'11',satDate:'2026-12-05'}
+let classProgress = {};   // {classId:{lessonNum:'pending'|'progress'|'done'}}
+let extras        = [];   // paid extra sessions
+let tests         = null; // book tests (defaults set below)
+let testScores    = {};   // {testId:{studentId:{score,note}}}
 let settings      = ld('settings',{instapay:'',w1:'',w2:'',sessFee:'',courseFee:'',payInstr:''});
 
 // ═══════════════════════════════════════════════════
@@ -1070,94 +1140,44 @@ function switchTab(t,el){
   document.getElementById('lt-t').style.display=t==='teacher'?'block':'none';
   document.getElementById('lt-s').style.display=t==='student'?'block':'none';
   document.getElementById('lerr').textContent='';
-  loginAttempts=0;lockoutUntil=0;
   if(document.getElementById('lattempts'))document.getElementById('lattempts').textContent='';
 }
-// ── SECURITY: brute force protection ──
-const MAX_ATTEMPTS=5,LOCKOUT_MS=300000;
-let loginAttempts=0,lockoutUntil=0;
-function _loginBlocked(){if(Date.now()<lockoutUntil){const s=Math.ceil((lockoutUntil-Date.now())/1000);document.getElementById('lerr').textContent='Too many attempts. Wait '+s+'s.';return true;}return false;}
-function _loginFail(){loginAttempts++;if(loginAttempts>=MAX_ATTEMPTS){lockoutUntil=Date.now()+LOCKOUT_MS;loginAttempts=0;document.getElementById('lattempts').textContent='';}else{const r=MAX_ATTEMPTS-loginAttempts;document.getElementById('lattempts').textContent=r+' attempt'+(r!==1?'s':'')+' left';}}
-
-function doLogin(){
-  if(_loginBlocked())return;
-  const u=document.getElementById('lu').value.trim();
-  const p=document.getElementById('lp').value;
-  if(!u||!p){document.getElementById('lerr').textContent='Username and password are required.';return;}
-  const acc=teachers.find(a=>a.user===u&&a.pass===p);
-  if(!acc){document.getElementById('lerr').textContent='Invalid username or password.';_loginFail();return;}
-  loginAttempts=0;lockoutUntil=0;
-  CU=acc; CR=acc.level==='assistant'?'assistant':'teacher';
-  sv('session',{type:'teacher',id:acc.id,ts:Date.now()});
-  launchApp();
+// Passwords are checked on the server; wrong attempts are counted there (8 tries → 15 min lock)
+let _loggingIn=false;
+async function _serverLogin(kind,login,pw){
+  const err=document.getElementById('lerr'), att=document.getElementById('lattempts');
+  err.textContent=''; att.textContent='';
+  if(!login||!pw){err.textContent=kind==='teacher'?'Username and password are required.':'Student ID and password are required.';return;}
+  if(!DB_READY){err.textContent='Cannot connect — check your internet and refresh.';return;}
+  if(_loggingIn)return; _loggingIn=true; err.textContent='Signing in...';
+  try{
+    const {data,error}=await DB.rpc('login',{p_kind:kind,p_login:login,p_password:pw});
+    if(error){err.textContent='Cannot sign in right now. Please try again.';return;}
+    if(data.error==='locked'){err.textContent='Too many wrong attempts. Try again in '+Math.ceil(data.seconds/60)+' min.';return;}
+    if(data.error){err.textContent=kind==='teacher'?'Invalid username or password.':'Invalid student ID or password.';
+      if(data.left!==undefined&&data.left<=5)att.textContent=data.left+' attempt'+(data.left!==1?'s':'')+' left';return;}
+    TOKEN=data.token; _lsSet('token',TOKEN);
+    CR=data.role; CU=data.profile;
+    err.textContent='Loading...';
+    await Promise.all([loadAllFromDB(),loadPayRequests()]);
+    err.textContent='';
+    launchApp();
+  } finally { _loggingIn=false; }
 }
-
-async function doStudentLogin(){
-  if(_loginBlocked())return;
-  const idOrEmail=document.getElementById('lsi').value.trim();
-  const p=document.getElementById('lsp').value;
-  if(!idOrEmail||!p){document.getElementById('lerr').textContent='Student ID/email and password are required.';return;}
-
-  // ── Path A: email address → Supabase Auth ──
-  if(idOrEmail.includes('@') && DB){
-    document.getElementById('lerr').textContent='';
-    const {data,error}=await DB.auth.signInWithPassword({email:idOrEmail,password:p});
-    if(error){document.getElementById('lerr').textContent='Invalid email or password.';_loginFail();return;}
-    const uid=data.user.id;
-    const s=students.find(x=>x.supabase_uid===uid);
-    if(!s){
-      document.getElementById('lerr').textContent='Account not yet activated. Contact your teacher.';
-      await DB.auth.signOut();return;
-    }
-    loginAttempts=0;lockoutUntil=0;
-    CU=s; CR='student';
-    _lsSet('session',{type:'student',id:s.id,ts:Date.now()});
-    launchApp();return;
-  }
-
-  // ── Path B: legacy student ID + password ──
-  const s=students.find(x=>x.id===idOrEmail);
-  if(!s||!s.pw||s.pw!==p){document.getElementById('lerr').textContent='Invalid student ID or password.';_loginFail();return;}
-  loginAttempts=0;lockoutUntil=0;
-  CU=s; CR='student';
-  _lsSet('session',{type:'student',id:s.id,ts:Date.now()});
-  launchApp();
-}
+function doLogin(){_serverLogin('teacher',document.getElementById('lu').value.trim(),document.getElementById('lp').value);}
+function doStudentLogin(){_serverLogin('student',document.getElementById('lsi').value.trim(),document.getElementById('lsp').value);}
 
 async function restoreSession(){
-  // ── Step 1: Check Supabase Auth (email-registered students) ──
-  if(DB){
-    try{
-      const {data:{session}}=await DB.auth.getSession();
-      if(session){
-        const uid=session.user.id;
-        const s=students.find(x=>x.supabase_uid===uid);
-        if(s){CU=s;CR='student';launchApp();return true;}
-        // Supabase session exists but account not yet activated by teacher
-        document.getElementById('lerr').textContent='Your account is pending teacher activation.';
-        await DB.auth.signOut();
-        return false;
-      }
-    }catch(e){console.warn('Supabase auth check failed:',e);}
-  }
-
-  // ── Step 2: Check localStorage session (teachers + legacy-ID students) ──
-  const sess=_lsGet('session',null);
-  if(!sess)return false;
-  if(sess.ts&&Date.now()-sess.ts>86400000){_lsSet('session',null);return false;} // 24h expiry
-  if(sess.type==='teacher'){
-    const acc=teachers.find(a=>a.id===sess.id);
-    if(!acc){_lsSet('session',null);return false;}
-    CU=acc; CR=acc.level==='assistant'?'assistant':'teacher';
+  if(!TOKEN||!DB_READY)return false;
+  document.getElementById('db-loading').classList.remove('hidden');
+  document.getElementById('db-load-msg').textContent='Loading your data...';
+  try{
+    const {data,error}=await DB.rpc('me',{p_token:TOKEN});
+    if(error||!data||!data.profile){TOKEN=null;_lsSet('token',null);return false;}
+    CR=data.role; CU=data.profile;
+    await Promise.all([loadAllFromDB(),loadPayRequests()]);
     launchApp(); return true;
-  }
-  if(sess.type==='student'){
-    const s=students.find(x=>x.id===sess.id);
-    if(!s||!s.pw){_lsSet('session',null);return false;}
-    CU=s; CR='student';
-    launchApp(); return true;
-  }
-  return false;
+  } finally { document.getElementById('db-loading').classList.add('hidden'); }
 }
 
 function launchApp(){
@@ -1184,14 +1204,14 @@ const faqBtn=document.getElementById('faq-add-btn');if(faqBtn)faqBtn.style.displ
 }
 
 function logout(){
-  if(DB&&DB.auth)DB.auth.signOut().catch(()=>{});
-  _lsSet('session',null); CU=null; CR=null;
+  if(TOKEN&&DB)DB.rpc('logout',{p_token:TOKEN}).then(()=>{},()=>{});
+  TOKEN=null; _lsSet('token',null); CU=null; CR=null;
+  students=[];teachers=[];payments=[];payRequests=[];notifications=[]; // clear data from memory
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('lu').value=''; document.getElementById('lp').value='';
   document.getElementById('lsi').value=''; document.getElementById('lsp').value='';
   document.getElementById('lerr').textContent='';
-  loginAttempts=0; lockoutUntil=0;
   if(document.getElementById('lattempts'))document.getElementById('lattempts').textContent='';
   // reset nav
   document.querySelectorAll('.sbi').forEach(x=>x.classList.remove('active'));
@@ -1206,7 +1226,7 @@ function logout(){
 function nav(el){
   const p=el.dataset.p;
   // ── RBAC: block students from teacher-only pages ──
-  const teacherPages=['schedule','students','payments-admin','quizzes','exams','notifications','manage-course','settings'];
+  const teacherPages=['schedule','students','payments-admin','quizzes','tests','extras-admin','notifications','manage-course','settings'];
   if(CR==='student' && teacherPages.includes(p)){
     toast2('Access denied.');
     return;
@@ -1218,15 +1238,7 @@ function nav(el){
   // smooth scroll + close mobile sidebar
   const ma=document.querySelector('.main');if(ma)ma.scrollTo({top:0,behavior:'smooth'});
   closeMobSb();
-  const map={
-    dashboard:renderDashboard, curriculum:renderCurriculum,
-    schedule:renderSchedule, students:renderStudents,
-    'payments-admin':renderPaymentsAdmin, quizzes:renderQuizzes,
-    exams:renderExams, notifications:renderNotifications,
-    settings:renderSettings,'manage-course':renderManageCourse,'my-password':()=>{},'my-schedule':renderMySchedule,
-    'my-scores':renderMyScores,'my-payments':renderMyPayments,'faq':renderFAQ
-  };
-  if(map[p]) map[p]();
+  if(PAGE_RENDER[p]) PAGE_RENDER[p]();
 }
 function navTo(p){const el=document.querySelector(`.sbi[data-p="${p}"]`);if(el)nav(el);}
 
@@ -1235,7 +1247,7 @@ function navTo(p){const el=document.querySelector(`.sbi[data-p="${p}"]`);if(el)n
 // ═══════════════════════════════════════════════════
 function gl(n){return lessonData[n]||{status:'pending',hwLink:'',hwMax:10,bookContent:'',sessNotes:'',recLink:''};}
 function gq(id){const q=QUIZZES.find(x=>x.id===id);return quizData[id]||{title:q?q.def:'',formLink:'',max:10,notes:''};}
-function doneCount(){return LESSONS.filter(l=>gl(l.n).status==='done').length;} function visibleLessons(){if(CR==='teacher'||CR==='assistant')return LESSONS;return LESSONS.filter(l=>(l.grades||[]).map(String).includes(String(CU.grade)));} function visibleQuizzes(){if(CR==='teacher'||CR==='assistant')return QUIZZES;return QUIZZES.filter(q=>(q.grades||[]).map(String).includes(String(CU.grade)));}
+function doneCount(cid){return (CR==='student'?visibleLessons():LESSONS).filter(l=>lessonStatus(l.n,cid)==='done').length;} function visibleLessons(){if(CR==='teacher'||CR==='assistant')return LESSONS;return LESSONS.filter(l=>(l.grades||[]).map(String).includes(String(CU.grade)));} function visibleQuizzes(){if(CR==='teacher'||CR==='assistant')return QUIZZES;return QUIZZES.filter(q=>(q.grades||[]).map(String).includes(String(CU.grade)));}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function init2(n){return(n||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();}
 function showPwStr(inp,barId){
@@ -1251,8 +1263,10 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.ovl').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
 function updateSbProg(){
-  const d=doneCount(),t=LESSONS.length;
-  document.getElementById('sbpt').textContent=d+' / '+t+' lessons';
+  if(!CU)return;
+  const d=doneCount(),t=(CR==='student'?visibleLessons():LESSONS).length||1;
+  const nm=clsName(myClassId());
+  document.getElementById('sbpt').textContent=(nm?nm+': ':'')+d+' / '+t+' lessons';
   document.getElementById('sbpb').style.width=Math.round(d/t*100)+'%';
 }
 
@@ -1269,13 +1283,15 @@ function updateDots(){
 
 function addNotif(text,type){
   notifications.unshift({id:'n'+Date.now(),text,type:type||'payment',time:new Date().toLocaleString('en-GB'),read:false});
-  sv('notifications',notifications); updateDots();
+  updateDots();
+  // Appended on the server so devices can't overwrite each other's lists
+  if(CR!=='student'&&TOKEN) rpc('notify',{p_token:TOKEN,p_text:text,p_type:type||'payment'}).then(({error})=>{if(error)console.warn('notif',error.message);});
 }
 
 // Payment gate: student has access to lesson N if approved payment exists
 function isPaid(sid,lessonNum){
   if(!lessonNum) return true;
-  const ps=payments.filter(p=>p.studentId===sid&&+p.amount>0&&p.approved!==false);
+  const ps=payments.filter(p=>p.studentId===sid&&+p.amount>0&&p.approved!==false&&!p.extraId);
   return ps.some(p=>!p.lesson||+p.lesson===0||+p.lesson===lessonNum);
 }
 
@@ -1302,7 +1318,7 @@ function satLabel(s){return SAT_DATES.find(x=>x.d===s?.satDate)?.l||(s?.satDate=
 let cdTimer=null;
 function renderDashboard(){
   if(cdTimer){clearInterval(cdTimer);cdTimer=null;}
-  const d=doneCount(),t=LESSONS.length;
+  const d=doneCount(),t=(CR==='student'?visibleLessons():LESSONS).length||1;
 
   if(CR==='teacher'||CR==='assistant'){
     document.getElementById('dash-title').textContent='Dashboard';
@@ -1315,7 +1331,7 @@ function renderDashboard(){
       const unread=notifications.filter(n=>!n.read).length;
       document.getElementById('dash-stats-row').innerHTML=`<div class="stats4">
         <div class="stat"><div class="sv">${students.length}</div><div class="sl">Students enrolled</div></div>
-        <div class="stat"><div class="sv">${d}<span style="font-size:14px;color:var(--text3)">/${t}</span></div><div class="sl">Lessons done</div>
+        <div class="stat"><div class="sv">${d}<span style="font-size:14px;color:var(--text3)">/${t}</span></div><div class="sl">Lessons done${clsName(myClassId())?' — '+esc(clsName(myClassId())):''}</div>
           <div class="prw" style="margin-top:8px"><div class="prb pr-w" style="width:${Math.round(d/t*100)}%"></div></div></div>
         <div class="stat" style="cursor:pointer" onclick="navTo('payments-admin')">
           <div class="sv" style="color:var(--green)">${totalPaid.toLocaleString()}</div>
@@ -1331,15 +1347,19 @@ function renderDashboard(){
       const unread=notifications.filter(n=>!n.read).length;
       document.getElementById('dash-stats-row').innerHTML=`<div class="stats3">
         <div class="stat"><div class="sv">${students.length}</div><div class="sl">Students enrolled</div></div>
-        <div class="stat"><div class="sv">${d}<span style="font-size:14px;color:var(--text3)">/${t}</span></div><div class="sl">Lessons done</div>
+        <div class="stat"><div class="sv">${d}<span style="font-size:14px;color:var(--text3)">/${t}</span></div><div class="sl">Lessons done${clsName(myClassId())?' — '+esc(clsName(myClassId())):''}</div>
           <div class="prw" style="margin-top:8px"><div class="prb pr-w" style="width:${Math.round(d/t*100)}%"></div></div></div>
         <div class="stat"><div class="sv" style="color:${unread?'var(--red)':'var(--white)'}">${unread}</div>
           <div class="sl">Unread notifications</div></div>
       </div>`;
     }
 
-    const recDone=LESSONS.filter(l=>gl(l.n).status==='done').slice(-4).reverse();
-    document.getElementById('dash-left').innerHTML=`<div class="st" style="margin-bottom:10px">Recent lessons</div>`+
+    const recDone=LESSONS.filter(l=>lessonStatus(l.n)==='done').slice(-4).reverse();
+    const grpHtml=classes.length?`<div class="st" style="margin-bottom:10px">Groups</div>`+classes.map(c=>{const dc=doneCount(c.id);const n=students.filter(x=>x.classId===c.id).length;
+      return`<div class="card cp" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px"><span style="font-weight:600">${esc(c.name)}</span><span style="color:var(--text3)">${n} student${n!==1?'s':''}${c.satDate?' · '+esc((SAT_DATES.find(x=>x.d===c.satDate)||{}).l||c.satDate):''}</span></div>
+        <div class="prw" style="margin-top:8px"><div class="prb pr-w" style="width:${Math.round(dc/(LESSONS.length||1)*100)}%"></div></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:5px">${dc} / ${LESSONS.length} lessons done</div></div>`;}).join('')+'<div style="height:10px"></div>':'';
+    document.getElementById('dash-left').innerHTML=grpHtml+`<div class="st" style="margin-bottom:10px">Recent lessons${clsName(myClassId())?' — '+esc(clsName(myClassId())):''}</div>`+
       (recDone.length?recDone.map(l=>`<div class="card cp" style="margin-bottom:8px;display:flex;align-items:center;gap:9px">
         <span class="bge ${DI[l.d]?.c||'bgray'}">L${l.n}</span>
         <span style="font-size:13px;font-weight:500">${esc(l.title)}</span>
@@ -1347,7 +1367,7 @@ function renderDashboard(){
 
     const today=new Date(); today.setHours(0,0,0,0);
     const upSess=sessions.filter(s=>{
-      try{return new Date(s.date)>=today&&String(s.grade)===String(CU.grade)}catch(e){return false}
+      try{return new Date(s.date)>=today}catch(e){return false} // teachers see all grades
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
     document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">Upcoming sessions</div>`+
       (upSess.length?upSess.map(s=>{
@@ -1355,7 +1375,7 @@ function renderDashboard(){
         const tl=s.type==='lesson'?'Session 1 — New lesson':s.type==='review'?'Session 2 — HW review':'Quiz / Exam';
         return`<div class="card cp" style="margin-bottom:8px;border-left:2px solid ${tc}">
           <div style="font-size:13px;font-weight:600">${esc(s.title)}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.date)} ${esc(s.time||'')} · ${s.grade?'Grade '+esc(s.grade):'No grade'} · <span style="color:${tc}">${tl}</span></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.date)} ${esc(s.time||'')} · ${s.classId?esc(clsName(s.classId)):s.grade?'Grade '+esc(s.grade):'No group'} · <span style="color:${tc}">${tl}</span></div>
           ${s.zoomVis==='live'&&s.zoom?'<span class="bge bgr" style="margin-top:5px">Zoom live</span>':''}
         </div>`;}).join(''):'<div class="empty" style="padding:16px 0">No upcoming sessions</div>');
 
@@ -1372,14 +1392,15 @@ function renderDashboard(){
         <div class="sid-badge" style="display:inline-flex"><span class="sid-label">ID</span>${esc(CU.id)}</div>
       </div>
       <div class="stat"><div class="sv">${att}</div><div class="sl">Sessions attended</div>
-        <div class="sn">${Math.round(att/LESSONS.length*100)}% attendance rate</div></div>
+        <div class="sn">${Math.round(att/Math.max(1,d)*100)}% of lessons taught</div></div>
       <div class="stat"><div class="sv">${d}<span style="font-size:14px;color:var(--text3)">/${t}</span></div>
         <div class="sl">Lessons covered</div>
         <div class="prw" style="margin-top:8px"><div class="prb pr-b" style="width:${Math.round(d/t*100)}%"></div></div></div>
     </div>`;
 
     // ── COUNTDOWN WIDGET ──
-    const satD=CU.satDate==='custom'?CU.satCustom:CU.satDate;
+    const myC=clsById(CU.classId);
+    const satD=CU.satDate==='custom'?CU.satCustom:(CU.satDate||(myC&&myC.satDate)||'');
     // Find next upcoming SAT date (student's own, or next official)
     const today0=new Date(); today0.setHours(0,0,0,0);
     let cdTarget=null, cdLabel='';
@@ -1404,8 +1425,8 @@ function renderDashboard(){
 
     // Upcoming sessions
     const today=new Date(); today.setHours(0,0,0,0);
-    const upSess=sessions.filter(s=>{
-      try{return new Date(s.date)>=today&&String(s.grade)===String(CU.grade)}catch(e){return false}
+    const upSess=sessionsFor(CU).filter(s=>{
+      try{return new Date(s.date)>=today}catch(e){return false}
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
 
     document.getElementById('dash-left').innerHTML=cdHtml+
@@ -1426,12 +1447,12 @@ function renderDashboard(){
    document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">My lesson progress</div>`+
       visibleLessons().map(l=>{
         const att2=CU.attendance&&CU.attendance[l.n];
-        const paid=isPaid(CU.id,l.n);
+        const paid=isPaid(CU.id,l.n); const open=lessonOpen(l.n);
         return`<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)">
           <span class="bge ${DI[l.d]?.c||'bgray'}" style="font-size:9px;min-width:24px;justify-content:center">L${l.n}</span>
           <span style="font-size:12px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.title)}</span>
-          <span class="bge ${att2?'bgr':'bgray'}" style="flex-shrink:0">${att2?'Attended':'—'}</span>
-          ${!paid?'<span class="bge br" style="font-size:9px;flex-shrink:0">Locked</span>':''}
+          <span class="bge ${att2?'bgr':'bgray'}" style="flex-shrink:0">${att2?'Attended':!open?'Upcoming':'—'}</span>
+          ${open&&!paid?'<span class="bge br" style="font-size:9px;flex-shrink:0">Locked</span>':''}
         </div>`;}).join('');
 
     if(cdTarget){
@@ -1459,11 +1480,15 @@ let openL=null, CF='all';
 function filt(f,el){CF=f;document.querySelectorAll('#cf .ftab').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderCurriculum();}
 
 function renderCurriculum(){
-  const d=doneCount(); document.getElementById('cp-txt').textContent=d+'/'+LESSONS.length+' done';
+  const vl=visibleLessons(); const d=doneCount();
+  document.getElementById('cp-txt').textContent=d+'/'+vl.length+' done';
+  document.getElementById('curr-title').textContent='Curriculum — '+vl.length+' Lessons';
+  const cs=document.getElementById('curr-class');
+  if(cs){cs.style.display=(CR!=='student'&&classes.length)?'':'none';if(CR!=='student')fillClassSelect('curr-class');}
   let html='';
   visibleLessons().forEach(l=>{
     if(CF!=='all'&&l.d!==CF) return;
-    const ld=gl(l.n); const di=DI[l.d]||{}; const isOpen=openL===l.n;
+    const ld={...gl(l.n),status:lessonStatus(l.n)}; const di=DI[l.d]||{}; const isOpen=openL===l.n;
     const sc=ld.status==='done'?'sp-d':ld.status==='progress'?'sp-i':'sp-p';
     const sl=ld.status==='done'?'Done':ld.status==='progress'?'In progress':'Pending';
     html+=`<div class="lrow"><div class="lrh" onclick="togL(${l.n})">
@@ -1492,7 +1517,7 @@ function renderLB(n,ld){
     return`<div class="lrbody">
       <div class="fg2" style="margin-bottom:10px">
         <div class="fg"><label class="fl">Status</label>
-          <select onchange="slF(${n},'status',this.value)">
+          <select onchange="setLessonStatus(${n},this.value);renderCurriculum()">
             <option value="pending" ${ld.status==='pending'?'selected':''}>Pending</option>
             <option value="progress" ${ld.status==='progress'?'selected':''}>In progress</option>
             <option value="done" ${ld.status==='done'?'selected':''}>Done</option>
@@ -1513,11 +1538,12 @@ function renderLB(n,ld){
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${ld.hwLink?`<a href="${esc(ld.hwLink)}" target="_blank"><button class="btn bsm bg2">Open homework form</button></a>`:''}
         ${ld.recLink?`<a href="${esc(ld.recLink)}" target="_blank"><button class="btn bsm bblu">Watch recording</button></a>`:''}
-        <button class="btn bsm" onclick="slF(${n},'status','done');renderCurriculum()">Mark done</button>
+        <button class="btn bsm" onclick="setLessonStatus(${n},'done');renderCurriculum()">Mark done${clsName(myClassId())?' for '+esc(clsName(myClassId())):''}</button>
       </div>
     </div>`;
   }
   // Student view
+  if(!lessonOpen(n)) return`<div class="lrbody"><div class="lock-box">Not taught yet — this lesson opens when your group reaches it.</div></div>`;
   const paid=isPaid(CU.id,n);
   return`<div class="lrbody">
     ${!paid?`<div class="lock-box">
@@ -1538,8 +1564,8 @@ function renderLB(n,ld){
 function togL(n){openL=(openL===n)?null:n; renderCurriculum();}
 function cycStat(e,n){
   e.stopPropagation();
-  const ld=gl(n); const c={pending:'progress',progress:'done',done:'pending'};
-  slF(n,'status',c[ld.status]); renderCurriculum(); updateSbProg();
+  const c={pending:'progress',progress:'done',done:'pending'};
+  setLessonStatus(n,c[lessonStatus(n)]); renderCurriculum();
 }
 function slF(n,f,v){
   if(!lessonData[n]) lessonData[n]={status:'pending',hwLink:'',hwMax:10,bookContent:'',sessNotes:'',recLink:''};
@@ -1579,7 +1605,7 @@ function buildSessCard(s,isPast){
       <div class="sess-date"><div class="sess-day">${day}</div><div class="sess-mon">${mon}</div></div>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(s.title)}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.grade?'Grade '+esc(s.grade):'<span style="color:var(--red)">No grade — won\'t show to anyone</span>'} · <span style="color:${tc}">${tl}</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.classId?esc(clsName(s.classId)||'Deleted group'):s.grade?'Grade '+esc(s.grade):'<span style="color:var(--red)">No group — won\'t show to anyone</span>'} · <span style="color:${tc}">${tl}</span></div>
         <div style="margin-top:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           ${s.zoom?`<span class="zoom-badge ${s.zoomVis==='live'?'zoom-live':'zoom-hidden'}">${s.zoomVis==='live'?'Zoom live':'Zoom hidden'}</span>
           <button class="btn bxs" onclick="toggleZoom(event,'${s.id}')">${s.zoomVis==='live'?'Hide link':'Make live'}</button>`:'<span style="font-size:11px;color:var(--text3)">No Zoom link</span>'}
@@ -1619,7 +1645,7 @@ function openAddSess(){
   ['si-date','si-title','si-zoom','si-rec'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('si-time').value='17:00';
   document.getElementById('si-type').value='lesson';
-  document.getElementById('si-grade').value='10';
+  fillClassSelect('si-class');
   document.getElementById('si-vis').value='hidden';
   document.getElementById('si-ln').value='';
   openModal('m-add-sess');
@@ -1632,7 +1658,7 @@ function editSess(e,id){
   document.getElementById('si-time').value=s.time||'17:00';
   document.getElementById('si-title').value=s.title||'';
   document.getElementById('si-type').value=s.type||'lesson';
-  document.getElementById('si-grade').value=s.grade||'10';
+  fillClassSelect('si-class',s.classId);
   document.getElementById('si-zoom').value=s.zoom||'';
   document.getElementById('si-vis').value=s.zoomVis||'hidden';
   document.getElementById('si-rec').value=s.rec||'';
@@ -1647,7 +1673,8 @@ function saveSess(){
     time:document.getElementById('si-time').value,
     title,
     type:document.getElementById('si-type').value,
-    grade:document.getElementById('si-grade').value,
+    classId:document.getElementById('si-class').value||'',
+    grade:(clsById(document.getElementById('si-class').value)||{}).grade||'',
     zoom:document.getElementById('si-zoom').value.trim(),
     zoomVis:document.getElementById('si-vis').value,
     rec:document.getElementById('si-rec').value.trim(),
@@ -1672,7 +1699,7 @@ function renderStudents(){
       <div class="sname">${esc(s.name)}</div>
       <div class="smeta">${esc(s.id)} · ${esc(s.phone||'—')}</div>
       <div style="margin-top:9px;display:flex;gap:5px;flex-wrap:wrap">
-       <span class="bge bgold">G${esc(s.grade||'?')}</span>
+       <span class="bge bgold">${s.classId?esc(clsName(s.classId)):'G'+esc(s.grade||'?')}</span>
         <span class="bge ${s.group==='online'?'bb':s.group==='physical'?'bgr':'bp'}">${s.group||''}</span>
         ${payStatusBadge(s.id)}
         <span class="bge bgray">${getAttCount(s.id)} sessions</span>
@@ -1686,8 +1713,10 @@ function openAddStudent(){
   document.getElementById('m-add-stu-title').textContent='Add student';
   document.getElementById('m-add-student')._eid=null;
   ['st-name','st-id','st-phone','st-pw','st-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('st-pw').placeholder='Set a secure password';document.getElementById('st-pw-hint').textContent='(min 6 chars)';
   document.getElementById('st-fee').value='';
   document.getElementById('st-grp').value='online';   document.getElementById('st-grade').value='10';
+  fillClassSelect('st-class',curClass||'');
   document.getElementById('st-sat').value='';
   document.getElementById('st-sat-cw').style.display='none';
   openModal('m-add-student');
@@ -1700,21 +1729,29 @@ function saveStudent(){
   if(!id){toast2('Student ID required');return;}
   const phone=document.getElementById('st-phone').value.trim();
   const pw=document.getElementById('st-pw').value.trim();
+  const eid0=document.getElementById('m-add-student')._eid;
+  if(!eid0&&pw.length<6){toast2('Password required (min 6 characters)');return;}
+  if(pw&&pw.length<6){toast2('Password must be at least 6 characters');return;}
+  if(eid0&&id!==eid0&&!pw){toast2('Enter a new password when changing the Student ID');return;}
   const fee=document.getElementById('st-fee').value;
 const group=document.getElementById('st-grp').value;
-  const grade=document.getElementById('st-grade').value;
+  const classId=document.getElementById('st-class').value||'';
+  if(classes.length&&!classId){toast2('Choose a group');return;}
+  const grade=(clsById(classId)||{}).grade||document.getElementById('st-grade').value;
   const satDate=document.getElementById('st-sat').value;
   const satCustom=document.getElementById('st-sat-c').value;
   const notes=document.getElementById('st-notes').value.trim();
   const eid=document.getElementById('m-add-student')._eid;
   if(eid){
-    const s=students.find(x=>x.id===eid); if(s) Object.assign(s,{name,id,phone,pw,fee,group,grade,satDate,satCustom,notes});
+    if(id!==eid&&students.find(x=>x.id===id)){toast2('ID already exists');return;}
+    const s=students.find(x=>x.id===eid); if(s){Object.assign(s,{name,id,phone,fee,group,grade,classId,satDate,satCustom,notes});if(pw)s.pw=pw;}
   } else {
     if(students.find(x=>x.id===id)){toast2('ID already exists');return;}
-    students.push({id,name,phone,pw,fee,group,grade,satDate,satCustom,notes,attendance:{}});
+    students.push({id,name,phone,pw,fee,group,grade,classId,satDate,satCustom,notes,attendance:{}});
     addNotif('New student registered: '+name,'info');
   }
-  sv('students',students); closeModal('m-add-student'); renderStudents(); toast2('Student saved');
+  sv('students',students); students.forEach(x=>delete x.pw); // password is stored scrambled on the server only
+  closeModal('m-add-student'); renderStudents(); toast2(pw?'Student saved — send them their ID and password':'Student saved');
 }
 
 function openStuView(sid){
@@ -1729,12 +1766,12 @@ function openStuView(sid){
       <div class="savt" style="width:50px;height:50px;font-size:16px">${init2(s.name)}</div>
       <div>
         <div style="font-size:17px;font-weight:700;color:var(--white)">${esc(s.name)}</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(s.id)} · <span class="bge bgold">Grade ${esc(s.grade||'?')}</span> · <span class="bge ${s.group==='online'?'bb':s.group==='physical'?'bgr':'bp'}">${s.group||''}</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(s.id)} · <span class="bge bgold">${s.classId?esc(clsName(s.classId)):'Grade '+esc(s.grade||'?')}</span> · <span class="bge ${s.group==='online'?'bb':s.group==='physical'?'bgr':'bp'}">${s.group||''}</span></div>
       </div>
     </div>
     <div class="fg2" style="margin-bottom:14px">
       <div><div style="font-size:11px;color:var(--text3)">Phone</div><div style="font-size:13px;margin-top:3px">${esc(s.phone)||'—'}</div></div>
-      <div><div style="font-size:11px;color:var(--text3)">Portal password</div><div style="font-size:13px;margin-top:3px;letter-spacing:.08em">${esc(s.pw)||'—'}</div></div>
+      <div><div style="font-size:11px;color:var(--text3)">Portal password</div><div style="font-size:12px;margin-top:3px;color:var(--text3)">Hidden for security · use Edit to set a new one</div></div>
     </div>
     <div class="fg2" style="margin-bottom:14px">
       <div><div style="font-size:11px;color:var(--text3)">SAT date</div><div style="font-size:13px;margin-top:3px;color:var(--gold)">${esc(satL)}</div></div>
@@ -1769,9 +1806,11 @@ function editStuOpen(sid){
   document.getElementById('st-name').value=s.name||'';
   document.getElementById('st-id').value=s.id||'';
   document.getElementById('st-phone').value=s.phone||'';
-  document.getElementById('st-pw').value=s.pw||'';
+  document.getElementById('st-pw').value='';
+  document.getElementById('st-pw').placeholder='Leave blank to keep current password';document.getElementById('st-pw-hint').textContent='(only to reset)';
   document.getElementById('st-fee').value=s.fee||'';
   document.getElementById('st-grp').value=s.group||'online';   document.getElementById('st-grade').value=s.grade||'10';
+  fillClassSelect('st-class',s.classId||'');
   document.getElementById('st-sat').value=s.satDate||'';
   document.getElementById('st-sat-c').value=s.satCustom||'';
   document.getElementById('st-sat-cw').style.display=s.satDate==='custom'?'block':'none';
@@ -1785,7 +1824,7 @@ function deleteStu(sid){
   students=students.filter(x=>x.id!==sid);
   payments=payments.filter(p=>p.studentId!==sid);
   payRequests=payRequests.filter(r=>r.studentId!==sid);
-  sv('students',students); sv('payments',payments); sv('payRequests',payRequests);
+  sv('students',students); sv('payments',payments);
   closeModal('m-stu-view'); renderStudents(); toast2('Student deleted');
 }
 
@@ -1853,7 +1892,7 @@ function buildReqCard(r,status){
         <div>
           <div style="font-size:13px;font-weight:600;color:var(--white)">${esc(r.studentName)}</div>
           <div style="font-size:11px;color:var(--text3)">${esc(r.studentId)} · ${esc(r.method||'—')} · ${esc(r.amount||'?')} EGP · ${esc(r.date||'—')}</div>
-          ${r.lesson?`<div style="font-size:11px;color:var(--amber)">Lesson ${r.lesson} access requested</div>`:'<div style="font-size:11px;color:var(--text3)">General payment</div>'}
+          ${r.extraId?`<div style="font-size:11px;color:var(--gold)">Extra session: ${esc((extras.find(x=>x.id===r.extraId)||{}).title||'—')}</div>`:r.lesson?`<div style="font-size:11px;color:var(--amber)">Lesson ${r.lesson} access requested</div>`:'<div style="font-size:11px;color:var(--text3)">General payment</div>'}
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -1868,9 +1907,15 @@ function buildReqCard(r,status){
   </div>`;
 }
 
-function viewScreenshot(rid){
-  const r=payRequests.find(x=>x.id===rid); if(!r||!r.screenshot) return;
-  const s=students.find(x=>x.id===r.studentId);
+async function getScreenshotUrl(r){
+  const {data,error}=await rpc('pr_image',{p_token:TOKEN,p_id:r.id});
+  return error?null:data;
+}
+async function viewScreenshot(rid){
+  const r=payRequests.find(x=>x.id===rid); if(!r) return;
+  toast2('Loading screenshot...');
+  const src=await getScreenshotUrl(r);
+  if(!src){toast2('Could not load the screenshot. Try again.');return;}
   document.getElementById('m-sc-title').textContent='Payment screenshot — '+esc(r.studentName);
   document.getElementById('m-sc-body').innerHTML=`
     <div style="margin-bottom:12px;display:flex;gap:14px;flex-wrap:wrap">
@@ -1879,7 +1924,7 @@ function viewScreenshot(rid){
       <div><div style="font-size:11px;color:var(--text3)">Method</div><div style="font-size:13px">${esc(r.method||'—')}</div></div>
       <div><div style="font-size:11px;color:var(--text3)">Lesson access</div><div style="font-size:13px">${r.lesson?'Lesson '+r.lesson:'General'}</div></div>
     </div>
-    <img src="${r.screenshot}" style="max-width:100%;border-radius:var(--r);display:block;margin-bottom:10px" alt="Payment screenshot">
+    <img src="${esc(src)}" style="max-width:100%;border-radius:var(--r);display:block;margin-bottom:10px" alt="Payment screenshot">
     ${r.note?`<div style="font-size:12px;color:var(--text2)">Student note: ${esc(r.note)}</div>`:''}`;
   document.getElementById('m-sc-foot').innerHTML=
     r.status==='pending'?`
@@ -1890,23 +1935,33 @@ function viewScreenshot(rid){
   openModal('m-screenshot');
 }
 
-function approveReq(rid){
-  const r=payRequests.find(x=>x.id===rid); if(!r) return;
-  r.status='approved'; r.approvedAt=new Date().toLocaleString('en-GB');
-  sv('payRequests',payRequests);
-  // Record as approved payment
-  payments.push({id:'p'+Date.now(),studentId:r.studentId,amount:+r.amount||0,date:r.date,method:r.method,lesson:r.lesson?+r.lesson:null,note:'Screenshot approved',approved:true});
-  sv('payments',payments);
-  addNotif('Payment approved: '+r.studentName+' — '+(r.amount||'?')+' EGP via '+(r.method||'—'),'payment');
-  renderPayRequests(); updateDots(); toast2('Access granted to '+r.studentName);
+// Approve/reject run on the server in one step: status + payment record + notification.
+// Clicking twice can't create a duplicate payment.
+const _prBusy={};
+async function _decideReq(rid,fn){
+  if(_prBusy[rid]) return null;
+  if(!DB_READY){toast2('Not connected — please refresh and try again');return null;}
+  _prBusy[rid]=true;
+  try{
+    const {data,error}=await rpc(fn,{p_token:TOKEN,p_id:rid});
+    if(error||!data){toast2('Not saved: '+(error?error.message:'request not found')+'. Please try again.');return null;}
+    upsertLocalPR(data);
+    await loadAllFromDB();
+    renderPayRequests(); updateDots();
+    return data;
+  } finally { delete _prBusy[rid]; }
 }
-
-function rejectReq(rid){
+async function approveReq(rid){
+  const r=payRequests.find(x=>x.id===rid); if(!r) return;
+  toast2('Approving...');
+  const d=await _decideReq(rid,'pr_approve');
+  if(d) toast2(d.status==='approved'?'Access granted to '+r.studentName:'This request was already '+d.status);
+}
+async function rejectReq(rid){
   if(!confirm('Reject this payment request?')) return;
   const r=payRequests.find(x=>x.id===rid); if(!r) return;
-  r.status='rejected'; sv('payRequests',payRequests);
-  addNotif('Payment request rejected: '+r.studentName,'warn');
-  renderPayRequests(); updateDots(); toast2('Request rejected');
+  const d=await _decideReq(rid,'pr_reject');
+  if(d) toast2(d.status==='rejected'?'Request rejected':'This request was already '+d.status);
 }
 
 function renderPayHistory(){
@@ -1961,6 +2016,7 @@ function openPayModal(sid){
   const sel=document.getElementById('pay-stu');
   sel.innerHTML=students.map(s=>`<option value="${s.id}">${esc(s.name)} (${s.id})</option>`).join('');
   if(sid) sel.value=sid;
+  document.getElementById('pay-extra').innerHTML='<option value="">— no —</option>'+extras.map(x=>`<option value="${esc(x.id)}">${esc(x.title)} (${(+x.price).toLocaleString()} EGP)</option>`).join('');
   document.getElementById('pay-date').value=new Date().toISOString().split('T')[0];
   openModal('m-pay');
 }
@@ -1972,9 +2028,10 @@ function savePayment(){
   const method=document.getElementById('pay-method').value;
   const lesson=document.getElementById('pay-lesson').value;
   const note=document.getElementById('pay-note').value.trim();
+  const extraId=document.getElementById('pay-extra').value||null;
   if(!sid||!amt){toast2('Student and amount required');return;}
   const s=students.find(x=>x.id===sid);
-  payments.push({id:'p'+Date.now(),studentId:sid,amount:+amt,date,method,lesson:lesson?+lesson:null,note,approved:true});
+  payments.push({id:'p'+Date.now(),studentId:sid,amount:+amt,date,method,lesson:extraId?null:(lesson?+lesson:null),extraId,note,approved:true});
   sv('payments',payments);
   addNotif('Payment recorded: '+(s?s.name:sid)+' — '+(+amt).toLocaleString()+' EGP via '+method,'payment');
   closeModal('m-pay'); renderPaymentsAdmin(); toast2('Payment recorded');
@@ -2029,61 +2086,212 @@ function sqScore(id,sid,f,v){
 }
 
 // ═══════════════════════════════════════════════════
-// EXAMS
+// GROUPS (classes)
 // ═══════════════════════════════════════════════════
-let openExam=null;
-function renderExams(){
-  const el=document.getElementById('exams-list');
-  el.innerHTML=`<div style="margin-bottom:14px;background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--amber)">
-    Start this phase after completing all 20 curriculum lessons. Each exam = full 44-question timed Bluebook session.
-  </div>`+examList.map((e,i)=>`
-    <div class="lrow">
-      <div class="lrh" onclick="togExam('${e.id}')">
-        <span class="bge ba" style="flex-shrink:0">#${i+1}</span>
-        <span class="ltit">${esc(e.title)}</span>
-        ${e.date?`<span class="bge bb">${e.date}</span>`:'<span class="bge bgray">No date</span>'}
-        <span class="bge bgray">Max: ${e.max||800}</span>
-        <button class="btn bxs bd" style="margin-left:8px" onclick="delExam(event,'${e.id}')">Remove</button>
-        <span style="color:var(--text3);font-size:11px;margin-left:6px">${openExam===e.id?'▲':'▼'}</span>
+let curClass='';
+function clsById(id){return classes.find(c=>c.id===id);}
+function clsName(id){const c=clsById(id);return c?c.name:'';}
+function myClassId(){return CR==='student'?(CU&&CU.classId)||'':(curClass||(classes[0]&&classes[0].id)||'');}
+function lessonStatus(n,cid){
+  cid=cid===undefined?myClassId():cid;
+  if(cid&&classes.length){return ((classProgress[cid]||{})[n])||'pending';}
+  return gl(n).status||'pending';
+}
+function setLessonStatus(n,v,cid){
+  cid=cid===undefined?myClassId():cid;
+  if(cid&&classes.length){if(!classProgress[cid])classProgress[cid]={};classProgress[cid][n]=v;sv('classProgress',classProgress);}
+  else slF(n,'status',v);
+  updateSbProg();
+}
+function lessonOpen(n){return ['done','progress'].includes(lessonStatus(n));} // unlocked for student's group
+function sessionsFor(st){ // sessions visible to a student
+  return sessions.filter(s=>(st.classId&&s.classId)?s.classId===st.classId:String(s.grade)===String(st.grade));
+}
+function classOptions(sel,withNone){
+  return (withNone?'<option value="">— none —</option>':'')+classes.map(c=>`<option value="${esc(c.id)}" ${c.id===sel?'selected':''}>${esc(c.name)}</option>`).join('');
+}
+function fillClassSelect(id,sel){const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=classes.length?classOptions(sel||myClassId()):'<option value="">No groups yet — add them in Students → Groups</option>';}
+function openClassesModal(){
+  document.getElementById('cl-sat').innerHTML='<option value="">Not set</option>'+SAT_DATES.map(x=>`<option value="${x.d}">${x.l}</option>`).join('');
+  renderClassesList(); openModal('m-classes');
+}
+function renderClassesList(){
+  const el=document.getElementById('classes-list');
+  el.innerHTML=classes.length?`<table class="tbl"><thead><tr><th>Group</th><th>Grade</th><th>Target SAT</th><th>Students</th><th>Progress</th><th></th></tr></thead><tbody>${
+    classes.map(c=>{const n=students.filter(s=>s.classId===c.id).length;const d=doneCount(c.id);
+      return`<tr><td><input type="text" value="${esc(c.name)}" onchange="updClass('${c.id}','name',this.value)"></td>
+      <td>G${esc(c.grade)}</td>
+      <td><select onchange="updClass('${c.id}','satDate',this.value)"><option value="">Not set</option>${SAT_DATES.map(x=>`<option value="${x.d}" ${x.d===c.satDate?'selected':''}>${x.l}</option>`).join('')}</select></td>
+      <td>${n}</td><td>${d}/${LESSONS.length}</td>
+      <td><button class="btn bxs bd" onclick="delClass('${c.id}')">Del</button></td></tr>`;}).join('')}</tbody></table>`
+    :'<div class="empty" style="padding:14px">No groups yet</div>';
+}
+function addClass(){
+  const name=document.getElementById('cl-name').value.trim(); if(!name){toast2('Group name required');return;}
+  classes.push({id:'c'+Date.now(),name,grade:document.getElementById('cl-grade').value,satDate:document.getElementById('cl-sat').value});
+  sv('classes',classes); document.getElementById('cl-name').value=''; renderClassesList(); toast2('Group added');
+}
+function updClass(id,f,v){const c=clsById(id);if(c){c[f]=v;sv('classes',classes);toast2('Saved');}}
+function delClass(id){
+  const n=students.filter(s=>s.classId===id).length;
+  if(n){toast2('Move its '+n+' student(s) to another group first');return;}
+  if(!confirm('Delete group "'+clsName(id)+'"?'))return;
+  classes=classes.filter(c=>c.id!==id); delete classProgress[id];
+  sv('classes',classes); sv('classProgress',classProgress); if(curClass===id)curClass=''; renderClassesList();
+}
+
+// ═══════════════════════════════════════════════════
+// TESTS (book tests, replace Bluebook past exams)
+// ═══════════════════════════════════════════════════
+const DEFAULT_TESTS=Array.from({length:10},(_,i)=>({id:'bt'+(i+1),title:'Test '+(i+1),max:44,link:'',notes:'',openFor:[]}));
+function getTests(){if(!tests)tests=JSON.parse(JSON.stringify(DEFAULT_TESTS));return tests;}
+let openTest=null;
+function renderTests(){
+  fillClassSelect('tests-class');
+  const cid=myClassId(); const list=getTests();
+  const grpStu=students.filter(s=>!cid||s.classId===cid);
+  document.getElementById('tests-list').innerHTML=list.map((t,i)=>{
+    const open=(t.openFor||[]).includes(cid); const isOpen=openTest===t.id;
+    const sc=testScores[t.id]||{}; const done=grpStu.filter(s=>sc[s.id]&&sc[s.id].score!=='' && sc[s.id].score!==undefined).length;
+    return`<div class="lrow"><div class="lrh" onclick="togTest('${t.id}')">
+      <span class="bge ba" style="flex-shrink:0">#${i+1}</span>
+      <span class="ltit">${esc(t.title)}</span>
+      ${cid?`<span class="spl ${open?'sp-d':'sp-p'}" onclick="event.stopPropagation();toggleTestOpen('${t.id}')">${open?'Open for this group':'Closed'}</span>`:''}
+      <span class="bge bgray">${done}/${grpStu.length} scored</span>
+      <span style="color:var(--text3);font-size:11px;margin-left:6px">${isOpen?'▲':'▼'}</span>
+    </div>${isOpen?`<div class="lrbody">
+      <div class="fg3" style="margin-bottom:10px">
+        <div class="fg" style="grid-column:span 2"><label class="fl">Title</label><input type="text" value="${esc(t.title)}" onchange="stF('${t.id}','title',this.value)"></div>
+        <div class="fg"><label class="fl">Max score</label><input type="number" min="1" value="${t.max||44}" onchange="stF('${t.id}','max',+this.value);renderTests()"></div>
       </div>
-      ${openExam===e.id?examBody(e):''}
-    </div>`).join('');
+      <div class="fg2" style="margin-bottom:10px">
+        <div class="fg"><label class="fl">Test link (Google Form / PDF / answer key)</label><input type="url" value="${esc(t.link||'')}" placeholder="https://..." onchange="stF('${t.id}','link',this.value)"></div>
+        <div class="fg"><label class="fl">Notes for students</label><input type="text" value="${esc(t.notes||'')}" placeholder="Time limit, pages..." onchange="stF('${t.id}','notes',this.value)"></div>
+      </div>
+      ${grpStu.length?`<table class="tbl"><thead><tr><th>Student</th><th>Score / ${t.max||44}</th><th>%</th><th>Note</th></tr></thead><tbody>
+      ${grpStu.map(s=>{const r=sc[s.id]||{};const raw=r.score!==undefined&&r.score!==''?+r.score:null;const pct=raw!==null?Math.round(raw/(t.max||44)*100):null;
+        return`<tr><td style="font-weight:600">${esc(s.name.split(' ').slice(0,2).join(' '))}</td>
+        <td><input type="number" min="0" max="${t.max||44}" value="${esc(r.score??'')}" onchange="stScore('${t.id}','${s.id}','score',this.value)"></td>
+        <td style="color:${pct===null?'var(--text3)':pct>=70?'var(--green)':'var(--red)'}">${pct!==null?pct+'%':'—'}</td>
+        <td><input type="text" value="${esc(r.note||'')}" onchange="stScore('${t.id}','${s.id}','note',this.value)"></td></tr>`;}).join('')}
+      </tbody></table>`:'<div style="font-size:12px;color:var(--text3)">No students in this group</div>'}
+      <div style="margin-top:12px"><button class="btn bxs bd" onclick="delTest('${t.id}')">Remove test</button></div>
+    </div>`:''}</div>`;}).join('')||'<div class="empty">No tests</div>';
 }
-function examBody(e){
-  return`<div class="lrbody">
-    <div class="fg3" style="margin-bottom:10px">
-      <div class="fg"><label class="fl">Title</label><input type="text" value="${esc(e.title)}" onchange="seF('${e.id}','title',this.value)"></div>
-      <div class="fg"><label class="fl">Date</label><input type="date" value="${esc(e.date||'')}" onchange="seF('${e.id}','date',this.value)"></div>
-      <div class="fg"><label class="fl">Max score</label><input type="number" value="${e.max||800}" onchange="seF('${e.id}','max',+this.value)"></div>
-    </div>
-    <div class="fg2" style="margin-bottom:10px">
-      <div class="fg"><label class="fl">Recording / review link</label><input type="url" value="${esc(e.rec||'')}" placeholder="Drive..." onchange="seF('${e.id}','rec',this.value)"></div>
-      <div class="fg"><label class="fl">Notes</label><textarea onchange="seF('${e.id}','notes',this.value)" style="min-height:40px">${esc(e.notes||'')}</textarea></div>
-    </div>
-    ${students.length?`<table class="tbl"><thead><tr><th>Student</th><th>Math / ${e.max||800}</th><th>Total / 1600</th><th>Notes</th></tr></thead><tbody>
-    ${students.map(s=>{
-      const sc=(examScores[e.id]&&examScores[e.id][s.id])||{math:'',total:'',note:''};
-      return`<tr>
-        <td style="font-weight:600">${esc(s.name.split(' ').slice(0,2).join(' '))}</td>
-        <td><input type="number" min="200" max="${e.max||800}" value="${esc(sc.math||'')}" placeholder="—" onchange="seScore('${e.id}','${s.id}','math',this.value)"></td>
-        <td><input type="number" min="400" max="1600" value="${esc(sc.total||'')}" placeholder="—" onchange="seScore('${e.id}','${s.id}','total',this.value)"></td>
-        <td><input type="text" value="${esc(sc.note||'')}" placeholder="..." onchange="seScore('${e.id}','${s.id}','note',this.value)"></td>
-      </tr>`;}).join('')}
-    </tbody></table>`:'<div style="font-size:12px;color:var(--text3)">No students enrolled</div>'}
-  </div>`;
+function togTest(id){openTest=openTest===id?null:id;renderTests();}
+function stF(id,f,v){const t=getTests().find(x=>x.id===id);if(t){t[f]=v;sv('tests',tests);toast2('Saved');}}
+function toggleTestOpen(id){const cid=myClassId();if(!cid)return;const t=getTests().find(x=>x.id===id);if(!t)return;
+  t.openFor=t.openFor||[];const i=t.openFor.indexOf(cid);if(i>=0)t.openFor.splice(i,1);else t.openFor.push(cid);sv('tests',tests);renderTests();}
+function stScore(tid,sid,f,v){if(!testScores[tid])testScores[tid]={};if(!testScores[tid][sid])testScores[tid][sid]={score:'',note:''};
+  testScores[tid][sid][f]=v;sv('testScores',testScores);toast2('Score saved');}
+function addTest(){const l=getTests();l.push({id:'bt'+Date.now(),title:'Test '+(l.length+1),max:44,link:'',notes:'',openFor:[]});sv('tests',tests);renderTests();}
+function delTest(id){if(!confirm('Remove this test and its scores?'))return;tests=getTests().filter(x=>x.id!==id);delete testScores[id];sv('tests',tests);sv('testScores',testScores);renderTests();}
+function renderMyTests(){
+  const el=document.getElementById('my-tests-content');
+  const list=getTests().filter(t=>(t.openFor||[]).includes(CU.classId));
+  el.innerHTML=list.length?list.map(t=>{const r=(testScores[t.id]||{})[CU.id]||{};const has=r.score!==undefined&&r.score!=='';
+    const pct=has?Math.round(+r.score/(t.max||44)*100):null;
+    return`<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px"><div style="font-size:14px;font-weight:600">${esc(t.title)}</div>
+      ${t.notes?`<div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(t.notes)}</div>`:''}</div>
+      ${has?`<span class="bge ${pct>=70?'bgr':'br'}" style="font-size:12px;padding:4px 10px">${esc(r.score)} / ${t.max||44} · ${pct}%</span>`:'<span class="bge bgray">Not scored yet</span>'}
+      ${t.link?`<a href="${esc(t.link)}" target="_blank"><button class="btn bsm bblu">Open test</button></a>`:''}
+    </div>`;}).join(''):'<div class="empty">No tests open for your group yet</div>';
 }
-function togExam(id){openExam=(openExam===id)?null:id;renderExams();}
-function seF(id,f,v){const e=examList.find(x=>x.id===id);if(e){e[f]=v;sv('examList',examList);toast2('Saved');}}
-function seScore(eid,sid,f,v){
-  if(!examScores[eid])examScores[eid]={};if(!examScores[eid][sid])examScores[eid][sid]={math:'',total:'',note:''};
-  examScores[eid][sid][f]=v;sv('examScores',examScores);toast2('Score saved');
+
+// ═══════════════════════════════════════════════════
+// EXTRA SESSIONS (paid, outside curriculum)
+// ═══════════════════════════════════════════════════
+let editExtraId=null;
+function isPaidExtra(sid,xid){return payments.some(p=>p.studentId===sid&&p.extraId===xid&&+p.amount>0&&p.approved!==false);}
+function extraPending(sid,xid){return payRequests.some(r=>r.studentId===sid&&r.extraId===xid&&r.status==='pending');}
+function openExtraModal(id){
+  editExtraId=id; const x=id?extras.find(e=>e.id===id):null;
+  document.getElementById('m-extra-title').textContent=x?'Edit extra session':'Add extra session';
+  document.getElementById('ex-title').value=x?x.title:'';
+  document.getElementById('ex-date').value=x?x.date||'':'';
+  document.getElementById('ex-time').value=x?x.time||'17:00':'17:00';
+  document.getElementById('ex-price').value=x?x.price||'':(settings.sessFee||'');
+  document.getElementById('ex-desc').value=x?x.desc||'':'';
+  document.getElementById('ex-zoom').value=x?x.zoom||'':'';
+  document.getElementById('ex-vis').value=x?x.zoomVis||'hidden':'hidden';
+  document.getElementById('ex-rec').value=x?x.rec||'':'';
+  const sel=x?x.classIds||[]:[myClassId()].filter(Boolean);
+  document.getElementById('ex-classes').innerHTML=classes.length?classes.map(c=>`<label style="display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;cursor:pointer"><input type="checkbox" value="${esc(c.id)}" ${sel.includes(c.id)?'checked':''} style="width:auto"> ${esc(c.name)}</label>`).join(''):'<span style="font-size:12px;color:var(--text3)">Add groups first (Students → Groups)</span>';
+  document.getElementById('ex-del').style.display=x?'':'none';
+  openModal('m-extra');
 }
-function delExam(e,id){e.stopPropagation();if(!confirm('Remove?'))return;examList=examList.filter(x=>x.id!==id);sv('examList',examList);renderExams();}
-function saveExam(){
-  const t=document.getElementById('ei-t').value.trim();if(!t){toast2('Title required');return;}
-  examList.push({id:'e'+Date.now(),title:t,date:document.getElementById('ei-d').value,max:+document.getElementById('ei-m').value||800,notes:document.getElementById('ei-n').value,rec:document.getElementById('ei-r').value});
-  sv('examList',examList);closeModal('m-add-exam');renderExams();toast2('Exam added');
+function saveExtra(){
+  const title=document.getElementById('ex-title').value.trim(); const price=+document.getElementById('ex-price').value;
+  if(!title){toast2('Title required');return;} if(!price){toast2('Price required');return;}
+  const classIds=[...document.querySelectorAll('#ex-classes input:checked')].map(i=>i.value);
+  if(!classIds.length){toast2('Choose at least one group');return;}
+  const obj={title,price,classIds,date:document.getElementById('ex-date').value,time:document.getElementById('ex-time').value,
+    desc:document.getElementById('ex-desc').value.trim(),zoom:document.getElementById('ex-zoom').value.trim(),
+    zoomVis:document.getElementById('ex-vis').value,rec:document.getElementById('ex-rec').value.trim()};
+  if(editExtraId){const x=extras.find(e=>e.id===editExtraId);if(x)Object.assign(x,obj);}else extras.push({id:'x'+Date.now(),...obj});
+  sv('extras',extras); closeModal('m-extra'); renderExtrasAdmin(); toast2('Extra session saved');
 }
+function deleteExtra(){if(!confirm('Delete this extra session?'))return;extras=extras.filter(e=>e.id!==editExtraId);sv('extras',extras);closeModal('m-extra');renderExtrasAdmin();}
+function toggleExtraZoom(id){const x=extras.find(e=>e.id===id);if(!x)return;x.zoomVis=x.zoomVis==='live'?'hidden':'live';sv('extras',extras);renderExtrasAdmin();}
+function renderExtrasAdmin(){
+  const el=document.getElementById('extras-list');
+  const list=[...extras].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  el.innerHTML=list.length?list.map(x=>{
+    const elig=students.filter(s=>(x.classIds||[]).includes(s.classId));
+    const paid=elig.filter(s=>isPaidExtra(s.id,x.id));
+    return`<div class="card cp" style="margin-bottom:10px;border-left:3px solid var(--gold)">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:14px;font-weight:600">${esc(x.title)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(x.date||'No date')} ${esc(x.time||'')} · ${(+x.price).toLocaleString()} EGP · ${(x.classIds||[]).map(clsName).map(esc).join(', ')}</div>
+          ${x.desc?`<div style="font-size:12px;color:var(--text2);margin-top:6px">${esc(x.desc)}</div>`:''}
+          <div style="font-size:12px;margin-top:8px"><span style="color:var(--green);font-weight:600">${paid.length} paid</span> <span style="color:var(--text3)">of ${elig.length}</span>${paid.length?` · <span style="color:var(--text2)">${paid.map(s=>esc(s.name.split(' ')[0])).join(', ')}</span>`:''}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          ${x.zoom?`<span class="zoom-badge ${x.zoomVis==='live'?'zoom-live':'zoom-hidden'}">${x.zoomVis==='live'?'Zoom live':'Zoom hidden'}</span><button class="btn bxs" onclick="toggleExtraZoom('${x.id}')">${x.zoomVis==='live'?'Hide link':'Make live'}</button>`:'<span style="font-size:11px;color:var(--text3)">No Zoom link</span>'}
+          <button class="btn bxs" onclick="openExtraModal('${x.id}')">Edit</button>
+        </div>
+      </div></div>`;}).join(''):'<div class="empty">No extra sessions yet. Add one with the button above.</div>';
+}
+function renderMyExtras(){
+  const el=document.getElementById('my-extras-content');
+  const list=extras.filter(x=>(x.classIds||[]).includes(CU.classId)).sort((a,b)=>new Date(a.date||0)-new Date(b.date||0));
+  el.innerHTML=list.length?list.map(x=>{
+    const paid=isPaidExtra(CU.id,x.id), pend=extraPending(CU.id,x.id);
+    return`<div class="card cp" style="margin-bottom:10px;border-left:3px solid ${paid?'var(--green)':'var(--gold)'}">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:14px;font-weight:600">${esc(x.title)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(x.date||'Date TBA')} ${esc(x.time||'')} · ${(+x.price).toLocaleString()} EGP</div>
+          ${x.desc?`<div style="font-size:12px;color:var(--text2);margin-top:6px">${esc(x.desc)}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          ${paid?`<span class="bge bgr">Paid</span>
+            ${x.zoomVis==='live'&&x.zoom?`<a href="${esc(x.zoom)}" target="_blank"><button class="btn bsm bblu">Join Zoom</button></a>`:'<span class="bge bgray">Link coming soon</span>'}
+            ${x.rec?`<a href="${esc(x.rec)}" target="_blank"><button class="btn bxs">Recording</button></a>`:''}`
+          :pend?'<span class="bge ba">Payment under review</span>'
+          :`<button class="btn bsm bamb" onclick="payForExtra('${x.id}')">Pay ${(+x.price).toLocaleString()} EGP</button>`}
+        </div>
+      </div></div>`;}).join(''):'<div class="empty">No extra sessions for your group right now</div>';
+}
+function payForExtra(id){
+  navTo('my-payments');
+  const x=extras.find(e=>e.id===id); const sel=document.getElementById('up-extra');
+  if(sel){sel.value=id;} if(x)document.getElementById('up-amt').value=x.price||'';
+  document.getElementById('up-lesson').value='';
+  toast2('Upload your payment screenshot for: '+(x?x.title:''));
+}
+
+const PAGE_RENDER={
+  dashboard:()=>renderDashboard(), curriculum:()=>renderCurriculum(),
+  schedule:()=>renderSchedule(), students:()=>renderStudents(),
+  'payments-admin':()=>renderPaymentsAdmin(), quizzes:()=>renderQuizzes(),
+  tests:()=>renderTests(), 'extras-admin':()=>renderExtrasAdmin(), notifications:()=>renderNotifications(),
+  settings:()=>renderSettings(),'manage-course':()=>renderManageCourse(),'my-password':()=>{},'my-schedule':()=>renderMySchedule(),
+  'my-scores':()=>renderMyScores(),'my-payments':()=>renderMyPayments(),'my-tests':()=>renderMyTests(),'my-extras':()=>renderMyExtras(),'faq':()=>renderFAQ()
+};
 
 // ═══════════════════════════════════════════════════
 // NOTIFICATIONS
@@ -2127,6 +2335,7 @@ function loadSettings(){
   document.getElementById('pay-instr-s').value=settings.payInstr||'';
 }
 function saveSett(){
+  if(CR!=='teacher')return; // only the owner/teacher edits payment settings
   settings.instapay=document.getElementById('ip-num')?.value||'';
   settings.w1=document.getElementById('ip-w1')?.value||'';
   settings.w2=document.getElementById('ip-w2')?.value||'';
@@ -2143,7 +2352,6 @@ function renderSettings(){
         <div style="flex:1">
           <div style="font-size:13px;font-weight:600;color:var(--white)">${esc(a.name)}</div>
           <div style="font-size:11px;color:var(--text3)">@${esc(a.user)} · ${esc(a.role||'Teacher')} · ${a.level==='assistant'?'Limited':'Full'} access</div>
-          ${!a.owner?`<div style="font-size:11px;color:var(--text3);margin-top:2px">Password: <span style="color:var(--text2)">${esc(a.pass||'—')}</span></div>`:''}
         </div>
         ${a.owner?'<span class="bge bgold">Owner</span>':''}
         ${(!a.owner && CR==='teacher')?`<button class="btn bxs" onclick="openEditTeacherModal('${a.id}')">Edit</button>`:''}
@@ -2154,7 +2362,7 @@ function renderSettings(){
 function openAddTeacherModal(){
   document.getElementById('m-ta-title').textContent='Add teacher / assistant';
   document.getElementById('m-add-teacher')._eid=null;
-  ['ta-n','ta-u','ta-p','ta-r'].forEach(id=>document.getElementById(id).value='');
+  ['ta-n','ta-u','ta-p','ta-r'].forEach(id=>document.getElementById(id).value='');document.getElementById('ta-p').placeholder='Min 6 characters';
   document.getElementById('ta-lvl').value='assistant';
   openModal('m-add-teacher');
 }
@@ -2165,7 +2373,7 @@ function openEditTeacherModal(id){
   document.getElementById('m-add-teacher')._eid=id;
   document.getElementById('ta-n').value=a.name||'';
   document.getElementById('ta-u').value=a.user||'';
-  document.getElementById('ta-p').value=a.pass||'';
+  document.getElementById('ta-p').value='';document.getElementById('ta-p').placeholder='Leave blank to keep current';
   document.getElementById('ta-r').value=a.role||'';
   document.getElementById('ta-lvl').value=a.level||'assistant';
   openModal('m-add-teacher');
@@ -2177,30 +2385,31 @@ function saveTeacher(){
   const p=document.getElementById('ta-p').value.trim();
   const r=document.getElementById('ta-r').value.trim();
   const lvl=document.getElementById('ta-lvl').value;
-  if(!n||!u||!p){toast2('All fields required');return;}
   const eid=document.getElementById('m-add-teacher')._eid;
+  if(!n||!u||(!eid&&!p)){toast2('Name, username and password are required');return;}
+  if(p&&p.length<6){toast2('Password must be at least 6 characters');return;}
+  if(teachers.find(a=>a.user===u&&a.id!==eid)){toast2('Username taken');return;}
   if(eid){
     const a=teachers.find(x=>x.id===eid);
-    if(a) Object.assign(a,{name:n,user:u,pass:p,role:r||'Assistant',level:lvl});
+    if(a){Object.assign(a,{name:n,user:u,role:r||'Assistant',level:lvl});if(p)a.pass=p;}
     document.getElementById('m-add-teacher')._eid=null;
   } else {
     if(teachers.find(a=>a.user===u)){toast2('Username taken');return;}
     teachers.push({id:'t'+Date.now(),name:n,user:u,pass:p,role:r||'Assistant',level:lvl,owner:false});
   }
-  sv('teachers',teachers);closeModal('m-add-teacher');renderSettings();toast2('Saved');
+  sv('teachers',teachers);teachers.forEach(x=>delete x.pass);closeModal('m-add-teacher');renderSettings();toast2('Saved');
 }
 function delTeacher(id){if(CR!=='teacher'){toast2('Only the teacher can remove accounts.');return;}if(!confirm('Remove?'))return;teachers=teachers.filter(a=>a.id!==id);sv('teachers',teachers);renderSettings();}
-function changePwd(){
+async function changePwd(){
   const cur=document.getElementById('cp-cur').value;
   const nw=document.getElementById('cp-new').value;
   const cf=document.getElementById('cp-cf').value;
-  if(CU.pass!==cur){toast2('Incorrect current password');return;}
   if(!nw||nw!==cf){toast2('New passwords do not match');return;}
-  CU.pass=nw;
-  const a=teachers.find(x=>x.id===CU.id);if(a)a.pass=nw;
-  sv('teachers',teachers);
-  // update persisted session
-  sv('session',{type:'teacher',id:CU.id});
+  if(nw.length<6){toast2('New password must be at least 6 characters');return;}
+  const {data,error}=await rpc('change_password',{p_token:TOKEN,p_current:cur,p_new:nw});
+  if(error){toast2('Could not update password. Try again.');return;}
+  if(data&&data.error==='wrong_current'){toast2('Incorrect current password');return;}
+  if(data&&data.error){toast2('New password must be at least 6 characters');return;}
   toast2('Password updated');
   ['cp-cur','cp-new','cp-cf'].forEach(id=>document.getElementById(id).value='');
 }
@@ -2212,7 +2421,7 @@ function renderMySchedule(){
   const el=document.getElementById('my-sch-content'); if(!el) return;
   const myGrp=CU.group||'online';
   const today=new Date(); today.setHours(0,0,0,0);
-  const mySess=sessions.filter(s=>String(s.grade)===String(CU.grade)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const mySess=sessionsFor(CU).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const upcoming=mySess.filter(s=>{try{return new Date(s.date)>=today}catch(e){return true;}});
   const past=mySess.filter(s=>{try{return new Date(s.date)<today}catch(e){return false;}});
   let html=`<div class="sh"><div class="st">Upcoming sessions</div></div>`;
@@ -2256,12 +2465,12 @@ function renderMySchedule(){
  html+=`<hr class="d"><div class="st" style="margin-bottom:12px">My attendance</div>`;
   html+=visibleLessons().map(l=>{
     const att=CU.attendance&&CU.attendance[l.n];
-    const paid=isPaid(CU.id,l.n);
+    const paid=isPaid(CU.id,l.n); const open=lessonOpen(l.n);
     return`<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)">
       <span class="bge ${DI[l.d]?.c||'bgray'}" style="font-size:9px;min-width:24px;justify-content:center">L${l.n}</span>
       <span style="font-size:12px;flex:1;color:var(--text)">${esc(l.title)}</span>
-      <span class="bge ${att?'bgr':'bgray'}">${att?'Attended':'Not yet'}</span>
-      ${!paid?'<span class="bge br" style="font-size:9px">Locked</span>':''}
+      <span class="bge ${att?'bgr':'bgray'}">${att?'Attended':open?'Not yet':'Upcoming'}</span>
+      ${open&&!paid?'<span class="bge br" style="font-size:9px">Locked</span>':''}
     </div>`;}).join('');
   el.innerHTML=html;
 }
@@ -2287,17 +2496,18 @@ function renderMyScores(){
     </tr>`;
   });
   html+=`</tbody></table></div>`;
-  // Exams
-  html+=`<div class="st" style="margin-bottom:12px">SAT exam scores</div>
-  <div class="card"><table class="tbl"><thead><tr><th>Exam</th><th>Math score</th><th>Total / 1600</th><th>Note</th></tr></thead><tbody>`;
-  examList.forEach(e=>{
-    const sc=(examScores[e.id]&&examScores[e.id][sid])||{};
-    html+=`<tr>
-      <td style="font-weight:500">${esc(e.title)}</td>
-      <td style="color:${sc.math?'var(--white)':'var(--text3)'}">${sc.math||'—'} / ${e.max||800}</td>
-      <td style="color:${sc.total?'var(--white)':'var(--text3)'}">${sc.total||'—'}</td>
-      <td style="color:var(--text2)">${esc(sc.note||'')}</td>
-    </tr>`;
+  // Tests
+  html+=`<div class="st" style="margin-bottom:12px">Test scores</div>
+  <div class="card"><table class="tbl"><thead><tr><th>Test</th><th>Score</th><th>%</th><th>Note</th></tr></thead><tbody>`;
+  const myT=getTests().filter(t=>(t.openFor||[]).includes(CU.classId)||((testScores[t.id]||{})[sid]));
+  if(!myT.length) html+='<tr><td colspan="4" style="color:var(--text3)">No tests yet</td></tr>';
+  myT.forEach(t=>{
+    const sc=(testScores[t.id]||{})[sid]||{}; const has=sc.score!==undefined&&sc.score!=='';
+    const pct=has?Math.round(+sc.score/(t.max||44)*100):null;
+    html+=`<tr><td style="font-weight:500">${esc(t.title)}</td>
+      <td>${has?esc(sc.score)+' / '+(t.max||44):'—'}</td>
+      <td style="color:${pct===null?'var(--text3)':pct>=70?'var(--green)':'var(--red)'}">${pct!==null?pct+'%':'—'}</td>
+      <td style="color:var(--text2)">${esc(sc.note||'')}</td></tr>`;
   });
   html+=`</tbody></table></div>`;
   el.innerHTML=html;
@@ -2346,6 +2556,7 @@ function renderMyPayments(){
         </select></div>
       <div class="fg"><label class="fl">Lesson # (if for specific lesson)</label><input type="number" id="up-lesson" min="0" max="20" placeholder="0 = general"></div>
     </div>
+    ${extras.length?`<div class="fg"><label class="fl">Paying for an extra session?</label><select id="up-extra"><option value="">No — regular lesson / course fee</option>${extras.filter(x=>!isPaidExtra(CU.id,x.id)).map(x=>`<option value="${esc(x.id)}">${esc(x.title)} — ${(+x.price).toLocaleString()} EGP</option>`).join('')}</select></div>`:''}
     <div class="fg"><label class="fl">Note (optional)</label><input type="text" id="up-note" placeholder="Transaction reference number..."></div>
     <div class="fg">
       <label class="fl">Payment screenshot *</label>
@@ -2359,11 +2570,17 @@ function renderMyPayments(){
         <img id="up-preview" class="upload-thumb" style="display:none" alt="Preview">
       </div>
     </div>
-    <button class="btn bw" onclick="submitPayRequest()">Submit payment for review</button>
-  </div>`;
+    <button class="btn bw" id="up-submit" onclick="submitPayRequest()">Submit payment for review</button>
+  </div>
+  <div id="my-pay-list"></div>`;
+  el.innerHTML=html;
+  renderMyPaymentsList();
+}
 
-  // My submitted requests
-  const myReqs=payRequests.filter(r=>r.studentId===sid);
+function renderMyPaymentsList(){
+  const el=document.getElementById('my-pay-list'); if(!el||!CU) return;
+  let html='';
+  const myReqs=payRequests.filter(r=>r.studentId===CU.id);
   if(myReqs.length){
     html+=`<div class="st" style="margin-bottom:12px">My submitted payments</div>
     <div class="card"><table class="tbl"><thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Lesson</th><th>Status</th></tr></thead><tbody>
@@ -2371,7 +2588,7 @@ function renderMyPayments(){
       <td>${r.date||'—'}</td>
       <td>${(+r.amount||0).toLocaleString()} EGP</td>
       <td>${esc(r.method||'—')}</td>
-      <td>${r.lesson?'Lesson '+r.lesson:'General'}</td>
+      <td>${r.extraId?'Extra: '+esc((extras.find(x=>x.id===r.extraId)||{}).title||'—'):r.lesson?'Lesson '+r.lesson:'General'}</td>
       <td style="color:${r.status==='approved'?'var(--green)':r.status==='rejected'?'var(--red)':'var(--amber)'}; font-weight:600">${r.status==='approved'?'Approved':r.status==='rejected'?'Rejected':'Pending review'}</td>
     </tr>`).join('')}
     </tbody></table></div>`;
@@ -2390,50 +2607,51 @@ function previewUpload(inp){
   reader.readAsDataURL(file);
 }
 
-function submitPayRequest(){
+let _submitting=false;
+async function submitPayRequest(){
+  if(_submitting) return;
   const amt=document.getElementById('up-amt').value;
   const method=document.getElementById('up-method').value;
   const lesson=document.getElementById('up-lesson').value;
   const note=document.getElementById('up-note').value.trim();
-  const fileInp=document.getElementById('up-file');
-  const prev=document.getElementById('up-preview');
-  if(!amt){toast2('Amount required');return;}
-  if(!prev.src||prev.style.display==='none'){toast2('Please upload a payment screenshot');return;}
+  const file=document.getElementById('up-file').files[0];
+  if(!amt||+amt<=0){toast2('Amount required');return;}
+  if(!file){toast2('Please upload a payment screenshot');return;}
+  if(!DB_READY){toast2('Not connected — please refresh and try again');return;}
 
-  const req={
-    id:'r'+Date.now(),
-    studentId:CU.id,
-    studentName:CU.name,
-    amount:+amt,
-    method,
-    lesson:lesson?+lesson:null,
-    note,
-    screenshot:prev.src,
-    date:new Date().toISOString().split('T')[0],
-    status:'pending',
-    submittedAt:new Date().toLocaleString('en-GB'),
-  };
-  payRequests.push(req);
-  sv('payRequests',payRequests);
-  addNotif('Payment screenshot submitted: '+CU.name+' — '+amt+' EGP via '+method+(lesson?' (Lesson '+lesson+')':''),'payment');
-  toast2('Screenshot submitted! Your teacher will review it shortly.');
-  renderMyPayments(); updateDots();
+  const btn=document.getElementById('up-submit');
+  _submitting=true; if(btn){btn.disabled=true;btn.textContent='Uploading...';}
+  try{
+    const id='r'+Date.now()+Math.random().toString(36).slice(2,6);
+    const img=await compressImage(file);
+    if(img.length>4000000){toast2('Screenshot is too large. Please crop it and try again.');return;}
+    const extraId=document.getElementById('up-extra')?document.getElementById('up-extra').value:'';
+    const ins=await rpc('pr_submit',{p_token:TOKEN,p_id:id,p_amount:+amt,p_method:method,p_lesson:lesson?+lesson:null,p_note:note,p_image:img,p_extra:extraId||null});
+    if(ins.error){toast2('Not submitted: '+ins.error.message+'. Please try again.');return;}
+    upsertLocalPR(ins.data);
+    toast2('Screenshot submitted! Your teacher will review it shortly.');
+    renderMyPayments(); updateDots();
+  } catch(e){
+    toast2('Something went wrong. Please try again.'); console.warn(e);
+  } finally {
+    _submitting=false;
+    const b=document.getElementById('up-submit'); if(b){b.disabled=false;b.textContent='Submit payment for review';}
+  }
 }
 
 // ═══════════════════════════════════════════════════
 // STUDENT PASSWORD CHANGE
 // ═══════════════════════════════════════════════════
-function changeStuPwd(){
+async function changeStuPwd(){
   const cur=document.getElementById('sp-cur').value;
   const nw=document.getElementById('sp-new').value;
   const cf=document.getElementById('sp-cf').value;
-  if(!cur||cur!==CU.pw){toast2('Incorrect current password');return;}
   if(!nw||nw.length<6){toast2('New password must be at least 6 characters');return;}
   if(nw!==cf){toast2('Passwords do not match');return;}
-  const s=students.find(x=>x.id===CU.id);
-  if(s){s.pw=nw;sv('students',students);}
-  CU.pw=nw;
-  sv('session',{type:'student',id:CU.id,ts:Date.now()});
+  const {data,error}=await rpc('change_password',{p_token:TOKEN,p_current:cur,p_new:nw});
+  if(error){toast2('Could not update password. Try again.');return;}
+  if(data&&data.error==='wrong_current'){toast2('Incorrect current password');return;}
+  if(data&&data.error){toast2('New password must be at least 6 characters');return;}
   toast2('Password updated successfully');
   ['sp-cur','sp-new','sp-cf'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('sp-str').style.width='0';
