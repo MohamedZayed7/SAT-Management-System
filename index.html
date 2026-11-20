@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808">
 <title>Eng. Mohamed Zayed — SAT Math</title>
 <link rel="icon" type="image/png" href="/favicon.ico?v=3">
 <style>
@@ -18,7 +19,6 @@
   --amber:#f59e0b;--amber-bg:#2d1a05;--amber-dim:#92400e;
   --green:#22c55e;--green-bg:#0d2219;--green-dim:#166534;
   --red:#ef4444;--red-bg:#2d0f0f;--red-dim:#991b1b;
-  --gold:#c9a84c;--gold-bg:#201508;
   --r:8px;--rl:12px;--rxl:16px;
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -274,6 +274,58 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 .db-spinner{width:32px;height:32px;border:2.5px solid var(--border2);border-top-color:var(--white);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .db-load-text{font-size:13px;color:var(--text2)}
+/* ═══ THEME + MOTION (v3) ═══ */
+:root{--accent:#c9a84c;--on-accent:#1b1b1b;--gold:var(--accent);--gold-bg:color-mix(in srgb,var(--accent) 14%,transparent);
+  --r:10px;--rl:14px;--rxl:18px;--ease:cubic-bezier(.2,.8,.2,1)}
+html[data-theme=light]{
+  --black:#ffffff;--bg:#f6f5f2;--card:#ffffff;--card2:#f3f1ec;--card3:#ebe8e1;
+  --border:#e8e5de;--border2:#dedad1;--border3:#c9c4b8;
+  --text:#1b1b1b;--text2:#5d5a53;--text3:#8a867c;--white:#141414;
+  --blue-bg:#e8f1fd;--purple-bg:#f1ecfe;--teal-bg:#e3f6f3;--amber-bg:#fdf2dc;--green-bg:#e6f6ea;--red-bg:#fdeaea;
+  --blue-dim:#9cc0f3;--purple-dim:#c4b3f7;--teal-dim:#8fd8cc;--amber-dim:#f0c77a;--green-dim:#95d9a8;--red-dim:#f1a7a7}
+html{color-scheme:dark}html[data-theme=light]{color-scheme:light}
+body{transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
+.card,.stat,.lrow,.scard,.pr-card,.manage-course-section{border-radius:var(--rl)}
+.bw,.lbtn{background:var(--accent)!important;color:var(--on-accent)!important;border-color:var(--accent)!important}
+.btn{transition:transform .12s var(--ease),background .15s,opacity .15s}.btn:active,.lbtn:active,.ftab:active,.sbi:active{transform:scale(.96)}
+.ftab.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.sbi.active{border-left-color:var(--accent)}.pr-w,.pb2{background:var(--accent)}
+.prb,.pb2{animation:grow 1s var(--ease) both}
+@keyframes grow{from{width:0}}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.97)}60%{transform:scale(1.025)}100%{transform:scale(1)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.in{animation:up .45s var(--ease) both}
+.page.active{animation:fadein .25s ease both}
+.ovl.open .modal{animation:up .3s var(--ease) both}
+.toast{background:var(--card3);border-color:var(--accent)}
+/* bottom nav (phones) */
+.bnav{display:none}
+@media(max-width:768px){
+  .ham-btn{display:none!important}
+  .ph{padding:14px!important}
+  .main{padding-bottom:72px}
+  .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--black);border-top:1px solid var(--border);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));justify-content:space-around}
+  .bni{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--text3);padding:4px 8px;border-radius:10px;cursor:pointer;min-width:56px;transition:color .15s,transform .12s}
+  .bni svg{width:20px;height:20px}.bni.on{color:var(--accent)}.bni:active{transform:scale(.92)}
+  .toast{bottom:84px;left:16px;right:16px;max-width:none}
+  #dash-left,#dash-right{min-width:0}
+  .cd-row{flex-wrap:nowrap;gap:4px}.cd-colon{display:none}.cd-cell{flex:1;min-width:0;padding:8px 2px}.cd-n{font-size:24px}
+  .pb3>div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+}
+/* score predictor */
+.hero{background:var(--accent);color:var(--on-accent);border-radius:var(--rxl);padding:22px;text-align:center;position:relative;overflow:hidden}
+.hero .hn{font-size:56px;font-weight:700;line-height:1;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.hero .hl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.12)}
+input[type=range]{accent-color:var(--accent);padding:0;border:none;background:transparent;height:32px;width:100%;display:block;margin-top:6px}
+.pr-b{background:var(--accent)}
+.seg{display:flex;background:var(--card2);border-radius:10px;padding:3px;gap:3px}.seg span{flex:1;text-align:center;padding:8px 0;border-radius:8px;cursor:pointer;font-size:13px;transition:background .15s}
+.seg .on{background:var(--accent);color:var(--on-accent);font-weight:600}
+.sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;display:inline-block;margin:0 6px 6px 0;transition:transform .12s}.sw.on{border-color:var(--white)}.sw:active{transform:scale(.9)}
+.thsw{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 <!-- Supabase JS v2 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -297,8 +349,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 <div class="lb">
   <div class="lb-brand">
     <div class="lb-eng">Instructor</div>
-    <div class="lb-name">Mohamed Zayed</div>
-    <div class="lb-sub">SAT Math — Management System</div>
+    <div class="lb-name" id="lb-name">Mohamed Zayed</div>
+    <div class="lb-sub" id="lb-sub">SAT Math — Management System</div>
   </div>
   <div class="lbox">
     <div class="ltabs">
@@ -332,7 +384,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 <div class="sb">
   <div class="sb-brand">
     <div class="sb-badge">Instructor</div>
-    <div class="sb-name">Mohamed Zayed</div>
+    <div class="sb-name" id="sb-name">Mohamed Zayed</div>
     <div class="sb-role" id="sb-role"></div>
   </div>
   <div class="sbnav">
@@ -362,6 +414,10 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6 6.5C6 5.67 6.9 5 8 5s2 .67 2 1.5c0 .7-.5 1.3-1.2 1.6L8 8.5V9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="11.5" r=".7" fill="currentColor"/></svg>
       Quizzes
     </div>
+    <div class="sbi t-only" data-p="predictor" onclick="nav(this)">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="1.5" width="12" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="4.5" y="4" width="7" height="2.5" rx=".6" fill="currentColor" opacity=".6"/><circle cx="5.5" cy="9.5" r=".9" fill="currentColor"/><circle cx="8" cy="9.5" r=".9" fill="currentColor"/><circle cx="10.5" cy="9.5" r=".9" fill="currentColor"/><circle cx="5.5" cy="12" r=".9" fill="currentColor"/><circle cx="8" cy="12" r=".9" fill="currentColor"/><circle cx="10.5" cy="12" r=".9" fill="currentColor"/></svg>
+      Score predictor
+    </div>
     <div class="sbi t-only" data-p="notifications" onclick="nav(this)">
       <svg viewBox="0 0 16 16" fill="none"><path d="M8 1C5.24 1 3 3.24 3 6v4l-1.5 2h13L13 10V6c0-2.76-2.24-5-5-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 13.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       Notifications
@@ -384,6 +440,10 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>
       My Schedule
     </div>
+    <div class="sbi s-only" data-p="my-score" onclick="nav(this)" style="display:none">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="1.5" width="12" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="4.5" y="4" width="7" height="2.5" rx=".6" fill="currentColor" opacity=".6"/><circle cx="5.5" cy="9.5" r=".9" fill="currentColor"/><circle cx="8" cy="9.5" r=".9" fill="currentColor"/><circle cx="10.5" cy="9.5" r=".9" fill="currentColor"/><circle cx="5.5" cy="12" r=".9" fill="currentColor"/><circle cx="8" cy="12" r=".9" fill="currentColor"/><circle cx="10.5" cy="12" r=".9" fill="currentColor"/></svg>
+      Score predictor
+    </div>
     <div class="sbi s-only" data-p="my-scores" onclick="nav(this)" style="display:none">
       <svg viewBox="0 0 16 16" fill="none"><polyline points="2,12 5,8 9,10 14,4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       My Scores
@@ -398,6 +458,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     </div>
   </div>
   <div class="sb-foot">
+    <div class="thsw" onclick="toggleTheme()" id="thsw"></div>
     <div class="sb-user" id="sb-user"></div>
     <div class="sb-id" id="sb-id-label"></div>
     <div class="sbpt" id="sbpt"></div>
@@ -480,6 +541,12 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   <div class="pb3" id="quizzes-list"></div>
 </div>
 
+<!-- SCORE PREDICTOR (teacher) -->
+<div class="page t-only" id="page-predictor">
+  <div class="ph"><div><div class="ph-t">Score predictor</div><div class="ph-s">Check students' Bluebook results · see how accurate the predictor is</div></div></div>
+  <div class="pb3" id="predictor-content"></div>
+</div>
+
 <!-- NOTIFICATIONS -->
 <div class="page t-only" id="page-notifications">
   <div class="ph"><div><div class="ph-t">Notifications</div><div class="ph-s">Payment alerts and system events</div></div>
@@ -491,7 +558,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 <div class="page t-only" id="page-settings">
   <div class="ph"><div><div class="ph-t">Settings</div><div class="ph-s">Accounts · passwords · payment details</div></div></div>
   <div class="pb3">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:860px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;max-width:900px">
       <div>
         <div class="card cp" style="margin-bottom:14px">
           <div class="st" style="margin-bottom:14px">Teacher accounts</div>
@@ -506,6 +573,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
           <button class="btn bw" onclick="changePwd()">Update password</button>
         </div>
       </div>
+      <div>
+      <div class="card cp" id="brand-card" style="margin-bottom:14px"></div>
       <div class="card cp">
         <div class="st" style="margin-bottom:14px">Payment details (displayed to students)</div>
         <div class="fg"><label class="fl">Instapay number / name</label><input type="text" id="ip-num" placeholder="01X XXXX XXXX — Mohamed Zayed" oninput="saveSett()"></div>
@@ -518,6 +587,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
         <div class="fg"><label class="fl">Payment instructions (shown to students)</label>
           <textarea id="pay-instr-s" placeholder="Send transfer to Instapay: 01X XXXX XXXX — then upload screenshot here." oninput="saveSett()"></textarea></div>
         <button class="btn bw" onclick="saveSett();toast2('Settings saved')">Save settings</button>
+      </div>
       </div>
     </div>
   </div>
@@ -571,6 +641,12 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
 </div>
 
+<!-- SCORE PREDICTOR (student) -->
+<div class="page" id="page-my-score" data-role="student">
+  <div class="ph"><div><div class="ph-t">Score predictor</div><div class="ph-s">Estimate your Digital SAT Math score</div></div></div>
+  <div class="pb3" id="my-score-content"></div>
+</div>
+
 <!-- MY SCORES (student) -->
 <div class="page" id="page-my-scores" data-role="student">
   <div class="ph"><div><div class="ph-t">My Scores</div><div class="ph-s">Quiz results</div></div></div>
@@ -605,7 +681,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
   <div class="fg2">
     <div class="fg"><label class="fl">Login password <span id="st-pw-req" style="color:var(--red)">*</span> <span id="st-pw-hint" style="font-size:11px;color:var(--text3)">(min 6 chars)</span></label>
-      <input type="text" id="st-pw" placeholder="Set a secure password" autocomplete="new-password" oninput="showPwStr(this,'st-pw-str')">
+      <div style="display:flex;gap:6px"><input type="text" id="st-pw" placeholder="Set a secure password" autocomplete="new-password" oninput="showPwStr(this,'st-pw-str')">
+      <button type="button" class="btn bsm" onclick="const e=document.getElementById('st-pw');e.value=genPassword();showPwStr(e,'st-pw-str')">Generate</button></div>
       <div id="st-pw-str" class="pw-str" style="width:0"></div></div>
     <div class="fg"><label class="fl">Mode</label>
       <select id="st-grp"><option value="online">Online</option><option value="physical">Physical</option><option value="both">Online + Physical</option></select></div>
@@ -723,6 +800,14 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     <button class="btn" onclick="closeModal('m-pay')">Cancel</button>
     <button class="btn bw" onclick="savePayment()">Record &amp; notify</button>
   </div>
+</div>
+</div>
+
+<div class="ovl" id="m-share">
+<div class="modal" style="max-width:480px">
+  <div class="mtit">Send login details</div>
+  <div id="share-body"></div>
+  <div class="mfoot" id="share-foot"></div>
 </div>
 </div>
 
@@ -857,6 +942,7 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
 </div>
 </div>
+<nav class="bnav" id="bnav"></nav>
 <div class="toast" id="toast-el"></div>
 
 <script>
@@ -928,7 +1014,7 @@ let DB_READY=false;
 const K='mz4_';
 function _lsSet(k,v){try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}}
 function _lsGet(k,d){try{const v=localStorage.getItem(K+k);return v!==null?JSON.parse(v):d}catch(e){return d}}
-try{Object.keys(localStorage).filter(x=>x.startsWith(K)&&x!==K+'token').forEach(x=>localStorage.removeItem(x));}catch(e){} // wipe old caches (they held passwords)
+try{Object.keys(localStorage).filter(x=>x.startsWith(K)&&![K+'token',K+'theme',K+'brand'].includes(x)).forEach(x=>localStorage.removeItem(x));}catch(e){} // wipe old caches (they held passwords)
 let TOKEN=_lsGet('token',null);
 function ld(k,d){return d;}
 
@@ -972,11 +1058,11 @@ function compressImage(file){
   return new Promise((res,rej)=>{
     const img=new Image(); const url=URL.createObjectURL(file);
     img.onload=()=>{
-      const max=1400; let w=img.width,h=img.height;
+      const max=1100; let w=img.width,h=img.height;
       if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}
       const c=document.createElement('canvas');c.width=w;c.height=h;
       const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,w,h);g.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);
-      res(c.toDataURL('image/jpeg',0.8));
+      res(c.toDataURL('image/jpeg',0.7)); // ~100–150 KB: readable, keeps the free database small
     };
     img.onerror=()=>{URL.revokeObjectURL(url);
       // browser can't decode (e.g. HEIC on some phones): send as-is if small enough
@@ -988,7 +1074,7 @@ function compressImage(file){
 // Load all app data the logged-in user is allowed to see
 async function loadAllFromDB(){
   if(!TOKEN)return false;
-  const {data:m,error}=await rpc('app_load',{p_token:TOKEN});
+  const {data:m,error}=await rpc('app_load_v2',{p_token:TOKEN});
   if(error||!m){console.warn('DB load:',error&&error.message);return false;}
   students=m.students||[]; teachers=m.teachers||[];
   if(m.lessons)LESSONS=m.lessons; if(m.quizzes)QUIZZES=m.quizzes;
@@ -996,7 +1082,8 @@ async function loadAllFromDB(){
   payments=m.payments||[]; sessions=m.sessions||[]; notifications=m.notifications||[];
   settings=m.settings||settings; if(m.faqData)faqData=m.faqData;
   extras=m.extras||[]; tests=m.tests||null; testScores=m.testScores||{};
-  classes=m.classes||[]; classProgress=m.classProgress||{};
+  classes=m.classes||[]; classProgress=m.classProgress||{}; myRate=m.myRate||null;
+  await loadBB();
   // keep CU pointing at the fresh record
   if(CU){const fresh=(CR==='student'?students:teachers).find(x=>x.id===CU.id);if(fresh)CU=fresh;}
   return true;
@@ -1019,7 +1106,8 @@ function handleChange(payload){
   _syncT=setTimeout(async()=>{
     const ks=[..._syncKeys]; _syncKeys.clear();
     if(ks.includes('pay_requests'))await loadPayRequests();
-    if(ks.some(x=>x!=='pay_requests'))await loadAllFromDB();
+    if(ks.includes('bb_results'))await loadBB();
+    if(ks.some(x=>x!=='pay_requests'&&x!=='bb_results'))await loadAllFromDB();
     rerenderCurrent();
   },400);
 }
@@ -1054,6 +1142,7 @@ let payRequests   = [];
 let sessions      = ld('sessions',[]);
 let notifications = ld('notifications',[]);
 let teachers      = [];
+let myRate=null, bbResults=[], bbModel=[];
 let classes       = [];   // groups, e.g. {id:'c1',name:'G11 — December',grade:'11',satDate:'2026-12-05'}
 let classProgress = {};   // {classId:{lessonNum:'pending'|'progress'|'done'}}
 let extras        = [];   // paid extra sessions
@@ -1132,7 +1221,7 @@ function launchApp(){
 
   if(CR==='teacher'||CR==='assistant') loadSettings();
 const faqBtn=document.getElementById('faq-add-btn');if(faqBtn)faqBtn.style.display=(CR==='teacher'||CR==='assistant')?'':'none';
-  renderDashboard(); updateSbProg(); updateDots();
+  applyBrand(); buildBnav(); renderDashboard(); updateSbProg(); updateDots(); animateIn();
 }
 
 function logout(){
@@ -1158,7 +1247,7 @@ function logout(){
 function nav(el){
   const p=el.dataset.p;
   // ── RBAC: block students from teacher-only pages ──
-  const teacherPages=['schedule','students','payments-admin','quizzes','notifications','manage-course','settings'];
+  const teacherPages=['predictor','schedule','students','payments-admin','quizzes','notifications','manage-course','settings'];
   if(CR==='student' && teacherPages.includes(p)){
     toast2('Access denied.');
     return;
@@ -1171,6 +1260,7 @@ function nav(el){
   const ma=document.querySelector('.main');if(ma)ma.scrollTo({top:0,behavior:'smooth'});
   closeMobSb();
   if(PAGE_RENDER[p]) PAGE_RENDER[p]();
+  animateIn(); syncBnav();
 }
 function navTo(p){const el=document.querySelector(`.sbi[data-p="${p}"]`);if(el)nav(el);}
 
@@ -1259,7 +1349,7 @@ function renderDashboard(){
     if(CR==='teacher'){
       const totalFee=students.reduce((s,st)=>s+(+st.fee||0),0);
       const totalPaid=payments.reduce((s,p)=>s+(+p.amount||0),0);
-      const pending=payRequests.filter(r=>r.status==='pending').length;
+      const pending=payRequests.filter(r=>r.status==='pending').length+bbResults.filter(r=>r.status==='pending').length;
       const unread=notifications.filter(n=>!n.read).length;
       document.getElementById('dash-stats-row').innerHTML=`<div class="stats4">
         <div class="stat"><div class="sv">${students.length}</div><div class="sl">Students enrolled</div></div>
@@ -1361,7 +1451,11 @@ function renderDashboard(){
       try{return new Date(s.date)>=today}catch(e){return false}
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
 
-    document.getElementById('dash-left').innerHTML=cdHtml+
+    const lastBB=bbResults.filter(r=>r.status==='approved').slice(-1)[0];
+    const bbHtml=`<div class="card cp" style="margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="navTo('my-score')">
+      <div style="flex:1"><div style="font-size:12px;color:var(--text3)">${lastBB?'Latest Bluebook score':'Score predictor'}</div><div style="font-size:13px;margin-top:2px">${lastBB?esc(lastBB.test_name||''):'Estimate your SAT Math score'}</div></div>
+      ${lastBB?`<div class="sv" style="color:var(--accent)">${lastBB.score}</div>`:'<span class="btn bsm bw">Open</span>'}</div>`;
+    document.getElementById('dash-left').innerHTML=cdHtml+bbHtml+
       `<div class="st" style="margin-bottom:10px">Upcoming sessions</div>`+
       (upSess.length?upSess.map(s=>{
         const paid=canAccessSess(CU.id,s);
@@ -1646,6 +1740,7 @@ function openAddStudent(){
   document.getElementById('m-add-student')._eid=null;
   ['st-name','st-id','st-phone','st-pw','st-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('st-pw').placeholder='Set a secure password';document.getElementById('st-pw-hint').textContent='(min 6 chars)';
+  document.getElementById('st-id').value=nextStudentId(); const pwe=document.getElementById('st-pw'); pwe.value=genPassword(); showPwStr(pwe,'st-pw-str');
   document.getElementById('st-fee').value='';
   document.getElementById('st-grp').value='online';   document.getElementById('st-grade').value='10';
   fillClassSelect('st-class',curClass||'');
@@ -1679,11 +1774,14 @@ const group=document.getElementById('st-grp').value;
     const s=students.find(x=>x.id===eid); if(s){Object.assign(s,{name,id,phone,fee,group,grade,classId,satDate,satCustom,notes});if(pw)s.pw=pw;}
   } else {
     if(students.find(x=>x.id===id)){toast2('ID already exists');return;}
+    const cap=rateCard().max||8, inGrp=students.filter(x=>x.classId&&x.classId===classId).length;
+    if(classId&&inGrp>=cap&&!confirm(clsName(classId)+' already has '+inGrp+' students (max '+cap+'). Add anyway?'))return;
     students.push({id,name,phone,pw,fee,group,grade,classId,satDate,satCustom,notes,attendance:{}});
     addNotif('New student registered: '+name,'info');
   }
   sv('students',students); students.forEach(x=>delete x.pw); // password is stored scrambled on the server only
-  closeModal('m-add-student'); renderStudents(); toast2(pw?'Student saved — send them their ID and password':'Student saved');
+  closeModal('m-add-student'); renderStudents(); toast2('Student saved');
+  if(pw) showLoginShare({name,id,pw,phone});
 }
 
 function openStuView(sid){
@@ -2054,7 +2152,7 @@ function renderClassesList(){
       return`<tr><td><input type="text" value="${esc(c.name)}" onchange="updClass('${c.id}','name',this.value)"></td>
       <td>G${esc(c.grade)}</td>
       <td><select onchange="updClass('${c.id}','satDate',this.value)"><option value="">Not set</option>${SAT_DATES.map(x=>`<option value="${x.d}" ${x.d===c.satDate?'selected':''}>${x.l}</option>`).join('')}</select></td>
-      <td>${n}</td><td>${d}/${LESSONS.length}</td>
+      <td>${n} / ${rateCard().max||8}<div style="font-size:10px;color:var(--text3)">${rateFor(Math.max(n,1))} EGP each</div></td><td>${d}/${LESSONS.length}</td>
       <td><button class="btn bxs bd" onclick="delClass('${c.id}')">Del</button></td></tr>`;}).join('')}</tbody></table>`
     :'<div class="empty" style="padding:14px">No groups yet</div>';
 }
@@ -2072,13 +2170,243 @@ function delClass(id){
   sv('classes',classes); sv('classProgress',classProgress); if(curClass===id)curClass=''; renderClassesList();
 }
 
+// ═══════════════════════════════════════════════════
+// THEME, BRANDING, ANIMATIONS, BOTTOM NAV
+// ═══════════════════════════════════════════════════
+const ACCENTS=[['#c9a84c','#1b1b1b','Gold'],['#3b82f6','#ffffff','Blue'],['#14b8a6','#06231f','Teal'],['#8b5cf6','#ffffff','Purple'],['#e11d48','#ffffff','Rose'],['#22c55e','#06210f','Green'],['#f97316','#1b1b1b','Orange']];
+function onColor(hex){const h=hex.replace('#','');const r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);return (r*299+g*587+b*114)/1000>150?'#1b1b1b':'#ffffff';}
+function getBrand(){return (settings&&settings.brand)||_lsGet('brand',null)||{name:'Mohamed Zayed',sub:'SAT Math',accent:'#c9a84c',theme:'dark'};}
+function applyBrand(b){
+  b=b||getBrand(); _lsSet('brand',b);
+  const r=document.documentElement.style;
+  r.setProperty('--accent',b.accent||'#c9a84c'); r.setProperty('--on-accent',onColor(b.accent||'#c9a84c'));
+  const nm=b.name||'Mohamed Zayed';
+  ['lb-name','sb-name'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=nm;});
+  const ls=document.getElementById('lb-sub');if(ls)ls.textContent=(b.sub||'SAT Math')+' — Student Portal';
+  document.title=nm+' — '+(b.sub||'SAT Math');
+  applyTheme();
+}
+function curTheme(){return _lsGet('theme',null)||getBrand().theme||'dark';}
+function applyTheme(){
+  const t=curTheme(); document.documentElement.dataset.theme=t;
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#ffffff':'#080808';
+  const sw=document.getElementById('thsw');
+  if(sw)sw.innerHTML=t==='light'?'<span style="font-size:14px">☾</span> Switch to dark':'<span style="font-size:14px">☀</span> Switch to light';
+}
+function toggleTheme(){_lsSet('theme',curTheme()==='light'?'dark':'light');applyTheme();}
+
+// staggered entrance for the active page
+function animateIn(){
+  const pg=document.querySelector('.page.active'); if(!pg)return;
+  const els=pg.querySelectorAll('.pb3 .card,.pb3 .stat,.pb3 .lrow,.pb3 .scard,.pb3 .pr-card,.pb3 .qdiv,.pb3 .cd-widget,.pb3 .hero,.pb3 .manage-course-section');
+  els.forEach((e,i)=>{if(i>24)return;e.classList.remove('in');void e.offsetWidth;e.style.animationDelay=Math.min(i*45,500)+'ms';e.classList.add('in');});
+  pg.querySelectorAll('.sv').forEach(countUp);
+}
+function countUp(el){
+  const txt=el.firstChild&&el.firstChild.nodeType===3?el.firstChild.textContent:el.textContent;
+  const raw=String(txt).trim(); if(!/^[\d,]+$/.test(raw))return;
+  const tgt=+raw.replace(/,/g,''); if(!tgt)return; const comma=raw.includes(',')||tgt>=1000;
+  const node=el.firstChild&&el.firstChild.nodeType===3?el.firstChild:null; const t0=performance.now();
+  (function f(n){const p=Math.min(1,(n-t0)/800),v=Math.round(tgt*(1-Math.pow(1-p,3)));const s=comma?v.toLocaleString():String(v);
+    if(node)node.textContent=s;else el.textContent=s; if(p<1)requestAnimationFrame(f);})(t0);
+}
+function buildBnav(){
+  const bn=document.getElementById('bnav'); if(!bn)return;
+  const items=CR==='student'?[['dashboard','Home'],['curriculum','Lessons'],['my-score','Score'],['my-payments','Pay']]
+    :[['dashboard','Home'],['students','Students'],[CR==='teacher'?'payments-admin':'schedule',CR==='teacher'?'Payments':'Schedule'],['curriculum','Lessons']];
+  const icon=p=>{const s=document.querySelector(`.sbi[data-p="${p}"] svg`);return s?s.outerHTML:'';};
+  bn.innerHTML=items.map(([p,l])=>`<div class="bni" data-bp="${p}" onclick="navTo('${p}')">${icon(p)}<span>${l}</span></div>`).join('')+
+    `<div class="bni" onclick="toggleMobSb()"><svg viewBox="0 0 16 16" fill="none"><circle cx="3" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="13" cy="8" r="1.4" fill="currentColor"/></svg><span>More</span></div>`;
+  syncBnav();
+}
+function syncBnav(){const p=_curPage();document.querySelectorAll('.bni').forEach(b=>b.classList.toggle('on',b.dataset.bp===p));}
+
+// ═══════════════════════════════════════════════════
+// BRANDING + RATE CARD (Settings)
+// ═══════════════════════════════════════════════════
+function rateCard(){if(!settings.rateCard)settings.rateCard={max:8,tiers:[{from:2,to:3,price:550},{from:4,to:8,price:450}]};return settings.rateCard;}
+function rateFor(n){const rc=rateCard();const t=rc.tiers.find(t=>n>=t.from&&n<=t.to);if(t)return t.price;
+  return rc.tiers.slice().sort((a,b)=>Math.abs(a.from-n)-Math.abs(b.from-n))[0]?.price||'';}
+function renderBrandCard(){
+  const el=document.getElementById('brand-card'); if(!el)return;
+  if(CR!=='teacher'){el.style.display='none';return;}
+  const b=getBrand(); const rc=rateCard();
+  el.innerHTML=`<div class="st" style="margin-bottom:14px">Branding</div>
+    <div class="fg"><label class="fl">Name shown on the site</label><input type="text" value="${esc(b.name||'')}" onchange="setBrand('name',this.value)"></div>
+    <div class="fg"><label class="fl">Subtitle</label><input type="text" value="${esc(b.sub||'')}" placeholder="SAT Math" onchange="setBrand('sub',this.value)"></div>
+    <div class="fg"><label class="fl">Main colour</label><div>${ACCENTS.map(a=>`<span class="sw ${(b.accent||'').toLowerCase()===a[0]?'on':''}" title="${a[2]}" style="background:${a[0]}" onclick="setBrand('accent','${a[0]}')"></span>`).join('')}
+      <label class="sw" title="Custom colour" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);position:relative;overflow:hidden"><input type="color" value="${esc(b.accent||'#c9a84c')}" onchange="setBrand('accent',this.value)" style="opacity:0;position:absolute;inset:0;cursor:pointer"></label></div></div>
+    <div class="fg"><label class="fl">Default theme for everyone (each person can still switch)</label>
+      <div class="seg" style="max-width:260px"><span class="${b.theme!=='light'?'on':''}" onclick="setBrand('theme','dark')">Dark</span><span class="${b.theme==='light'?'on':''}" onclick="setBrand('theme','light')">Light</span></div></div>
+    <hr class="d">
+    <div class="st" style="margin-bottom:10px">Rate card <span style="font-size:11px;color:var(--text3);font-weight:400">— teacher only, students see just their price</span></div>
+    <table class="tbl"><thead><tr><th>Students in group</th><th>Price per session (EGP)</th><th></th></tr></thead><tbody>
+    ${rc.tiers.map((t,i)=>`<tr><td><input type="number" min="1" value="${t.from}" style="width:60px" onchange="setTier(${i},'from',this.value)"> – <input type="number" min="1" value="${t.to}" style="width:60px" onchange="setTier(${i},'to',this.value)"></td>
+      <td><input type="number" min="0" value="${t.price}" onchange="setTier(${i},'price',this.value)"></td><td><button class="btn bxs bd" onclick="delTier(${i})">Del</button></td></tr>`).join('')}
+    </tbody></table>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap">
+      <button class="btn bsm" onclick="addTier()">+ Add tier</button>
+      <span style="font-size:12px;color:var(--text2)">Max students per group</span><input type="number" min="1" value="${rc.max||8}" style="width:70px" onchange="rateCard().max=+this.value;sv('settings',settings);toast2('Saved')">
+    </div>`;
+}
+function setBrand(k,v){if(!settings.brand)settings.brand={...getBrand()};settings.brand[k]=v;if(k==='theme')_lsSet('theme',null);sv('settings',settings);applyBrand(settings.brand);renderBrandCard();toast2('Saved');}
+function setTier(i,f,v){rateCard().tiers[i][f]=+v;sv('settings',settings);toast2('Saved');}
+function addTier(){rateCard().tiers.push({from:1,to:1,price:600});sv('settings',settings);renderBrandCard();}
+function delTier(i){rateCard().tiers.splice(i,1);sv('settings',settings);renderBrandCard();}
+
+// ═══════════════════════════════════════════════════
+// STUDENT LOGIN SHARING (auto ID/password + WhatsApp)
+// ═══════════════════════════════════════════════════
+function nextStudentId(){const nums=students.map(s=>parseInt(s.id,10)).filter(n=>!isNaN(n));return String(nums.length?Math.max(...nums)+1:101);}
+function genPassword(){const c='abcdefghjkmnpqrstuvwxyz23456789';const a=new Uint32Array(6);crypto.getRandomValues(a);const p=[...a].map(x=>c[x%c.length]).join('');return p.slice(0,3)+'-'+p.slice(3);}
+function waNumber(ph){let d=String(ph||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.startsWith('0'))d='20'+d.slice(1);else if(d.length===10&&d.startsWith('1'))d='20'+d;return d;}
+function showLoginShare(st){
+  const url=location.origin+location.pathname;
+  const msg=`Hello ${st.name.split(' ')[0]}! 👋\nYour SAT Math portal login:\n\nWebsite: ${url}\nStudent ID: ${st.id}\nPassword: ${st.pw}\n\nChoose "Student login", then sign in. You can change your password from the menu.`;
+  document.getElementById('share-body').innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Send these details to <b style="color:var(--white)">${esc(st.name)}</b>. The password is shown only now — it's stored scrambled.</div>
+    <div class="card cp" style="font-family:ui-monospace,monospace;font-size:13px;line-height:1.8;white-space:pre-wrap">${esc(msg)}</div>`;
+  const wa=waNumber(st.phone);
+  document.getElementById('share-foot').innerHTML=`<button class="btn" onclick="navigator.clipboard.writeText(${JSON.stringify(msg).replace(/"/g,'&quot;')}).then(()=>toast2('Copied'))">Copy</button>
+    ${wa?`<a href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener"><button class="btn bw">Send on WhatsApp</button></a>`:''}
+    <button class="btn" onclick="closeModal('m-share')">Done</button>`;
+  openModal('m-share');
+}
+
+// ═══════════════════════════════════════════════════
+// SCORE PREDICTOR (Digital SAT Math)
+// Baseline: College Board official raw→score table (SAT Practice Test 7, paper/linear, Math raw 0–54).
+// Adaptive adjustment by Module 2 route, then self-correction from teacher-approved Bluebook results.
+// ═══════════════════════════════════════════════════
+const LIN54=[[200,200],[210,230],[210,240],[210,250],[210,260],[210,270],[210,280],[230,290],[250,300],[260,310],[280,340],[300,360],[320,360],[330,370],[340,380],[350,390],[360,400],[360,400],[370,410],[380,420],[380,420],[390,430],[400,440],[410,450],[420,460],[430,470],[430,470],[440,480],[450,490],[460,500],[480,520],[490,530],[500,540],[500,560],[510,570],[520,580],[530,590],[540,600],[550,610],[560,620],[580,640],[590,650],[600,660],[610,670],[630,690],[640,700],[650,710],[670,730],[690,750],[700,760],[720,770],[750,780],[770,800],[780,800],[800,800]];
+const EASY_CAP=620, EASY_SHIFT=30;
+function linMid(r){r=Math.max(0,Math.min(54,r));const i=Math.floor(r),f=r-i;const a=(LIN54[i][0]+LIN54[i][1])/2,b=i<54?(LIN54[i+1][0]+LIN54[i+1][1])/2:a;return a+(b-a)*f;}
+function baseScore(m1,hard,m2){const mid=linMid((m1+m2)*54/44);return hard?mid:Math.min(mid-EASY_SHIFT,EASY_CAP);}
+function predictWith(data,m1,hard,m2){
+  let base=baseScore(m1,hard,m2), sw=0, sr=0;
+  data.forEach(d=>{if(d[1]!==(hard?1:0))return;const dist=Math.abs(d[0]-m1)+Math.abs(d[2]-m2);const w=1/(1+dist*dist/4);
+    sw+=w; sr+=w*(d[3]-baseScore(d[0],!!d[1],d[2]));});
+  const est=base+(sw?sr/(sw+1):0);   // shrinks toward the official table when little data
+  return Math.max(200,Math.min(800,Math.round(est/10)*10));
+}
+function predAccuracy(){ // leave-one-out on approved Bluebook results
+  const D=bbModel; if(D.length<3)return null;
+  let within=0,abs=0; D.forEach((d,i)=>{const p=predictWith(D.filter((_,j)=>j!==i),d[0],!!d[1],d[2]);const e=Math.abs(p-d[3]);abs+=e;if(e<=30)within++;});
+  return {n:D.length,pct:Math.round(within/D.length*100),mae:Math.round(abs/D.length)};
+}
+function predict(m1,hard,m2){
+  const est=predictWith(bbModel,m1,hard,m2); const acc=predAccuracy();
+  const half=acc&&acc.n>=8?Math.max(20,Math.round(acc.mae/10)*10):30;
+  return {est,lo:Math.max(200,est-half),hi:Math.min(800,est+half)};
+}
+async function loadBB(){
+  if(!TOKEN)return;
+  const [a,b]=await Promise.all([rpc('bb_list',{p_token:TOKEN}),rpc('bb_model',{p_token:TOKEN})]);
+  if(!a.error)bbResults=a.data||[]; if(!b.error)bbModel=b.data||[];
+}
+const PS={m1:15,hard:true,m2:14};
+function predCard(){
+  const r=predict(PS.m1,PS.hard,PS.m2);
+  return `<div class="hero" id="pred-hero"><div class="hl">Estimated math score</div><div class="hn" id="pred-n">${r.est}</div>
+    <div style="font-size:12px;opacity:.85;margin-top:6px" id="pred-r">Likely ${r.lo} – ${r.hi}</div></div>
+  <div class="card cp" style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>Module 1 correct</span><b style="color:var(--accent)" id="pv1">${PS.m1} / 22</b></div>
+    <input type="range" min="0" max="22" step="1" value="${PS.m1}" oninput="PS.m1=+this.value;predUpd()"></div>
+  <div class="card cp"><div style="font-size:13px;margin-bottom:8px">Module 2 you got</div>
+    <div class="seg"><span id="rt-e" class="${PS.hard?'':'on'}" onclick="PS.hard=false;predUpd()">Easier</span><span id="rt-h" class="${PS.hard?'on':''}" onclick="PS.hard=true;predUpd()">Harder</span></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px">Doing well in Module 1 gives you the harder Module 2, which can reach higher scores.</div></div>
+  <div class="card cp"><div style="display:flex;justify-content:space-between;font-size:13px"><span>Module 2 correct</span><b style="color:var(--accent)" id="pv2">${PS.m2} / 22</b></div>
+    <input type="range" min="0" max="22" step="1" value="${PS.m2}" oninput="PS.m2=+this.value;predUpd()"></div>`;
+}
+let _pAnim=null;
+function predUpd(){
+  const r=predict(PS.m1,PS.hard,PS.m2);
+  document.getElementById('pv1').textContent=PS.m1+' / 22'; document.getElementById('pv2').textContent=PS.m2+' / 22';
+  document.getElementById('rt-e').className=PS.hard?'':'on'; document.getElementById('rt-h').className=PS.hard?'on':'';
+  document.getElementById('pred-r').textContent=`Likely ${r.lo} – ${r.hi}`;
+  const el=document.getElementById('pred-n'); const from=+el.textContent||r.est; const t0=performance.now(); cancelAnimationFrame(_pAnim);
+  (function f(n){const p=Math.min(1,(n-t0)/350);el.textContent=Math.round((from+(r.est-from)*p)/10)*10;if(p<1)_pAnim=requestAnimationFrame(f);})(t0);
+  const h=document.getElementById('pred-hero'); h.style.animation='none'; void h.offsetWidth; h.style.animation='pop .35s var(--ease)';
+}
+function bbStatus(s){return s==='approved'?'<span class="bge bgr">Approved</span>':s==='rejected'?'<span class="bge br">Rejected</span>':'<span class="bge ba">Pending review</span>';}
+function renderMyScore(){
+  const el=document.getElementById('my-score-content');
+  const mine=bbResults.slice().reverse();
+  const appr=bbResults.filter(r=>r.status==='approved');
+  const mx=Math.max(800,...appr.map(r=>r.score));
+  el.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start">
+  <div>${predCard()}<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">An estimate, not an official score. It gets more accurate as real Bluebook results are added.</div></div>
+  <div>
+    <div class="card cp" style="margin-bottom:12px">
+      <div class="st" style="margin-bottom:4px">Add my Bluebook result</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">After a Bluebook practice test, enter your numbers and a screenshot of your score page. Your teacher checks it.</div>
+      <div class="fg"><label class="fl">Practice test</label><input type="text" id="bb-test" placeholder="Bluebook Practice Test 4"></div>
+      <div class="fg3">
+        <div class="fg"><label class="fl">Module 1 correct</label><input type="number" id="bb-m1" min="0" max="22" placeholder="0–22"></div>
+        <div class="fg"><label class="fl">Module 2 was</label><select id="bb-rt"><option value="harder">Harder</option><option value="easier">Easier</option></select></div>
+        <div class="fg"><label class="fl">Module 2 correct</label><input type="number" id="bb-m2" min="0" max="22" placeholder="0–22"></div>
+      </div>
+      <div class="fg"><label class="fl">Real Math score from Bluebook</label><input type="number" id="bb-sc" min="200" max="800" step="10" placeholder="200–800"></div>
+      <div class="fg"><label class="fl">Screenshot of your Bluebook score page</label><input type="file" id="bb-file" accept="image/*" style="padding:6px"></div>
+      <div id="bb-err" style="color:var(--red);font-size:12px;min-height:16px"></div>
+      <button class="btn bw" id="bb-submit" onclick="submitBB()">Submit result</button>
+    </div>
+    ${appr.length?`<div class="card cp" style="margin-bottom:12px"><div class="st" style="margin-bottom:10px">My progress</div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:120px">${appr.slice(-10).map(r=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end">
+        <div style="font-size:10px;color:var(--text2)">${r.score}</div><div class="prb" style="width:100%;max-width:34px;height:${Math.max(6,Math.round((r.score-200)/(mx-200)*90))}px;background:var(--accent);border-radius:6px 6px 2px 2px;animation:none;transform-origin:bottom"></div></div>`).join('')}</div></div>`:''}
+    ${mine.length?`<div class="card"><table class="tbl"><thead><tr><th>Test</th><th>M1</th><th>M2</th><th>Score</th><th>Status</th></tr></thead><tbody>
+      ${mine.map(r=>`<tr><td>${esc(r.test_name||'—')}</td><td>${r.m1}</td><td>${r.m2} <span style="color:var(--text3);font-size:10px">${r.route}</span></td><td style="font-weight:600">${r.score}</td><td>${bbStatus(r.status)}</td></tr>`).join('')}</tbody></table></div>`:''}
+  </div></div>`;
+}
+let _bbBusy=false;
+async function submitBB(){
+  if(_bbBusy)return; const err=document.getElementById('bb-err'); err.textContent='';
+  const m1=+document.getElementById('bb-m1').value, m2=+document.getElementById('bb-m2').value, sc=+document.getElementById('bb-sc').value;
+  const rt=document.getElementById('bb-rt').value, test=document.getElementById('bb-test').value.trim(), f=document.getElementById('bb-file').files[0];
+  const raw1=document.getElementById('bb-m1').value, raw2=document.getElementById('bb-m2').value;
+  if(raw1===''||m1<0||m1>22||raw2===''||m2<0||m2>22){err.textContent='Enter Module 1 and Module 2 correct answers (0–22).';return;}
+  if(!sc||sc<200||sc>800||sc%10){err.textContent='Enter the real Math score (200–800, ends in 0).';return;}
+  if(!f){err.textContent='Add a screenshot of your Bluebook score page.';return;}
+  _bbBusy=true; const b=document.getElementById('bb-submit'); b.textContent='Uploading...';
+  try{
+    const img=await compressImage(f);
+    const {error}=await rpc('bb_submit',{p_token:TOKEN,p_id:'b'+Date.now()+Math.random().toString(36).slice(2,6),p_test:test||'Bluebook practice test',p_m1:m1,p_route:rt,p_m2:m2,p_score:sc,p_image:img});
+    if(error){err.textContent='Not submitted: '+error.message+'. Try again.';return;}
+    toast2('Result submitted — your teacher will check it'); await loadBB(); renderMyScore(); animateIn();
+  } finally {_bbBusy=false; const b2=document.getElementById('bb-submit'); if(b2)b2.textContent='Submit result';}
+}
+function renderPredictorAdmin(){
+  const el=document.getElementById('predictor-content'); const acc=predAccuracy();
+  const pend=bbResults.filter(r=>r.status==='pending'); const rest=bbResults.filter(r=>r.status!=='pending').slice().reverse();
+  const row=r=>{const p=predictWith(bbModel.filter(d=>!(d[0]===r.m1&&d[2]===r.m2&&d[3]===r.score)),r.m1,r.route==='harder',r.m2);
+    return`<tr><td style="font-weight:600">${esc((r.student_name||r.student_id).split(' ').slice(0,2).join(' '))}</td><td>${esc(r.test_name||'—')}</td><td>${r.m1}</td><td>${r.m2} <span style="color:var(--text3);font-size:10px">${r.route}</span></td>
+      <td style="font-weight:600">${r.score}</td><td style="color:${Math.abs(p-r.score)<=30?'var(--green)':'var(--amber)'}">${p}</td>
+      <td style="white-space:nowrap"><button class="btn bxs" onclick="viewBB('${r.id}')">Screenshot</button>
+      ${r.status==='pending'?`<button class="btn bxs bg2" onclick="decideBB('${r.id}',true)">Approve</button><button class="btn bxs bd" onclick="decideBB('${r.id}',false)">Reject</button>`:bbStatus(r.status)}</td></tr>`;};
+  const head='<thead><tr><th>Student</th><th>Test</th><th>M1</th><th>M2</th><th>Real</th><th>Predicted</th><th></th></tr></thead>';
+  el.innerHTML=`<div class="stats3">
+    <div class="stat"><div class="sv" style="color:${acc&&acc.pct>=80?'var(--green)':'var(--amber)'}">${acc?acc.pct:'—'}</div><div class="sl">% within ±30 points</div><div class="sn">${acc?'Tested on '+acc.n+' approved results':'Needs at least 3 approved results'}</div></div>
+    <div class="stat"><div class="sv">${acc?acc.mae:'—'}</div><div class="sl">Average error (points)</div><div class="sn">Target: 80% within ±30</div></div>
+    <div class="stat"><div class="sv" style="color:${pend.length?'var(--red)':'var(--white)'}">${pend.length}</div><div class="sl">Waiting for your review</div><div class="sn">Only approved results train the predictor</div></div>
+  </div>
+  ${pend.length?`<div class="st" style="margin-bottom:10px">Waiting for review</div><div class="card" style="margin-bottom:18px"><table class="tbl">${head}<tbody>${pend.map(row).join('')}</tbody></table></div>`:''}
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start">
+    <div><div class="st" style="margin-bottom:10px">Try the predictor</div>${predCard()}</div>
+    <div><div class="st" style="margin-bottom:10px">All results</div>${rest.length?`<div class="card"><table class="tbl">${head}<tbody>${rest.map(row).join('')}</tbody></table></div>`:'<div class="empty">No results yet. Students add them from their Score page after each Bluebook practice test.</div>'}</div>
+  </div>`;
+}
+async function decideBB(id,ok){const {error}=await rpc('bb_decide',{p_token:TOKEN,p_id:id,p_approve:ok});if(error){toast2('Not saved — try again');return;}
+  await loadBB(); renderPredictorAdmin(); toast2(ok?'Approved — predictor updated':'Rejected');}
+async function viewBB(id){toast2('Loading screenshot...');const {data,error}=await rpc('bb_image',{p_token:TOKEN,p_id:id});if(error||!data){toast2('Could not load screenshot');return;}
+  document.getElementById('m-sc-title').textContent='Bluebook score screenshot';
+  document.getElementById('m-sc-body').innerHTML=`<img src="${esc(data)}" style="max-width:100%;border-radius:var(--r);display:block">`;
+  document.getElementById('m-sc-foot').innerHTML=`<button class="btn bw" onclick="closeModal('m-screenshot')">Close</button>`; openModal('m-screenshot');}
+
 const PAGE_RENDER={
   dashboard:()=>renderDashboard(), curriculum:()=>renderCurriculum(),
   schedule:()=>renderSchedule(), students:()=>renderStudents(),
   'payments-admin':()=>renderPaymentsAdmin(), quizzes:()=>renderQuizzes(),
   notifications:()=>renderNotifications(),
   settings:()=>renderSettings(),'manage-course':()=>renderManageCourse(),'my-password':()=>{},'my-schedule':()=>renderMySchedule(),
-  'my-scores':()=>renderMyScores(),'my-payments':()=>renderMyPayments(),'faq':()=>renderFAQ()
+  'my-scores':()=>renderMyScores(),'my-payments':()=>renderMyPayments(),'my-score':()=>renderMyScore(),'predictor':()=>renderPredictorAdmin(),'faq':()=>renderFAQ()
 };
 
 // ═══════════════════════════════════════════════════
@@ -2133,7 +2461,7 @@ function saveSett(){
   sv('settings',settings);
 }
 function renderSettings(){
-  loadSettings();
+  loadSettings(); renderBrandCard();
   document.getElementById('ta-list').innerHTML=teachers.map(a=>`
     <div style="padding:8px 0;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:10px">
@@ -2305,7 +2633,7 @@ function renderMyPayments(){
 
   <div class="card cp" style="margin-bottom:18px">
     <div class="st" style="margin-bottom:14px">Fee information</div>
-    ${sessFee?`<div style="margin-bottom:8px;font-size:13px;color:var(--text)">Session fee: <strong style="color:var(--white)">${esc(sessFee)} EGP</strong></div>`:''}
+    ${(myRate||sessFee)?`<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--text3)">Your price per session</div><div class="sv" style="color:var(--accent)">${esc(myRate||sessFee)}</div><div style="font-size:11px;color:var(--text3)">EGP</div></div>`:''}
     ${fee?`<div style="margin-bottom:8px;font-size:13px;color:var(--text)">Your course total: <strong style="color:var(--white)">${fee.toLocaleString()} EGP</strong></div>`:''}
     ${settings.payInstr?`<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r)">${esc(settings.payInstr)}</div>`:''}
     <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
@@ -2319,7 +2647,7 @@ function renderMyPayments(){
     <div class="st" style="margin-bottom:6px">Upload payment screenshot</div>
     <div style="font-size:12px;color:var(--text3);margin-bottom:14px">After transferring, upload a screenshot here. Your teacher will review and grant access.</div>
     <div class="fg3">
-      <div class="fg"><label class="fl">Amount paid (EGP) *</label><input type="number" id="up-amt" min="0" placeholder="0"></div>
+      <div class="fg"><label class="fl">Amount paid (EGP) *</label><input type="number" id="up-amt" min="0" placeholder="0" value="${esc(myRate||'')}"></div>
       <div class="fg"><label class="fl">Payment method *</label>
         <select id="up-method">
           <option value="instapay">Instapay</option>
@@ -2846,7 +3174,9 @@ function closeMobSb(){
 // INIT — Supabase first, then session restore
 // ═══════════════════════════════════════════════════
 (async function(){
+  applyBrand();
   await initDB();
+  if(DB_READY)DB.rpc('public_brand').then(({data})=>{if(data&&data.accent){applyBrand(data);}}).catch(()=>{});
   if(!await restoreSession()){  // restoreSession is now async
     document.getElementById('login-screen').style.display='flex';
     document.getElementById('app').style.display='none';
