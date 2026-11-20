@@ -944,11 +944,62 @@ function _lsGet(k,d){try{const v=localStorage.getItem(K+k);return v!==null?JSON.
 function sv(k,v){
   _lsSet(k,v);
   if(k==='session') return; // never sync session token to cloud
+  if(k==='payRequests') return; // payment requests live in their own table now
   if(DB_READY&&DB){
     DB.from('app_data')
       .upsert({key:k,value:v,updated_at:new Date().toISOString()},{onConflict:'key'})
-      .then(({error})=>{if(error)console.warn('DB write',k,error.message);});
+      .then(({error})=>{if(error){console.warn('DB write',k,error.message);toast2('Save failed — please check your connection and try again');}});
   }
+}
+
+// ── PAYMENT REQUESTS (own table + screenshot storage) ──
+const SHOT_BUCKET='payment-screenshots';
+const PR_COLS='id,student_id,student_name,amount,method,lesson,note,screenshot_path,date,status,submitted_at,approved_at';
+function _fmtTs(t){return t?new Date(t).toLocaleString('en-GB'):'';}
+function mapPR(r){return{id:r.id,studentId:r.student_id,studentName:r.student_name,amount:+r.amount||0,method:r.method,
+  lesson:r.lesson,note:r.note,screenshotPath:r.screenshot_path,screenshot:true,date:r.date,status:r.status,
+  submittedAt:_fmtTs(r.submitted_at),approvedAt:_fmtTs(r.approved_at),_ts:r.submitted_at};}
+function upsertLocalPR(row){
+  const m=mapPR(row); const i=payRequests.findIndex(x=>x.id===m.id);
+  if(i>=0)payRequests[i]=m; else payRequests.push(m);
+  payRequests.sort((a,b)=>new Date(a._ts)-new Date(b._ts));
+}
+async function loadPayRequests(){
+  if(!DB)return;
+  const {data,error}=await DB.from('pay_requests').select(PR_COLS).order('submitted_at',{ascending:true});
+  if(error){console.warn('pay_requests load:',error.message);return;}
+  payRequests=(data||[]).map(mapPR);
+}
+function handlePRRealtime(payload){
+  if(!payload||!payload.new||!payload.new.id)return;
+  upsertLocalPR(payload.new); updateDots();
+  const pg=_curPage();
+  if(pg==='payments-admin'&&curPayTab==='requests')renderPayRequests();
+  if(pg==='my-payments')renderMyPaymentsList();
+}
+// Re-read small shared lists after a server-side change
+async function refreshKeys(keys){
+  if(!DB)return;
+  const {data,error}=await DB.from('app_data').select('key,value').in('key',keys);
+  if(error||!data)return;
+  data.forEach(r=>{if(r.key==='payments')payments=r.value;if(r.key==='notifications')notifications=r.value;_lsSet(r.key,r.value);});
+  updateDots();
+}
+// Shrink phone screenshots before upload (faster on mobile data)
+function compressImage(file){
+  return new Promise(res=>{
+    if(!file.type||!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size<400000){res(file);return;}
+    const img=new Image(); const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const max=1600; let w=img.width,h=img.height;
+      if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);
+      c.toBlob(b=>res(b&&b.size<file.size?b:file),'image/jpeg',0.82);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);res(file);};
+    img.src=url;
+  });
 }
 // ld(): read from localStorage cache (runtime state uses in-memory vars)
 function ld(k,d){return _lsGet(k,d);}
@@ -956,7 +1007,7 @@ function ld(k,d){return _lsGet(k,d);}
 // Load all app state fresh from Supabase
 async function loadAllFromDB(){
   if(!DB)return;
-  const {data,error}=await DB.from('app_data').select('key,value');
+  const {data,error}=await DB.from('app_data').select('key,value').neq('key','payRequests'); // old 11 MB list no longer loaded
   if(error){console.warn('DB load:',error.message);return;}
   if(!data||!data.length)return;
   const m={};data.forEach(r=>{m[r.key]=r.value;});
@@ -969,7 +1020,6 @@ async function loadAllFromDB(){
   if(m.examList)      examList=m.examList;
   if(m.examScores)    examScores=m.examScores;
   if(m.payments)      payments=m.payments;
-  if(m.payRequests)   payRequests=m.payRequests;
   if(m.sessions)      sessions=m.sessions;
   if(m.notifications) notifications=m.notifications;
   if(m.settings)      settings=m.settings;
@@ -993,7 +1043,6 @@ function handleRealtime(payload){
     case 'examList':      examList=v;      if(pg==='exams')renderExams();break;
     case 'examScores':    examScores=v;    if(pg==='exams')renderExams();break;
     case 'payments':      payments=v;      if(pg==='payments-admin')renderPaymentsAdmin();break;
-    case 'payRequests':   payRequests=v;   updateDots();if(pg==='payments-admin')renderPaymentsAdmin();break;
     case 'sessions':      sessions=v;      if(pg==='schedule')renderSchedule();if(pg==='dashboard')renderDashboard();break;
     case 'notifications': notifications=v; updateDots();if(pg==='notifications')renderNotifications();break;
     case 'settings':      settings=v;      break;
@@ -1023,11 +1072,18 @@ async function initDB(){
     });
 
     document.getElementById('db-load-msg').textContent='Loading data...';
-    await loadAllFromDB();
+    await Promise.all([loadAllFromDB(),loadPayRequests()]);
     DB_READY=true;
     DB.channel('realtime_sync')
       .on('postgres_changes',{event:'*',schema:'public',table:'app_data'},handleRealtime)
+      .on('postgres_changes',{event:'*',schema:'public',table:'pay_requests'},handlePRRealtime)
       .subscribe(s=>console.log('Realtime:',s));
+    // Catch up when a phone/laptop comes back to the tab (mobile browsers pause realtime in background)
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible'&&CU){loadPayRequests().then(()=>{updateDots();
+        const pg=_curPage();if(pg==='payments-admin'&&curPayTab==='requests')renderPayRequests();if(pg==='my-payments')renderMyPaymentsList();});
+        refreshKeys(['payments','notifications']);}
+    });
     document.getElementById('db-loading').classList.add('hidden');
   }catch(err){
     console.warn('Supabase unavailable, using localStorage:',err);
@@ -1053,7 +1109,8 @@ let examList      = ld('examList',[
 ]);
 let examScores    = ld('examScores',{});
 let payments      = ld('payments',[]);
-let payRequests   = ld('payRequests',[]);
+let payRequests   = [];
+try{localStorage.removeItem(K+'payRequests');}catch(e){} // free the old cached screenshots
 let sessions      = ld('sessions',[]);
 let notifications = ld('notifications',[]);
 let teachers      = ld('teachers',[{id:'t0',name:'Mohamed Zayed',user:'mzayed',pass:'admin123',role:'SAT Math Teacher',level:'owner',owner:true}]);
@@ -1269,7 +1326,11 @@ function updateDots(){
 
 function addNotif(text,type){
   notifications.unshift({id:'n'+Date.now(),text,type:type||'payment',time:new Date().toLocaleString('en-GB'),read:false});
-  sv('notifications',notifications); updateDots();
+  updateDots();
+  // Append on the server so one device can't overwrite another device's list
+  if(DB_READY&&DB){
+    DB.rpc('append_notification',{p_text:text,p_type:type||'payment'}).then(({error})=>{if(error){console.warn('notif',error.message);sv('notifications',notifications);}});
+  } else sv('notifications',notifications);
 }
 
 // Payment gate: student has access to lesson N if approved payment exists
@@ -1347,7 +1408,7 @@ function renderDashboard(){
 
     const today=new Date(); today.setHours(0,0,0,0);
     const upSess=sessions.filter(s=>{
-      try{return new Date(s.date)>=today&&String(s.grade)===String(CU.grade)}catch(e){return false}
+      try{return new Date(s.date)>=today}catch(e){return false} // teachers see all grades
     }).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
     document.getElementById('dash-right').innerHTML=`<div class="st" style="margin-bottom:10px">Upcoming sessions</div>`+
       (upSess.length?upSess.map(s=>{
@@ -1785,7 +1846,7 @@ function deleteStu(sid){
   students=students.filter(x=>x.id!==sid);
   payments=payments.filter(p=>p.studentId!==sid);
   payRequests=payRequests.filter(r=>r.studentId!==sid);
-  sv('students',students); sv('payments',payments); sv('payRequests',payRequests);
+  sv('students',students); sv('payments',payments);
   closeModal('m-stu-view'); renderStudents(); toast2('Student deleted');
 }
 
@@ -1868,9 +1929,20 @@ function buildReqCard(r,status){
   </div>`;
 }
 
-function viewScreenshot(rid){
-  const r=payRequests.find(x=>x.id===rid); if(!r||!r.screenshot) return;
-  const s=students.find(x=>x.id===r.studentId);
+async function getScreenshotUrl(r){
+  if(!DB) return null;
+  if(r.screenshotPath){
+    const {data,error}=await DB.storage.from(SHOT_BUCKET).createSignedUrl(r.screenshotPath,3600);
+    return error?null:data.signedUrl;
+  }
+  const {data,error}=await DB.from('pay_request_legacy_images').select('data').eq('id',r.id).maybeSingle();
+  return error||!data?null:data.data;
+}
+async function viewScreenshot(rid){
+  const r=payRequests.find(x=>x.id===rid); if(!r) return;
+  toast2('Loading screenshot...');
+  const src=await getScreenshotUrl(r);
+  if(!src){toast2('Could not load the screenshot. Try again.');return;}
   document.getElementById('m-sc-title').textContent='Payment screenshot — '+esc(r.studentName);
   document.getElementById('m-sc-body').innerHTML=`
     <div style="margin-bottom:12px;display:flex;gap:14px;flex-wrap:wrap">
@@ -1879,7 +1951,7 @@ function viewScreenshot(rid){
       <div><div style="font-size:11px;color:var(--text3)">Method</div><div style="font-size:13px">${esc(r.method||'—')}</div></div>
       <div><div style="font-size:11px;color:var(--text3)">Lesson access</div><div style="font-size:13px">${r.lesson?'Lesson '+r.lesson:'General'}</div></div>
     </div>
-    <img src="${r.screenshot}" style="max-width:100%;border-radius:var(--r);display:block;margin-bottom:10px" alt="Payment screenshot">
+    <img src="${esc(src)}" style="max-width:100%;border-radius:var(--r);display:block;margin-bottom:10px" alt="Payment screenshot">
     ${r.note?`<div style="font-size:12px;color:var(--text2)">Student note: ${esc(r.note)}</div>`:''}`;
   document.getElementById('m-sc-foot').innerHTML=
     r.status==='pending'?`
@@ -1890,23 +1962,33 @@ function viewScreenshot(rid){
   openModal('m-screenshot');
 }
 
-function approveReq(rid){
-  const r=payRequests.find(x=>x.id===rid); if(!r) return;
-  r.status='approved'; r.approvedAt=new Date().toLocaleString('en-GB');
-  sv('payRequests',payRequests);
-  // Record as approved payment
-  payments.push({id:'p'+Date.now(),studentId:r.studentId,amount:+r.amount||0,date:r.date,method:r.method,lesson:r.lesson?+r.lesson:null,note:'Screenshot approved',approved:true});
-  sv('payments',payments);
-  addNotif('Payment approved: '+r.studentName+' — '+(r.amount||'?')+' EGP via '+(r.method||'—'),'payment');
-  renderPayRequests(); updateDots(); toast2('Access granted to '+r.studentName);
+// Approve/reject run on the server in one step: status + payment record + notification.
+// Clicking twice can't create a duplicate payment.
+const _prBusy={};
+async function _decideReq(rid,fn){
+  if(_prBusy[rid]) return null;
+  if(!DB_READY){toast2('Not connected — please refresh and try again');return null;}
+  _prBusy[rid]=true;
+  try{
+    const {data,error}=await DB.rpc(fn,{p_id:rid});
+    if(error||!data){toast2('Not saved: '+(error?error.message:'request not found')+'. Please try again.');return null;}
+    upsertLocalPR(data);
+    await refreshKeys(['payments','notifications']);
+    renderPayRequests(); updateDots();
+    return data;
+  } finally { delete _prBusy[rid]; }
 }
-
-function rejectReq(rid){
+async function approveReq(rid){
+  const r=payRequests.find(x=>x.id===rid); if(!r) return;
+  toast2('Approving...');
+  const d=await _decideReq(rid,'approve_pay_request');
+  if(d) toast2(d.status==='approved'?'Access granted to '+r.studentName:'This request was already '+d.status);
+}
+async function rejectReq(rid){
   if(!confirm('Reject this payment request?')) return;
   const r=payRequests.find(x=>x.id===rid); if(!r) return;
-  r.status='rejected'; sv('payRequests',payRequests);
-  addNotif('Payment request rejected: '+r.studentName,'warn');
-  renderPayRequests(); updateDots(); toast2('Request rejected');
+  const d=await _decideReq(rid,'reject_pay_request');
+  if(d) toast2(d.status==='rejected'?'Request rejected':'This request was already '+d.status);
 }
 
 function renderPayHistory(){
@@ -2359,11 +2441,17 @@ function renderMyPayments(){
         <img id="up-preview" class="upload-thumb" style="display:none" alt="Preview">
       </div>
     </div>
-    <button class="btn bw" onclick="submitPayRequest()">Submit payment for review</button>
-  </div>`;
+    <button class="btn bw" id="up-submit" onclick="submitPayRequest()">Submit payment for review</button>
+  </div>
+  <div id="my-pay-list"></div>`;
+  el.innerHTML=html;
+  renderMyPaymentsList();
+}
 
-  // My submitted requests
-  const myReqs=payRequests.filter(r=>r.studentId===sid);
+function renderMyPaymentsList(){
+  const el=document.getElementById('my-pay-list'); if(!el||!CU) return;
+  let html='';
+  const myReqs=payRequests.filter(r=>r.studentId===CU.id);
   if(myReqs.length){
     html+=`<div class="st" style="margin-bottom:12px">My submitted payments</div>
     <div class="card"><table class="tbl"><thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Lesson</th><th>Status</th></tr></thead><tbody>
@@ -2390,34 +2478,41 @@ function previewUpload(inp){
   reader.readAsDataURL(file);
 }
 
-function submitPayRequest(){
+let _submitting=false;
+async function submitPayRequest(){
+  if(_submitting) return;
   const amt=document.getElementById('up-amt').value;
   const method=document.getElementById('up-method').value;
   const lesson=document.getElementById('up-lesson').value;
   const note=document.getElementById('up-note').value.trim();
-  const fileInp=document.getElementById('up-file');
-  const prev=document.getElementById('up-preview');
-  if(!amt){toast2('Amount required');return;}
-  if(!prev.src||prev.style.display==='none'){toast2('Please upload a payment screenshot');return;}
+  const file=document.getElementById('up-file').files[0];
+  if(!amt||+amt<=0){toast2('Amount required');return;}
+  if(!file){toast2('Please upload a payment screenshot');return;}
+  if(!DB_READY){toast2('Not connected — please refresh and try again');return;}
 
-  const req={
-    id:'r'+Date.now(),
-    studentId:CU.id,
-    studentName:CU.name,
-    amount:+amt,
-    method,
-    lesson:lesson?+lesson:null,
-    note,
-    screenshot:prev.src,
-    date:new Date().toISOString().split('T')[0],
-    status:'pending',
-    submittedAt:new Date().toLocaleString('en-GB'),
-  };
-  payRequests.push(req);
-  sv('payRequests',payRequests);
-  addNotif('Payment screenshot submitted: '+CU.name+' — '+amt+' EGP via '+method+(lesson?' (Lesson '+lesson+')':''),'payment');
-  toast2('Screenshot submitted! Your teacher will review it shortly.');
-  renderMyPayments(); updateDots();
+  const btn=document.getElementById('up-submit');
+  _submitting=true; if(btn){btn.disabled=true;btn.textContent='Uploading...';}
+  try{
+    const id='r'+Date.now()+Math.random().toString(36).slice(2,6);
+    const blob=await compressImage(file);
+    const ext=blob.type==='image/jpeg'?'jpg':(file.name.split('.').pop()||'png').toLowerCase();
+    const path=String(CU.id).replace(/[^\w-]/g,'_')+'/'+id+'.'+ext;
+    const up=await DB.storage.from(SHOT_BUCKET).upload(path,blob,{contentType:blob.type||file.type||'image/jpeg',upsert:false});
+    if(up.error){toast2('Upload failed: '+up.error.message+'. Please try again.');return;}
+    const row={id,student_id:CU.id,student_name:CU.name,amount:+amt,method,lesson:lesson?+lesson:null,note,
+      screenshot_path:path,date:new Date().toISOString().split('T')[0],status:'pending'};
+    const ins=await DB.from('pay_requests').insert(row).select(PR_COLS).single();
+    if(ins.error){toast2('Not submitted: '+ins.error.message+'. Please try again.');return;}
+    upsertLocalPR(ins.data);
+    addNotif('Payment screenshot submitted: '+CU.name+' — '+amt+' EGP via '+method+(lesson?' (Lesson '+lesson+')':''),'payment');
+    toast2('Screenshot submitted! Your teacher will review it shortly.');
+    renderMyPayments(); updateDots();
+  } catch(e){
+    toast2('Something went wrong. Please try again.'); console.warn(e);
+  } finally {
+    _submitting=false;
+    const b=document.getElementById('up-submit'); if(b){b.disabled=false;b.textContent='Submit payment for review';}
+  }
 }
 
 // ═══════════════════════════════════════════════════
