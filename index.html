@@ -338,6 +338,33 @@ body[data-role=student] .tbl td[style*="var(--red)"]{color:var(--text3)!importan
 body[data-role=student] .qdiv{background:var(--card);border-color:var(--border2)}
 body[data-role=student] .qdiv div[style*="color:var(--purple)"]{color:var(--accent)!important}
 body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--text3)!important}
+/* groups page */
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:14px}
+.gcard{cursor:pointer;transition:transform .15s var(--ease),border-color .2s}.gcard:hover{transform:translateY(-2px)}.gcard.gsel{border-color:var(--accent)}
+.gtype{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--accent);color:var(--on-accent)}.gtype.tmp{background:transparent;border:1px solid var(--text2);color:var(--text2)}
+.seats{display:flex;gap:3px;margin:10px 0 5px}.seats span{flex:1;height:7px;border-radius:4px;background:var(--border2)}.seats span.f{background:var(--accent)}
+/* curriculum subject palette */
+.dp-all,.dp-algebra{--df:var(--accent);--dt:var(--on-accent);--db:var(--accent)}
+.dp-advmath{--df:#b9bdc6;--dt:#15171b;--db:#b9bdc6}
+.dp-psdata{--df:#a8743a;--dt:#ffffff;--db:#a8743a}
+.dp-geo{--df:#3a3d44;--dt:#ffffff;--db:#6b707a}
+.dp-expert{--df:#efe3c2;--dt:#2a2210;--db:#cdbb8a}
+.dp-extra{--df:#111111;--dt:var(--accent);--db:var(--accent)}
+#cf .ftab{border:1.5px solid var(--db);color:var(--text);display:inline-flex;align-items:center;gap:6px}
+#cf .ftab i{width:9px;height:9px;border-radius:50%;background:var(--df);border:1px solid var(--db)}
+#cf .ftab.active{background:var(--df);color:var(--dt);border-color:var(--db);font-weight:600}
+.lrow.dpr{position:relative;transition:transform .15s var(--ease),border-color .2s}
+.lrow.dpr::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--df);box-shadow:inset 0 0 0 1px var(--db);z-index:1}
+.lrow.dpr:hover{transform:translateY(-1px);border-color:var(--db)}
+.lrow.dpr .lrh{padding-left:20px}
+.lrow.dpr .num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0;background:var(--df);color:var(--dt);border:1.5px solid var(--db)}
+.dtag{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--df);color:var(--dt);border:1px solid var(--db);white-space:nowrap}
+.lst{font-size:11px;display:inline-flex;align-items:center;gap:5px;color:var(--text3);white-space:nowrap}
+.lst .ic{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;border:1px solid var(--border2)}
+.lst.done{color:var(--accent)}.lst.done .ic{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.lst .ring{width:18px;height:18px;border-radius:50%;background:conic-gradient(var(--accent) 50%,var(--border2) 0)}
+.qdiv.qz{background:transparent;border:1px dashed var(--border2)}
+@media(max-width:768px){.lrow.dpr .ltit{font-size:13px}.dtag{display:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 <!-- Supabase JS v2 -->
@@ -421,6 +448,10 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
       <svg viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M1 13c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="1.2" opacity=".5"/><path d="M12 10c1.66 0 3 1.34 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".5"/></svg>
       Students
     </div>
+    <div class="sbi t-only" data-p="groups" onclick="nav(this)">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="5" cy="5" r="2.2" stroke="currentColor" stroke-width="1.4"/><circle cx="11" cy="5" r="2.2" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 13c0-2 1.6-3.5 3.5-3.5S8.5 11 8.5 13M7.5 13c0-2 1.6-3.5 3.5-3.5s3.5 1.5 3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Groups
+    </div>
     <div class="sbi t-only" data-p="payments-admin" onclick="nav(this)" id="sb-payments-item">
       <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="11" r="1" fill="currentColor" opacity=".6"/></svg>
       Payments
@@ -502,13 +533,13 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
       <select id="curr-class" class="t-only" style="width:auto;min-width:170px" onchange="curClass=this.value;renderCurriculum()"></select>
       <span id="cp-txt" style="font-size:12px;color:var(--text3)"></span>
       <div class="ftabs" id="cf">
-        <div class="ftab active" onclick="filt('all',this)">All</div>
-        <div class="ftab" onclick="filt('algebra',this)">Algebra</div>
-        <div class="ftab" onclick="filt('advmath',this)">Adv. Math</div>
-        <div class="ftab" onclick="filt('psdata',this)">PS &amp; Data</div>
-        <div class="ftab" onclick="filt('geo',this)">Geometry</div>
-        <div class="ftab" onclick="filt('expert',this)">Expert course</div>
-        <div class="ftab" onclick="filt('extra',this)">Extra Sessions</div>
+        <div class="ftab dp-all active" onclick="filt('all',this)">All</div>
+        <div class="ftab dp-algebra" onclick="filt('algebra',this)"><i></i>Algebra</div>
+        <div class="ftab dp-advmath" onclick="filt('advmath',this)"><i></i>Adv. Math</div>
+        <div class="ftab dp-psdata" onclick="filt('psdata',this)"><i></i>PS &amp; Data</div>
+        <div class="ftab dp-geo" onclick="filt('geo',this)"><i></i>Geometry</div>
+        <div class="ftab dp-expert" onclick="filt('expert',this)"><i></i>Expert course</div>
+        <div class="ftab dp-extra" onclick="filt('extra',this)"><i></i>Extra Sessions</div>
       </div>
     </div>
   </div>
@@ -528,9 +559,15 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
 <div class="page t-only" id="page-students">
   <div class="ph">
     <div><div class="ph-t">Students</div><div class="ph-s">Triple name required · each student belongs to one group</div></div>
-    <div style="display:flex;gap:8px"><button class="btn" onclick="openClassesModal()">Groups</button><button class="btn bw" onclick="openAddStudent()">+ Add student</button></div>
+    <div style="display:flex;gap:8px"><button class="btn" onclick="navTo('groups')">Groups</button><button class="btn bw" onclick="openAddStudent()">+ Add student</button></div>
   </div>
   <div class="pb3"><div class="sgrid" id="students-list"></div></div>
+</div>
+
+<!-- GROUPS -->
+<div class="page t-only" id="page-groups">
+  <div class="ph"><div><div class="ph-t">Groups</div><div class="ph-s">Trial groups and temporary students · seats, prices and rules per group</div></div></div>
+  <div class="pb3" id="groups-content"></div>
 </div>
 
 <!-- PAYMENTS ADMIN -->
@@ -724,7 +761,15 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
       </select></div>
   </div>
   <div class="fg"><label class="fl">Group (class) <span style="color:var(--red)">*</span> <span style="font-size:11px;color:var(--text3)">sessions, progress &amp; tests follow the group</span></label>
-    <select id="st-class"></select></div>
+    <select id="st-class" onchange="onStuClassChange()"></select></div>
+  <div id="st-temp" style="display:none;background:var(--card2);border-radius:var(--r);padding:12px;margin-bottom:12px">
+    <div class="fg2">
+      <div class="fg"><label class="fl">Attends sessions of</label><select id="st-host"></select></div>
+      <div class="fg"><label class="fl">Lessons they can open <span style="font-size:11px;color:var(--text3)">e.g. 6, 7, 10-12 · empty = all</span></label><input type="text" id="st-allowed" placeholder="6, 7, 10-12"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3)">For private sessions, choose "Own sessions only" and add sessions for this student on the Schedule page.</div>
+  </div>
+  <div class="fg"><label class="fl">Custom price per session (EGP) <span style="font-size:11px;color:var(--text3)">optional — overrides the group price</span></label><input type="number" id="st-price" min="0" placeholder="Group price"></div>
   <div class="fg" id="st-sat-cw" style="display:none"><label class="fl">Custom SAT date</label><input type="date" id="st-sat-c"></div>
   <div class="fg"><label class="fl">Notes</label><textarea id="st-notes" style="min-height:52px"></textarea></div>
   <div class="mfoot">
@@ -784,6 +829,8 @@ body[data-role=student] .qdiv div[style*="color:var(--purple-dim)"]{color:var(--
     <div class="fg"><label class="fl">Recording link (add after session)</label><input type="url" id="si-rec" placeholder="https://drive.google.com/..."></div>
     <div class="fg"><label class="fl">Linked lesson # (payment gate)</label><input type="number" id="si-ln" min="0" max="20" placeholder="0 = no gate"></div>
   </div>
+  <div class="fg"><label class="fl">Only for specific students <span style="font-size:11px;color:var(--text3)">(private session — leave empty for the whole group)</span></label>
+    <div id="si-stu" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
   <div class="mfoot">
     <button class="btn" onclick="closeModal('m-add-sess')">Cancel</button>
     <button class="btn bw" onclick="saveSess()">Save session</button>
@@ -1311,7 +1358,7 @@ function logout(){
 function nav(el){
   const p=el.dataset.p;
   // ── RBAC: block students from teacher-only pages ──
-  const teacherPages=['predictor','schedule','students','payments-admin','quizzes','notifications','manage-course','settings'];
+  const teacherPages=['groups','predictor','schedule','students','payments-admin','quizzes','notifications','manage-course','settings'];
   if(CR==='student' && teacherPages.includes(p)){
     toast2('Access denied.');
     return;
@@ -1569,7 +1616,7 @@ function filt(f,el){CF=f;document.querySelectorAll('#cf .ftab').forEach(x=>x.cla
 
 function renderCurriculum(){
   const vl=visibleLessons(); const d=doneCount();
-  document.getElementById('cp-txt').textContent=d+'/'+vl.length+' done';
+  document.getElementById('cp-txt').innerHTML=(CR==='student'&&clsName(myClassId())?esc(clsName(myClassId()))+' · ':'')+'<b style="color:var(--accent)">'+d+'</b>/'+vl.length+' done';
   document.getElementById('curr-title').textContent='Curriculum — '+vl.length+' Lessons';
   const cs=document.getElementById('curr-class');
   if(cs){cs.style.display=(CR!=='student'&&classes.length)?'':'none';if(CR!=='student')fillClassSelect('curr-class');}
@@ -1579,20 +1626,22 @@ function renderCurriculum(){
     const ld={...gl(l.n),status:lessonStatus(l.n)}; const di=DI[l.d]||{}; const isOpen=openL===l.n;
     const sc=ld.status==='done'?'sp-d':ld.status==='progress'?'sp-i':'sp-p';
     const sl=ld.status==='done'?'Done':ld.status==='progress'?'In progress':'Pending';
-    html+=`<div class="lrow"><div class="lrh" onclick="togL(${l.n})">
-      <span class="lnum" style="color:${di.col||'var(--text3)'}">${l.n}</span>
+    const staff=CR==='teacher'||CR==='assistant';
+    const stHtml=ld.status==='done'?'<span class="lst done"><span class="ic">✓</span>Done</span>':ld.status==='progress'?'<span class="lst done"><span class="ring"></span>This week</span>':'<span class="lst"><span class="ic">🔒</span>Coming soon</span>';
+    html+=`<div class="lrow dpr dp-${esc(l.d)}"><div class="lrh" onclick="togL(${l.n})">
+      <span class="num">${l.n}</span>
       <span class="ltit">${esc(l.title)}</span>
-      <span class="bge ${di.c||'bgray'}" style="margin-left:4px">${di.l||''}</span>
-      <span class="bge bgray" style="margin-left:4px">${l.q} q's</span>
-      ${(CR==='teacher'||CR==='assistant')?`<span class="spl ${sc}" style="margin-left:8px" onclick="cycStat(event,${l.n})">${sl}</span>`:''}
+      <span class="dtag">${di.l||''}</span>
+      ${staff&&l.q?`<span class="bge bgray" style="margin-left:4px" title="Approximate number of SAT questions on this topic">≈${esc(l.q)} on SAT</span>`:''}
+      ${staff?`<span class="spl ${sc}" style="margin-left:8px" onclick="cycStat(event,${l.n})">${sl}</span>`:(lessonAllowed(l.n)?stHtml:'<span class="lst"><span class="ic">—</span>Not in your plan</span>')}
       <span style="color:var(--text3);font-size:11px;margin-left:6px">${isOpen?'▲':'▼'}</span>
     </div>${isOpen?renderLB(l.n,ld):''}
     </div>`;
     visibleQuizzes().filter(q=>q.after===l.n&&CF==='all').forEach(q=>{
       const qd=gq(q.id);
-      html+=`<div class="qdiv">
-        <div><div style="font-size:13px;font-weight:600;color:var(--purple)">${esc(qd.title||q.def)}</div>
-        <div style="font-size:11px;color:var(--purple-dim);margin-top:2px">After Lesson ${q.after} · Max: ${qd.max||10} pts</div></div>
+      html+=`<div class="qdiv qz">
+        <div><div style="font-size:13px;font-weight:600;color:var(--accent)">${esc(qd.title||q.def)}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">After Lesson ${q.after} · Max: ${qd.max||10} pts</div></div>
         ${(CR==='teacher'||CR==='assistant')?`<button class="btn bsm" style="background:var(--purple-bg);color:var(--purple);border-color:var(--purple-dim)" onclick="navTo('quizzes')">Open quiz</button>`:''}
       </div>`;
     });
@@ -1692,7 +1741,7 @@ function buildSessCard(s,isPast){
     <div class="sess-card" style="cursor:pointer" onclick="togSess('${s.id}')">
       <div class="sess-date"><div class="sess-day">${day}</div><div class="sess-mon">${mon}</div></div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(s.title)}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(s.title)}${(s.studentIds||[]).length?` <span class="bge bgold">Private: ${esc(s.studentIds.map(id=>((students.find(x=>x.id===id)||{}).name||id).split(' ')[0]).join(', '))}</span>`:''}</div>
         <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(s.time||'')} · ${s.classId?esc(clsName(s.classId)||'Deleted group'):s.grade?'Grade '+esc(s.grade):'<span style="color:var(--red)">No group — won\'t show to anyone</span>'} · <span style="color:${tc}">${tl}</span></div>
         <div style="margin-top:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           ${s.zoom?`${zoomBadge(s)}
@@ -1717,6 +1766,10 @@ function buildSessCard(s,isPast){
   </div>`;
 }
 
+function fillSessStudents(sel){
+  const tmp=students.filter(s=>gType(clsById(s.classId))==='temporary');
+  document.getElementById('si-stu').innerHTML=tmp.length?tmp.map(s=>`<label style="display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;cursor:pointer"><input type="checkbox" value="${esc(s.id)}" ${sel.includes(s.id)?'checked':''} style="width:auto"> ${esc(s.name.split(' ').slice(0,2).join(' '))}</label>`).join(''):'<span style="font-size:12px;color:var(--text3)">No temporary students yet</span>';
+}
 function setZoomVis(id,v){const s=sessions.find(x=>x.id===id);if(!s)return;s.zoomVis=v;sv('sessions',sessions);renderSchedule();
   toast2(v==='auto'?'Zoom link will open 15 min before the session':v==='live'?'Zoom link is live for paid students':'Zoom link hidden');}
 function togSess(id){openSess=(openSess===id)?null:id; renderSchedule();}
@@ -1736,7 +1789,7 @@ function openAddSess(){
   ['si-date','si-title','si-zoom','si-rec'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('si-time').value='17:00';
   document.getElementById('si-type').value='lesson';
-  fillClassSelect('si-class');
+  fillClassSelect('si-class'); fillSessStudents([]);
   document.getElementById('si-vis').value='auto';
   document.getElementById('si-ln').value='';
   openModal('m-add-sess');
@@ -1749,7 +1802,7 @@ function editSess(e,id){
   document.getElementById('si-time').value=s.time||'17:00';
   document.getElementById('si-title').value=s.title||'';
   document.getElementById('si-type').value=s.type||'lesson';
-  fillClassSelect('si-class',s.classId);
+  fillClassSelect('si-class',s.classId); fillSessStudents(s.studentIds||[]);
   document.getElementById('si-zoom').value=s.zoom||'';
   document.getElementById('si-vis').value=s.zoomVis||'hidden';
   document.getElementById('si-rec').value=s.rec||'';
@@ -1765,6 +1818,7 @@ function saveSess(){
     title,
     type:document.getElementById('si-type').value,
     classId:document.getElementById('si-class').value||'',
+    studentIds:[...document.querySelectorAll('#si-stu input:checked')].map(i=>i.value),
     grade:(clsById(document.getElementById('si-class').value)||{}).grade||'',
     zoom:document.getElementById('si-zoom').value.trim(),
     zoomVis:document.getElementById('si-vis').value,
@@ -1800,7 +1854,14 @@ function renderStudents(){
 
 function validateTriple(name){return name.trim().split(/\s+/).filter(Boolean).length>=3;}
 
-function openAddStudent(){
+function fillTempFields(s){
+  const hs=document.getElementById('st-host');
+  hs.innerHTML='<option value="">Own sessions only</option>'+classes.filter(x=>gType(x)!=='temporary').map(x=>`<option value="${esc(x.id)}" ${s&&s.hostClassId===x.id?'selected':''}>${esc(x.name)}</option>`).join('');
+  document.getElementById('st-allowed').value=s?fmtLessons(s.allowedLessons):'';
+  document.getElementById('st-price').value=s&&+s.price?s.price:'';
+  onStuClassChange();
+}
+function openAddStudent(presetClass){
   document.getElementById('m-add-stu-title').textContent='Add student';
   document.getElementById('m-add-student')._eid=null;
   ['st-name','st-id','st-phone','st-pw','st-notes'].forEach(id=>document.getElementById(id).value='');
@@ -1808,7 +1869,7 @@ function openAddStudent(){
   document.getElementById('st-id').value=nextStudentId(); const pwe=document.getElementById('st-pw'); pwe.value=genPassword(); showPwStr(pwe,'st-pw-str');
   document.getElementById('st-fee').value='';
   document.getElementById('st-grp').value='online';   document.getElementById('st-grade').value='10';
-  fillClassSelect('st-class',curClass||'');
+  fillClassSelect('st-class',(typeof presetClass==='string'&&presetClass)||curClass||''); fillTempFields(null);
   document.getElementById('st-sat').value='';
   document.getElementById('st-sat-cw').style.display='none';
   openModal('m-add-student');
@@ -1827,8 +1888,14 @@ function saveStudent(){
   if(eid0&&id!==eid0&&!pw){toast2('Enter a new password when changing the Student ID');return;}
   const fee=document.getElementById('st-fee').value;
 const group=document.getElementById('st-grp').value;
-  const classId=document.getElementById('st-class').value||'';
+  let classId=document.getElementById('st-class').value||'';
   if(classes.length&&!classId){toast2('Choose a group');return;}
+  const eidC=document.getElementById('m-add-student')._eid, prevC=eidC?(students.find(x=>x.id===eidC)||{}).classId:null;
+  if(classId&&classId!==prevC){const g=seatCheck(clsById(classId),eidC||'');if(!g)return;classId=g.id;}
+  const isTmp=gType(clsById(classId))==='temporary';
+  const hostClassId=isTmp?document.getElementById('st-host').value:'';
+  const allowedLessons=isTmp?parseLessons(document.getElementById('st-allowed').value):[];
+  const price=+document.getElementById('st-price').value||'';
   const grade=(clsById(classId)||{}).grade||document.getElementById('st-grade').value;
   const satDate=document.getElementById('st-sat').value;
   const satCustom=document.getElementById('st-sat-c').value;
@@ -1836,16 +1903,14 @@ const group=document.getElementById('st-grp').value;
   const eid=document.getElementById('m-add-student')._eid;
   if(eid){
     if(id!==eid&&students.find(x=>x.id===id)){toast2('ID already exists');return;}
-    const s=students.find(x=>x.id===eid); if(s){Object.assign(s,{name,id,phone,fee,group,grade,classId,satDate,satCustom,notes});if(pw)s.pw=pw;}
+    const s=students.find(x=>x.id===eid); if(s){Object.assign(s,{name,id,phone,fee,group,grade,classId,hostClassId,allowedLessons,price,satDate,satCustom,notes});if(pw)s.pw=pw;}
   } else {
     if(students.find(x=>x.id===id)){toast2('ID already exists');return;}
-    const cap=rateCard().max||8, inGrp=students.filter(x=>x.classId&&x.classId===classId).length;
-    if(classId&&inGrp>=cap&&!confirm(clsName(classId)+' already has '+inGrp+' students (max '+cap+'). Add anyway?'))return;
-    students.push({id,name,phone,pw,fee,group,grade,classId,satDate,satCustom,notes,attendance:{}});
+    students.push({id,name,phone,pw,fee,group,grade,classId,hostClassId,allowedLessons,price,satDate,satCustom,notes,attendance:{}});
     addNotif('New student registered: '+name,'info');
   }
   sv('students',students); students.forEach(x=>delete x.pw); // password is stored scrambled on the server only
-  closeModal('m-add-student'); renderStudents(); toast2('Student saved');
+  closeModal('m-add-student'); renderStudents(); if(_curPage()==='groups')renderGroups(); toast2('Student saved');
   if(pw) showLoginShare({name,id,pw,phone});
 }
 
@@ -1905,7 +1970,7 @@ function editStuOpen(sid){
   document.getElementById('st-pw').placeholder='Leave blank to keep current password';document.getElementById('st-pw-hint').textContent='(only to reset)';
   document.getElementById('st-fee').value=s.fee||'';
   document.getElementById('st-grp').value=s.group||'online';   document.getElementById('st-grade').value=s.grade||'10';
-  fillClassSelect('st-class',s.classId||'');
+  fillClassSelect('st-class',s.classId||''); fillTempFields(s);
   document.getElementById('st-sat').value=s.satDate||'';
   document.getElementById('st-sat-c').value=s.satCustom||'';
   document.getElementById('st-sat-cw').style.display=s.satDate==='custom'?'block':'none';
@@ -2185,7 +2250,8 @@ function sqScore(id,sid,f,v){
 let curClass='';
 function clsById(id){return classes.find(c=>c.id===id);}
 function clsName(id){const c=clsById(id);return c?c.name:'';}
-function myClassId(){return CR==='student'?(CU&&CU.classId)||'':(curClass||(classes[0]&&classes[0].id)||'');}
+function myClassId(){return CR==='student'?(CU&&(CU.hostClassId||CU.classId))||'':(curClass||(classes[0]&&classes[0].id)||'');}
+function lessonAllowed(n){const a=(CU&&CU.allowedLessons)||[];return !a.length||a.map(Number).includes(+n);}
 function lessonStatus(n,cid){
   cid=cid===undefined?myClassId():cid;
   if(cid&&classes.length){return ((classProgress[cid]||{})[n])||'pending';}
@@ -2197,9 +2263,15 @@ function setLessonStatus(n,v,cid){
   else slF(n,'status',v);
   updateSbProg();
 }
-function lessonOpen(n){return ['done','progress'].includes(lessonStatus(n));} // unlocked for student's group
-function sessionsFor(st){ // sessions visible to a student
-  return sessions.filter(s=>(st.classId&&s.classId)?s.classId===st.classId:String(s.grade)===String(st.grade));
+function lessonOpen(n){return lessonAllowed(n)&&['done','progress'].includes(lessonStatus(n));} // unlocked for student's group
+function sessionsFor(st){ // sessions visible to a student (mirrors the server rules)
+  const al=(st.allowedLessons||[]).map(Number);
+  return sessions.filter(s=>{
+    if((s.studentIds||[]).length)return s.studentIds.includes(st.id);
+    if(st.classId&&s.classId===st.classId)return true;
+    if(st.hostClassId&&s.classId===st.hostClassId)return !al.length||al.includes(+s.lessonNum||0);
+    return !st.classId&&!s.classId&&String(s.grade)===String(st.grade);
+  });
 }
 function classOptions(sel,withNone){
   return (withNone?'<option value="">— none —</option>':'')+classes.map(c=>`<option value="${esc(c.id)}" ${c.id===sel?'selected':''}>${esc(c.name)}</option>`).join('');
@@ -2539,13 +2611,123 @@ function saveRepeat(){
   toast2((list.length-skipped)+' sessions added'+(skipped?' ('+skipped+' already existed)':''));
 }
 
+// ═══════════════════════════════════════════════════
+// GROUPS PAGE (trial groups, temporary students, seats, prices)
+// ═══════════════════════════════════════════════════
+let selGroup='';
+function gMax(c){return +(c&&c.max)||rateCard().max||8;}
+function gMembers(id){return students.filter(s=>s.classId===id);}
+function gType(c){return (c&&c.type)||'trial';}
+function gPriceLabel(c){
+  if(!c)return ''; if(c.priceMode==='fixed'&&+c.price)return (+c.price).toLocaleString()+' EGP / session (fixed)';
+  if(c.priceMode==='host')return 'Same as the group they join';
+  const n=Math.max(1,gMembers(c.id).length); return rateFor(n)+' EGP / session (rate card, '+n+' student'+(n!==1?'s':'')+')';
+}
+function gSchedule(id){
+  const now=new Date(); now.setHours(0,0,0,0);
+  const up=sessions.filter(s=>s.classId===id&&new Date(s.date)>=now);
+  const k=[...new Set(up.map(s=>{const d=new Date(s.date+'T'+(s.time||'00:00'));return d.toLocaleDateString('en-GB',{weekday:'short'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}))];
+  return k.slice(0,3).join(' · ')||'No upcoming sessions';
+}
+function nextGroupName(name){const m=name.match(/^(.*\s)([A-Y])$/);if(m)return m[1]+String.fromCharCode(m[2].charCodeAt(0)+1);const n=name.match(/^(.*\s)(\d+)$/);if(n)return n[1]+(+n[2]+1);return name+' B';}
+function renderGroups(){
+  const el=document.getElementById('groups-content'); if(!el)return;
+  if(!selGroup||!clsById(selGroup))selGroup=(classes[0]||{}).id||'';
+  const cards=classes.map(c=>{const n=gMembers(c.id).length,mx=gMax(c),tmp=gType(c)==='temporary';
+    return `<div class="card cp gcard ${selGroup===c.id?'gsel':''}" onclick="selGroup='${c.id}';renderGroups()">
+      <span class="gtype ${tmp?'tmp':''}">${tmp?'Temporary':'Trial group'}</span>
+      <div style="font-weight:600;font-size:14px;margin-top:6px">${esc(c.name)}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.satDate?esc(satName(c.satDate)):'No SAT date'} · G${esc(c.grade||'?')}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${esc(gSchedule(c.id))}</div>
+      ${tmp?`<div style="font-size:12px;margin-top:10px">${n} student${n!==1?'s':''}</div>`:
+      `<div class="seats">${Array.from({length:mx},(_,k)=>`<span class="${k<n?'f':''}"></span>`).join('')}</div>
+      <div style="font-size:11px;color:var(--text3)">${n} / ${mx} seats${n>=mx?' · <b style="color:var(--accent)">Full</b>':''}</div>`}
+    </div>`;}).join('');
+  const c=clsById(selGroup);
+  const det=!c?'<div class="empty">Create your first group</div>':(()=>{const mem=gMembers(c.id),tmp=gType(c)==='temporary';
+    const trials=classes.filter(x=>gType(x)!=='temporary');
+    return `<div class="card cp" style="margin-top:4px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      <div class="st" style="font-size:15px">${esc(c.name)}</div>
+      <div style="display:flex;gap:6px"><button class="btn bsm" onclick="openAddStudent('${c.id}')">+ Add student</button>
+      ${mem.length?'':`<button class="btn bsm bd" onclick="delClass('${c.id}');renderGroups()">Delete group</button>`}</div>
+    </div>
+    <div class="fg3">
+      <div class="fg"><label class="fl">Name</label><input type="text" value="${esc(c.name)}" onchange="updClass('${c.id}','name',this.value);renderGroups()"></div>
+      <div class="fg"><label class="fl">Type</label><select onchange="updClass('${c.id}','type',this.value);renderGroups()">
+        <option value="trial" ${!tmp?'selected':''}>Trial group (full course)</option><option value="temporary" ${tmp?'selected':''}>Temporary students</option></select></div>
+      <div class="fg"><label class="fl">Grade</label><select onchange="updClass('${c.id}','grade',this.value)">${['10','11','12'].map(g=>`<option value="${g}" ${c.grade===g?'selected':''}>Grade ${g}</option>`).join('')}</select></div>
+    </div>
+    <div class="fg3">
+      <div class="fg"><label class="fl">Target SAT</label><select onchange="updClass('${c.id}','satDate',this.value);renderGroups()"><option value="">Not set</option>${SAT_DATES.map(x=>`<option value="${x.d}" ${x.d===c.satDate?'selected':''}>${x.l}</option>`).join('')}</select></div>
+      ${tmp?'<div></div><div></div>':`<div class="fg"><label class="fl">Maximum students</label><input type="number" min="1" value="${gMax(c)}" onchange="updClass('${c.id}','max',+this.value);renderGroups()"></div>
+      <div class="fg"><label class="fl">When the group is full</label><select onchange="updClass('${c.id}','whenFull',this.value)">
+        <option value="offer" ${(c.whenFull||'offer')==='offer'?'selected':''}>Offer to create the next group</option><option value="warn" ${c.whenFull==='warn'?'selected':''}>Warn, but allow</option><option value="block" ${c.whenFull==='block'?'selected':''}>Don't allow</option></select></div>`}
+    </div>
+    <div class="fg3">
+      <div class="fg"><label class="fl">Price</label><select onchange="updClass('${c.id}','priceMode',this.value);renderGroups()">
+        <option value="rate" ${(c.priceMode||'rate')==='rate'?'selected':''}>Rate card (by group size)</option><option value="fixed" ${c.priceMode==='fixed'?'selected':''}>Fixed price per session</option>
+        ${tmp?`<option value="host" ${c.priceMode==='host'?'selected':''}>Same as the group they join</option>`:''}</select></div>
+      ${c.priceMode==='fixed'?`<div class="fg"><label class="fl">Fixed price (EGP)</label><input type="number" min="0" value="${esc(c.price||'')}" onchange="updClass('${c.id}','price',+this.value);renderGroups()"></div>`:'<div></div>'}
+      <div class="fg" style="align-self:end;font-size:12px;color:var(--accent);padding-bottom:10px">${esc(gPriceLabel(c))}</div>
+    </div>
+    <div class="st" style="margin:6px 0 8px">Students (${mem.length}${tmp?'':' / '+gMax(c)})</div>
+    ${mem.length?`<table class="tbl"><thead><tr><th>Name</th><th>ID</th>${tmp?'<th>Attends</th><th>Lessons</th>':''}<th>Price</th><th>Move to</th></tr></thead><tbody>
+      ${mem.map(s=>`<tr><td style="font-weight:600">${esc(s.name)}</td><td>${esc(s.id)}</td>
+        ${tmp?`<td>${s.hostClassId?esc(clsName(s.hostClassId)):'Own sessions'}</td><td>${(s.allowedLessons||[]).length?esc(fmtLessons(s.allowedLessons)):'All'}</td>`:''}
+        <td>${+s.price?(+s.price)+' EGP (custom)':'Group price'}</td>
+        <td><select style="width:auto" onchange="moveStudent('${s.id}',this.value)"><option value="">—</option>${classes.filter(x=>x.id!==c.id).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></td></tr>`).join('')}
+    </tbody></table>`:'<div class="empty" style="padding:16px">No students yet</div>'}
+  </div>`;})();
+  el.innerHTML=`<div class="card cp" style="margin-bottom:14px"><div class="st" style="margin-bottom:10px">New group</div>
+    <div class="fg3" style="align-items:end">
+      <div class="fg"><label class="fl">Name</label><input type="text" id="ng-name" placeholder="March Group B"></div>
+      <div class="fg"><label class="fl">Type</label><select id="ng-type"><option value="trial">Trial group</option><option value="temporary">Temporary students</option></select></div>
+      <div class="fg"><label class="fl">Target SAT</label><select id="ng-sat"><option value="">Not set</option>${SAT_DATES.map(x=>`<option value="${x.d}">${x.l}</option>`).join('')}</select></div>
+    </div><button class="btn bw bsm" onclick="createGroup()">+ Create group</button></div>
+    <div class="ggrid">${cards}</div>${det}`;
+  animateIn();
+}
+function satName(d){return (SAT_DATES.find(x=>x.d===d)||{}).l||d;}
+function fmtLessons(a){return (a||[]).map(Number).sort((x,y)=>x-y).join(', ');}
+function parseLessons(t){const out=new Set();String(t||'').split(/[,\s]+/).forEach(p=>{const m=p.match(/^(\d+)-(\d+)$/);if(m){for(let i=+m[1];i<=+m[2]&&i<+m[1]+200;i++)out.add(i);}else if(/^\d+$/.test(p))out.add(+p);});return [...out].sort((a,b)=>a-b);}
+function createGroup(){
+  const name=document.getElementById('ng-name').value.trim(); if(!name){toast2('Group name required');return;}
+  const type=document.getElementById('ng-type').value;
+  const c={id:'c'+Date.now(),name,type,grade:'11',satDate:document.getElementById('ng-sat').value,max:rateCard().max||8,whenFull:'offer',priceMode:type==='temporary'?'host':'rate'};
+  classes.push(c); sv('classes',classes); selGroup=c.id; renderGroups(); toast2('Group created');
+}
+function moveStudent(sid,cid){
+  if(!cid)return; const s=students.find(x=>x.id===sid); const c=clsById(cid); if(!s||!c)return;
+  if(!seatCheck(c,s.id))return;
+  s.classId=c.id; s.grade=c.grade||s.grade; if(gType(c)!=='temporary'){delete s.hostClassId;delete s.allowedLessons;}
+  sv('students',students); renderGroups(); toast2(s.name.split(' ')[0]+' moved to '+c.name);
+}
+// returns the group to use (may be a new one), or null to cancel
+function seatCheck(c,sid){
+  if(gType(c)==='temporary')return c;
+  const n=gMembers(c.id).filter(s=>s.id!==sid).length, mx=gMax(c);
+  if(n<mx)return c;
+  const rule=c.whenFull||'offer';
+  if(rule==='block'){toast2(c.name+' is full ('+mx+'/'+mx+'). Increase the maximum on the Groups page, or use another group.');return null;}
+  if(rule==='warn')return confirm(c.name+' already has '+n+' students (max '+mx+'). Add anyway?')?c:null;
+  const nn=nextGroupName(c.name); const ex=classes.find(x=>x.name===nn);
+  if(!confirm(c.name+' is full ('+mx+'/'+mx+').\n\nOK = add this student to "'+nn+'"'+(ex?'':' (new group, same settings)')+'\nCancel = go back'))return null;
+  if(ex)return ex;
+  const g={...c,id:'c'+Date.now(),name:nn}; classes.push(g); sv('classes',classes); return g;
+}
+function onStuClassChange(){
+  const c=clsById(document.getElementById('st-class').value); const tmp=gType(c)==='temporary';
+  document.getElementById('st-temp').style.display=tmp?'':'none';
+}
+
 const PAGE_RENDER={
   dashboard:()=>renderDashboard(), curriculum:()=>renderCurriculum(),
   schedule:()=>renderSchedule(), students:()=>renderStudents(),
   'payments-admin':()=>renderPaymentsAdmin(), quizzes:()=>renderQuizzes(),
   notifications:()=>renderNotifications(),
   settings:()=>renderSettings(),'manage-course':()=>renderManageCourse(),'my-password':()=>{},'my-schedule':()=>renderMySchedule(),
-  'my-scores':()=>renderMyScores(),'my-payments':()=>renderMyPayments(),'my-score':()=>renderMyScore(),'predictor':()=>renderPredictorAdmin(),'faq':()=>renderFAQ()
+  'my-scores':()=>renderMyScores(),'my-payments':()=>renderMyPayments(),'groups':()=>renderGroups(),'my-score':()=>renderMyScore(),'predictor':()=>renderPredictorAdmin(),'faq':()=>renderFAQ()
 };
 
 // ═══════════════════════════════════════════════════
