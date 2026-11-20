@@ -362,14 +362,6 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6 6.5C6 5.67 6.9 5 8 5s2 .67 2 1.5c0 .7-.5 1.3-1.2 1.6L8 8.5V9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="11.5" r=".7" fill="currentColor"/></svg>
       Quizzes
     </div>
-    <div class="sbi t-only" data-p="tests" onclick="nav(this)">
-      <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="4.5" y1="8" x2="11.5" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 5l1.5 1.5L8.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Tests
-    </div>
-    <div class="sbi t-only" data-p="extras-admin" onclick="nav(this)">
-      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v6M5 8h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      Extra sessions
-    </div>
     <div class="sbi t-only" data-p="notifications" onclick="nav(this)">
       <svg viewBox="0 0 16 16" fill="none"><path d="M8 1C5.24 1 3 3.24 3 6v4l-1.5 2h13L13 10V6c0-2.76-2.24-5-5-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 13.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       Notifications
@@ -391,14 +383,6 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     <div class="sbi s-only" data-p="my-schedule" onclick="nav(this)" style="display:none">
       <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>
       My Schedule
-    </div>
-    <div class="sbi s-only" data-p="my-tests" onclick="nav(this)" style="display:none">
-      <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="4.5" y1="8" x2="11.5" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4.5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M4.5 5l1.5 1.5L8.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Tests
-    </div>
-    <div class="sbi s-only" data-p="my-extras" onclick="nav(this)" style="display:none">
-      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v6M5 8h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      Extra sessions
     </div>
     <div class="sbi s-only" data-p="my-scores" onclick="nav(this)" style="display:none">
       <svg viewBox="0 0 16 16" fill="none"><polyline points="2,12 5,8 9,10 14,4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -446,6 +430,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
         <div class="ftab" onclick="filt('advmath',this)">Adv. Math</div>
         <div class="ftab" onclick="filt('psdata',this)">PS &amp; Data</div>
         <div class="ftab" onclick="filt('geo',this)">Geometry</div>
+        <div class="ftab" onclick="filt('expert',this)">Expert course</div>
+        <div class="ftab" onclick="filt('extra',this)">Extra Sessions</div>
       </div>
     </div>
   </div>
@@ -492,25 +478,6 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
 <div class="page t-only" id="page-quizzes">
   <div class="ph"><div><div class="ph-t">Quizzes — 5 assessments</div><div class="ph-s">Edit title, max score, form link · enter scores per student</div></div></div>
   <div class="pb3" id="quizzes-list"></div>
-</div>
-
-<!-- TESTS (book tests) -->
-<div class="page t-only" id="page-tests">
-  <div class="ph">
-    <div><div class="ph-t">Tests</div><div class="ph-s">Your book's tests · open them per group · enter scores</div></div>
-    <div style="display:flex;gap:8px;align-items:center"><select id="tests-class" style="width:auto;min-width:170px" onchange="curClass=this.value;renderTests()"></select>
-    <button class="btn bw" onclick="addTest()">+ Add test</button></div>
-  </div>
-  <div class="pb3" id="tests-list"></div>
-</div>
-
-<!-- EXTRA SESSIONS (teacher) -->
-<div class="page t-only" id="page-extras-admin">
-  <div class="ph">
-    <div><div class="ph-t">Extra sessions</div><div class="ph-s">Paid sessions outside the curriculum · students pay per session</div></div>
-    <button class="btn bw" onclick="openExtraModal(null)">+ Add extra session</button>
-  </div>
-  <div class="pb3" id="extras-list"></div>
 </div>
 
 <!-- NOTIFICATIONS -->
@@ -604,21 +571,9 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
 </div>
 
-<!-- MY TESTS (student) -->
-<div class="page" id="page-my-tests" data-role="student">
-  <div class="ph"><div><div class="ph-t">Tests</div><div class="ph-s">Tests from the course book and your scores</div></div></div>
-  <div class="pb3" id="my-tests-content"></div>
-</div>
-
-<!-- MY EXTRA SESSIONS (student) -->
-<div class="page" id="page-my-extras" data-role="student">
-  <div class="ph"><div><div class="ph-t">Extra sessions</div><div class="ph-s">Optional paid sessions for your group</div></div></div>
-  <div class="pb3" id="my-extras-content"></div>
-</div>
-
 <!-- MY SCORES (student) -->
 <div class="page" id="page-my-scores" data-role="student">
-  <div class="ph"><div><div class="ph-t">My Scores</div><div class="ph-s">Quiz and test results</div></div></div>
+  <div class="ph"><div><div class="ph-t">My Scores</div><div class="ph-s">Quiz results</div></div></div>
   <div class="pb3" id="my-scores-content"></div>
 </div>
 
@@ -763,7 +718,6 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
       </select></div>
     <div class="fg"><label class="fl">Unlocks lesson # (0 = general)</label><input type="number" id="pay-lesson" min="0" placeholder="0"></div>
   </div>
-  <div class="fg"><label class="fl">Or: for extra session</label><select id="pay-extra"></select></div>
   <div class="fg"><label class="fl">Note</label><input type="text" id="pay-note" placeholder="Installment / reference..."></div>
   <div class="mfoot">
     <button class="btn" onclick="closeModal('m-pay')">Cancel</button>
@@ -784,32 +738,6 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
     <div class="fg"><label class="fl">Target SAT</label><select id="cl-sat"></select></div>
   </div>
   <div class="mfoot"><button class="btn" onclick="closeModal('m-classes')">Close</button><button class="btn bw" onclick="addClass()">+ Add group</button></div>
-</div>
-</div>
-
-<!-- EXTRA SESSION modal -->
-<div class="ovl" id="m-extra">
-<div class="modal">
-  <div class="mtit" id="m-extra-title">Add extra session</div>
-  <div class="fg"><label class="fl">Title *</label><input type="text" id="ex-title" placeholder="e.g. December test final revision"></div>
-  <div class="fg3">
-    <div class="fg"><label class="fl">Date</label><input type="date" id="ex-date"></div>
-    <div class="fg"><label class="fl">Time</label><input type="time" id="ex-time" value="17:00"></div>
-    <div class="fg"><label class="fl">Price (EGP) *</label><input type="number" id="ex-price" min="0" placeholder="450"></div>
-  </div>
-  <div class="fg"><label class="fl">Description</label><textarea id="ex-desc" style="min-height:52px" placeholder="What will be covered"></textarea></div>
-  <div class="fg"><label class="fl">Open to groups</label><div id="ex-classes" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
-  <div class="fg2">
-    <div class="fg"><label class="fl">Zoom link</label><input type="url" id="ex-zoom" placeholder="https://zoom.us/j/..."></div>
-    <div class="fg"><label class="fl">Zoom visibility</label><select id="ex-vis"><option value="hidden">Hidden</option><option value="live">Live (paid students only)</option></select></div>
-  </div>
-  <div class="fg"><label class="fl">Recording link (after the session)</label><input type="url" id="ex-rec" placeholder="https://drive.google.com/..."></div>
-  <div class="mfoot">
-    <button class="btn bd bsm" id="ex-del" style="display:none" onclick="deleteExtra()">Delete</button>
-    <div style="flex:1"></div>
-    <button class="btn" onclick="closeModal('m-extra')">Cancel</button>
-    <button class="btn bw" onclick="saveExtra()">Save</button>
-  </div>
 </div>
 </div>
 
@@ -859,6 +787,8 @@ hr.d{border:none;border-top:1px solid var(--border);margin:14px 0}
         <option value="advmath">Advanced Math</option>
         <option value="psdata">PS &amp; Data Analysis</option>
         <option value="geo">Geometry &amp; Trigonometry</option>
+        <option value="expert">Expert course</option>
+        <option value="extra">Extra Sessions</option>
       </select>
     </div>
     <div class="fg">
@@ -972,6 +902,8 @@ const DI={
   advmath:{l:'Advanced Math',c:'bp',col:'var(--purple)'},
   psdata:{l:'PS & Data',c:'bt',col:'var(--teal)'},
   geo:{l:'Geometry',c:'ba',col:'var(--amber)'},
+  expert:{l:'Expert course',c:'bgold',col:'var(--gold)'},
+  extra:{l:'Extra Sessions',c:'bgr',col:'var(--green)'},
 };
 
 const SAT_DATES=[
@@ -1226,7 +1158,7 @@ function logout(){
 function nav(el){
   const p=el.dataset.p;
   // ── RBAC: block students from teacher-only pages ──
-  const teacherPages=['schedule','students','payments-admin','quizzes','tests','extras-admin','notifications','manage-course','settings'];
+  const teacherPages=['schedule','students','payments-admin','quizzes','notifications','manage-course','settings'];
   if(CR==='student' && teacherPages.includes(p)){
     toast2('Access denied.');
     return;
@@ -2016,7 +1948,6 @@ function openPayModal(sid){
   const sel=document.getElementById('pay-stu');
   sel.innerHTML=students.map(s=>`<option value="${s.id}">${esc(s.name)} (${s.id})</option>`).join('');
   if(sid) sel.value=sid;
-  document.getElementById('pay-extra').innerHTML='<option value="">— no —</option>'+extras.map(x=>`<option value="${esc(x.id)}">${esc(x.title)} (${(+x.price).toLocaleString()} EGP)</option>`).join('');
   document.getElementById('pay-date').value=new Date().toISOString().split('T')[0];
   openModal('m-pay');
 }
@@ -2028,7 +1959,7 @@ function savePayment(){
   const method=document.getElementById('pay-method').value;
   const lesson=document.getElementById('pay-lesson').value;
   const note=document.getElementById('pay-note').value.trim();
-  const extraId=document.getElementById('pay-extra').value||null;
+  const extraId=null;
   if(!sid||!amt){toast2('Student and amount required');return;}
   const s=students.find(x=>x.id===sid);
   payments.push({id:'p'+Date.now(),studentId:sid,amount:+amt,date,method,lesson:extraId?null:(lesson?+lesson:null),extraId,note,approved:true});
@@ -2141,156 +2072,13 @@ function delClass(id){
   sv('classes',classes); sv('classProgress',classProgress); if(curClass===id)curClass=''; renderClassesList();
 }
 
-// ═══════════════════════════════════════════════════
-// TESTS (book tests, replace Bluebook past exams)
-// ═══════════════════════════════════════════════════
-const DEFAULT_TESTS=Array.from({length:10},(_,i)=>({id:'bt'+(i+1),title:'Test '+(i+1),max:44,link:'',notes:'',openFor:[]}));
-function getTests(){if(!tests)tests=JSON.parse(JSON.stringify(DEFAULT_TESTS));return tests;}
-let openTest=null;
-function renderTests(){
-  fillClassSelect('tests-class');
-  const cid=myClassId(); const list=getTests();
-  const grpStu=students.filter(s=>!cid||s.classId===cid);
-  document.getElementById('tests-list').innerHTML=list.map((t,i)=>{
-    const open=(t.openFor||[]).includes(cid); const isOpen=openTest===t.id;
-    const sc=testScores[t.id]||{}; const done=grpStu.filter(s=>sc[s.id]&&sc[s.id].score!=='' && sc[s.id].score!==undefined).length;
-    return`<div class="lrow"><div class="lrh" onclick="togTest('${t.id}')">
-      <span class="bge ba" style="flex-shrink:0">#${i+1}</span>
-      <span class="ltit">${esc(t.title)}</span>
-      ${cid?`<span class="spl ${open?'sp-d':'sp-p'}" onclick="event.stopPropagation();toggleTestOpen('${t.id}')">${open?'Open for this group':'Closed'}</span>`:''}
-      <span class="bge bgray">${done}/${grpStu.length} scored</span>
-      <span style="color:var(--text3);font-size:11px;margin-left:6px">${isOpen?'▲':'▼'}</span>
-    </div>${isOpen?`<div class="lrbody">
-      <div class="fg3" style="margin-bottom:10px">
-        <div class="fg" style="grid-column:span 2"><label class="fl">Title</label><input type="text" value="${esc(t.title)}" onchange="stF('${t.id}','title',this.value)"></div>
-        <div class="fg"><label class="fl">Max score</label><input type="number" min="1" value="${t.max||44}" onchange="stF('${t.id}','max',+this.value);renderTests()"></div>
-      </div>
-      <div class="fg2" style="margin-bottom:10px">
-        <div class="fg"><label class="fl">Test link (Google Form / PDF / answer key)</label><input type="url" value="${esc(t.link||'')}" placeholder="https://..." onchange="stF('${t.id}','link',this.value)"></div>
-        <div class="fg"><label class="fl">Notes for students</label><input type="text" value="${esc(t.notes||'')}" placeholder="Time limit, pages..." onchange="stF('${t.id}','notes',this.value)"></div>
-      </div>
-      ${grpStu.length?`<table class="tbl"><thead><tr><th>Student</th><th>Score / ${t.max||44}</th><th>%</th><th>Note</th></tr></thead><tbody>
-      ${grpStu.map(s=>{const r=sc[s.id]||{};const raw=r.score!==undefined&&r.score!==''?+r.score:null;const pct=raw!==null?Math.round(raw/(t.max||44)*100):null;
-        return`<tr><td style="font-weight:600">${esc(s.name.split(' ').slice(0,2).join(' '))}</td>
-        <td><input type="number" min="0" max="${t.max||44}" value="${esc(r.score??'')}" onchange="stScore('${t.id}','${s.id}','score',this.value)"></td>
-        <td style="color:${pct===null?'var(--text3)':pct>=70?'var(--green)':'var(--red)'}">${pct!==null?pct+'%':'—'}</td>
-        <td><input type="text" value="${esc(r.note||'')}" onchange="stScore('${t.id}','${s.id}','note',this.value)"></td></tr>`;}).join('')}
-      </tbody></table>`:'<div style="font-size:12px;color:var(--text3)">No students in this group</div>'}
-      <div style="margin-top:12px"><button class="btn bxs bd" onclick="delTest('${t.id}')">Remove test</button></div>
-    </div>`:''}</div>`;}).join('')||'<div class="empty">No tests</div>';
-}
-function togTest(id){openTest=openTest===id?null:id;renderTests();}
-function stF(id,f,v){const t=getTests().find(x=>x.id===id);if(t){t[f]=v;sv('tests',tests);toast2('Saved');}}
-function toggleTestOpen(id){const cid=myClassId();if(!cid)return;const t=getTests().find(x=>x.id===id);if(!t)return;
-  t.openFor=t.openFor||[];const i=t.openFor.indexOf(cid);if(i>=0)t.openFor.splice(i,1);else t.openFor.push(cid);sv('tests',tests);renderTests();}
-function stScore(tid,sid,f,v){if(!testScores[tid])testScores[tid]={};if(!testScores[tid][sid])testScores[tid][sid]={score:'',note:''};
-  testScores[tid][sid][f]=v;sv('testScores',testScores);toast2('Score saved');}
-function addTest(){const l=getTests();l.push({id:'bt'+Date.now(),title:'Test '+(l.length+1),max:44,link:'',notes:'',openFor:[]});sv('tests',tests);renderTests();}
-function delTest(id){if(!confirm('Remove this test and its scores?'))return;tests=getTests().filter(x=>x.id!==id);delete testScores[id];sv('tests',tests);sv('testScores',testScores);renderTests();}
-function renderMyTests(){
-  const el=document.getElementById('my-tests-content');
-  const list=getTests().filter(t=>(t.openFor||[]).includes(CU.classId));
-  el.innerHTML=list.length?list.map(t=>{const r=(testScores[t.id]||{})[CU.id]||{};const has=r.score!==undefined&&r.score!=='';
-    const pct=has?Math.round(+r.score/(t.max||44)*100):null;
-    return`<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="flex:1;min-width:180px"><div style="font-size:14px;font-weight:600">${esc(t.title)}</div>
-      ${t.notes?`<div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(t.notes)}</div>`:''}</div>
-      ${has?`<span class="bge ${pct>=70?'bgr':'br'}" style="font-size:12px;padding:4px 10px">${esc(r.score)} / ${t.max||44} · ${pct}%</span>`:'<span class="bge bgray">Not scored yet</span>'}
-      ${t.link?`<a href="${esc(t.link)}" target="_blank"><button class="btn bsm bblu">Open test</button></a>`:''}
-    </div>`;}).join(''):'<div class="empty">No tests open for your group yet</div>';
-}
-
-// ═══════════════════════════════════════════════════
-// EXTRA SESSIONS (paid, outside curriculum)
-// ═══════════════════════════════════════════════════
-let editExtraId=null;
-function isPaidExtra(sid,xid){return payments.some(p=>p.studentId===sid&&p.extraId===xid&&+p.amount>0&&p.approved!==false);}
-function extraPending(sid,xid){return payRequests.some(r=>r.studentId===sid&&r.extraId===xid&&r.status==='pending');}
-function openExtraModal(id){
-  editExtraId=id; const x=id?extras.find(e=>e.id===id):null;
-  document.getElementById('m-extra-title').textContent=x?'Edit extra session':'Add extra session';
-  document.getElementById('ex-title').value=x?x.title:'';
-  document.getElementById('ex-date').value=x?x.date||'':'';
-  document.getElementById('ex-time').value=x?x.time||'17:00':'17:00';
-  document.getElementById('ex-price').value=x?x.price||'':(settings.sessFee||'');
-  document.getElementById('ex-desc').value=x?x.desc||'':'';
-  document.getElementById('ex-zoom').value=x?x.zoom||'':'';
-  document.getElementById('ex-vis').value=x?x.zoomVis||'hidden':'hidden';
-  document.getElementById('ex-rec').value=x?x.rec||'':'';
-  const sel=x?x.classIds||[]:[myClassId()].filter(Boolean);
-  document.getElementById('ex-classes').innerHTML=classes.length?classes.map(c=>`<label style="display:flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;cursor:pointer"><input type="checkbox" value="${esc(c.id)}" ${sel.includes(c.id)?'checked':''} style="width:auto"> ${esc(c.name)}</label>`).join(''):'<span style="font-size:12px;color:var(--text3)">Add groups first (Students → Groups)</span>';
-  document.getElementById('ex-del').style.display=x?'':'none';
-  openModal('m-extra');
-}
-function saveExtra(){
-  const title=document.getElementById('ex-title').value.trim(); const price=+document.getElementById('ex-price').value;
-  if(!title){toast2('Title required');return;} if(!price){toast2('Price required');return;}
-  const classIds=[...document.querySelectorAll('#ex-classes input:checked')].map(i=>i.value);
-  if(!classIds.length){toast2('Choose at least one group');return;}
-  const obj={title,price,classIds,date:document.getElementById('ex-date').value,time:document.getElementById('ex-time').value,
-    desc:document.getElementById('ex-desc').value.trim(),zoom:document.getElementById('ex-zoom').value.trim(),
-    zoomVis:document.getElementById('ex-vis').value,rec:document.getElementById('ex-rec').value.trim()};
-  if(editExtraId){const x=extras.find(e=>e.id===editExtraId);if(x)Object.assign(x,obj);}else extras.push({id:'x'+Date.now(),...obj});
-  sv('extras',extras); closeModal('m-extra'); renderExtrasAdmin(); toast2('Extra session saved');
-}
-function deleteExtra(){if(!confirm('Delete this extra session?'))return;extras=extras.filter(e=>e.id!==editExtraId);sv('extras',extras);closeModal('m-extra');renderExtrasAdmin();}
-function toggleExtraZoom(id){const x=extras.find(e=>e.id===id);if(!x)return;x.zoomVis=x.zoomVis==='live'?'hidden':'live';sv('extras',extras);renderExtrasAdmin();}
-function renderExtrasAdmin(){
-  const el=document.getElementById('extras-list');
-  const list=[...extras].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
-  el.innerHTML=list.length?list.map(x=>{
-    const elig=students.filter(s=>(x.classIds||[]).includes(s.classId));
-    const paid=elig.filter(s=>isPaidExtra(s.id,x.id));
-    return`<div class="card cp" style="margin-bottom:10px;border-left:3px solid var(--gold)">
-      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:200px">
-          <div style="font-size:14px;font-weight:600">${esc(x.title)}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(x.date||'No date')} ${esc(x.time||'')} · ${(+x.price).toLocaleString()} EGP · ${(x.classIds||[]).map(clsName).map(esc).join(', ')}</div>
-          ${x.desc?`<div style="font-size:12px;color:var(--text2);margin-top:6px">${esc(x.desc)}</div>`:''}
-          <div style="font-size:12px;margin-top:8px"><span style="color:var(--green);font-weight:600">${paid.length} paid</span> <span style="color:var(--text3)">of ${elig.length}</span>${paid.length?` · <span style="color:var(--text2)">${paid.map(s=>esc(s.name.split(' ')[0])).join(', ')}</span>`:''}</div>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-          ${x.zoom?`<span class="zoom-badge ${x.zoomVis==='live'?'zoom-live':'zoom-hidden'}">${x.zoomVis==='live'?'Zoom live':'Zoom hidden'}</span><button class="btn bxs" onclick="toggleExtraZoom('${x.id}')">${x.zoomVis==='live'?'Hide link':'Make live'}</button>`:'<span style="font-size:11px;color:var(--text3)">No Zoom link</span>'}
-          <button class="btn bxs" onclick="openExtraModal('${x.id}')">Edit</button>
-        </div>
-      </div></div>`;}).join(''):'<div class="empty">No extra sessions yet. Add one with the button above.</div>';
-}
-function renderMyExtras(){
-  const el=document.getElementById('my-extras-content');
-  const list=extras.filter(x=>(x.classIds||[]).includes(CU.classId)).sort((a,b)=>new Date(a.date||0)-new Date(b.date||0));
-  el.innerHTML=list.length?list.map(x=>{
-    const paid=isPaidExtra(CU.id,x.id), pend=extraPending(CU.id,x.id);
-    return`<div class="card cp" style="margin-bottom:10px;border-left:3px solid ${paid?'var(--green)':'var(--gold)'}">
-      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:200px">
-          <div style="font-size:14px;font-weight:600">${esc(x.title)}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">${esc(x.date||'Date TBA')} ${esc(x.time||'')} · ${(+x.price).toLocaleString()} EGP</div>
-          ${x.desc?`<div style="font-size:12px;color:var(--text2);margin-top:6px">${esc(x.desc)}</div>`:''}
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-          ${paid?`<span class="bge bgr">Paid</span>
-            ${x.zoomVis==='live'&&x.zoom?`<a href="${esc(x.zoom)}" target="_blank"><button class="btn bsm bblu">Join Zoom</button></a>`:'<span class="bge bgray">Link coming soon</span>'}
-            ${x.rec?`<a href="${esc(x.rec)}" target="_blank"><button class="btn bxs">Recording</button></a>`:''}`
-          :pend?'<span class="bge ba">Payment under review</span>'
-          :`<button class="btn bsm bamb" onclick="payForExtra('${x.id}')">Pay ${(+x.price).toLocaleString()} EGP</button>`}
-        </div>
-      </div></div>`;}).join(''):'<div class="empty">No extra sessions for your group right now</div>';
-}
-function payForExtra(id){
-  navTo('my-payments');
-  const x=extras.find(e=>e.id===id); const sel=document.getElementById('up-extra');
-  if(sel){sel.value=id;} if(x)document.getElementById('up-amt').value=x.price||'';
-  document.getElementById('up-lesson').value='';
-  toast2('Upload your payment screenshot for: '+(x?x.title:''));
-}
-
 const PAGE_RENDER={
   dashboard:()=>renderDashboard(), curriculum:()=>renderCurriculum(),
   schedule:()=>renderSchedule(), students:()=>renderStudents(),
   'payments-admin':()=>renderPaymentsAdmin(), quizzes:()=>renderQuizzes(),
-  tests:()=>renderTests(), 'extras-admin':()=>renderExtrasAdmin(), notifications:()=>renderNotifications(),
+  notifications:()=>renderNotifications(),
   settings:()=>renderSettings(),'manage-course':()=>renderManageCourse(),'my-password':()=>{},'my-schedule':()=>renderMySchedule(),
-  'my-scores':()=>renderMyScores(),'my-payments':()=>renderMyPayments(),'my-tests':()=>renderMyTests(),'my-extras':()=>renderMyExtras(),'faq':()=>renderFAQ()
+  'my-scores':()=>renderMyScores(),'my-payments':()=>renderMyPayments(),'faq':()=>renderFAQ()
 };
 
 // ═══════════════════════════════════════════════════
@@ -2496,20 +2284,6 @@ function renderMyScores(){
     </tr>`;
   });
   html+=`</tbody></table></div>`;
-  // Tests
-  html+=`<div class="st" style="margin-bottom:12px">Test scores</div>
-  <div class="card"><table class="tbl"><thead><tr><th>Test</th><th>Score</th><th>%</th><th>Note</th></tr></thead><tbody>`;
-  const myT=getTests().filter(t=>(t.openFor||[]).includes(CU.classId)||((testScores[t.id]||{})[sid]));
-  if(!myT.length) html+='<tr><td colspan="4" style="color:var(--text3)">No tests yet</td></tr>';
-  myT.forEach(t=>{
-    const sc=(testScores[t.id]||{})[sid]||{}; const has=sc.score!==undefined&&sc.score!=='';
-    const pct=has?Math.round(+sc.score/(t.max||44)*100):null;
-    html+=`<tr><td style="font-weight:500">${esc(t.title)}</td>
-      <td>${has?esc(sc.score)+' / '+(t.max||44):'—'}</td>
-      <td style="color:${pct===null?'var(--text3)':pct>=70?'var(--green)':'var(--red)'}">${pct!==null?pct+'%':'—'}</td>
-      <td style="color:var(--text2)">${esc(sc.note||'')}</td></tr>`;
-  });
-  html+=`</tbody></table></div>`;
   el.innerHTML=html;
 }
 
@@ -2556,7 +2330,6 @@ function renderMyPayments(){
         </select></div>
       <div class="fg"><label class="fl">Lesson # (if for specific lesson)</label><input type="number" id="up-lesson" min="0" max="20" placeholder="0 = general"></div>
     </div>
-    ${extras.length?`<div class="fg"><label class="fl">Paying for an extra session?</label><select id="up-extra"><option value="">No — regular lesson / course fee</option>${extras.filter(x=>!isPaidExtra(CU.id,x.id)).map(x=>`<option value="${esc(x.id)}">${esc(x.title)} — ${(+x.price).toLocaleString()} EGP</option>`).join('')}</select></div>`:''}
     <div class="fg"><label class="fl">Note (optional)</label><input type="text" id="up-note" placeholder="Transaction reference number..."></div>
     <div class="fg">
       <label class="fl">Payment screenshot *</label>
@@ -2625,7 +2398,7 @@ async function submitPayRequest(){
     const id='r'+Date.now()+Math.random().toString(36).slice(2,6);
     const img=await compressImage(file);
     if(img.length>4000000){toast2('Screenshot is too large. Please crop it and try again.');return;}
-    const extraId=document.getElementById('up-extra')?document.getElementById('up-extra').value:'';
+    const extraId='';
     const ins=await rpc('pr_submit',{p_token:TOKEN,p_id:id,p_amount:+amt,p_method:method,p_lesson:lesson?+lesson:null,p_note:note,p_image:img,p_extra:extraId||null});
     if(ins.error){toast2('Not submitted: '+ins.error.message+'. Please try again.');return;}
     upsertLocalPR(ins.data);
@@ -2682,7 +2455,7 @@ function renderManageCourse(){
           <input type="text" value="${esc(l.title)}" style="margin-bottom:6px" onchange="updateLesson(${i},'title',this.value)">
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <select style="width:auto;flex:1" onchange="updateLesson(${i},'d',this.value)">
-              ${['algebra','advmath','psdata','geo'].map(d=>`<option value="${d}" ${l.d===d?'selected':''}>${DI[d]?.l||d}</option>`).join('')}
+              ${['algebra','advmath','psdata','geo','expert','extra'].map(d=>`<option value="${d}" ${l.d===d?'selected':''}>${DI[d]?.l||d}</option>`).join('')}
             </select>
             <input type="text" value="${esc(l.q||'1–2')}" style="width:70px" placeholder="q's" onchange="updateLesson(${i},'q',this.value)">
           </div>
