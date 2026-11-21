@@ -552,7 +552,8 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
 <!-- CURRICULUM -->
 <div class="page" id="page-curriculum">
   <div class="ph">
-    <div><div class="ph-t" id="curr-title">Curriculum</div><div class="ph-s">Official College Board Digital SAT Math skill areas</div></div>
+    <div><div class="ph-t" id="curr-title">Curriculum</div><div class="ph-s">Official College Board Digital SAT Math skill areas</div>
+      <div id="curr-hint" class="t-only" style="font-size:11px;color:var(--accent);margin-top:4px">Status is per group — choose the group on the right. Lessons open automatically when that group's session starts.</div></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <select id="curr-class" class="t-only" style="width:auto;min-width:170px" onchange="curClass=this.value;renderCurriculum()"></select>
       <span id="cp-txt" style="font-size:12px;color:var(--text3)"></span>
@@ -1677,6 +1678,8 @@ function renderCurriculum(){
   document.getElementById('curr-title').textContent='Curriculum — '+vl.length+' Lessons';
   const cs=document.getElementById('curr-class');
   if(cs){cs.style.display=(CR!=='student'&&classes.length)?'':'none';if(CR!=='student')fillClassSelect('curr-class');}
+  const hint=document.getElementById('curr-hint');
+  if(hint)hint.style.display=(CR!=='student'&&classes.length)?'':'none';
   let html='';
   visibleLessons().forEach(l=>{
     if(CF!=='all'&&l.d!==CF) return;
@@ -2321,7 +2324,12 @@ function myClassId(){return CR==='student'?(CU&&(CU.hostClassId||CU.classId))||'
 function lessonAllowed(n){const a=(CU&&CU.allowedLessons)||[];return !a.length||a.map(Number).includes(+n);}
 function lessonStatus(n,cid){
   cid=cid===undefined?myClassId():cid;
-  if(cid&&classes.length){return ((classProgress[cid]||{})[n])||'pending';}
+  if(cid&&classes.length){
+    const v=(classProgress[cid]||{})[n]; if(v)return v;          // set by the teacher
+    // otherwise: open automatically once this group's session for the lesson has started
+    const now=Date.now();
+    return sessions.some(s=>s.classId===cid&&+s.lessonNum===+n&&s.date&&new Date(s.date+'T'+(s.time||'00:00'))<=now)?'done':'pending';
+  }
   return gl(n).status||'pending';
 }
 function setLessonStatus(n,v,cid){
