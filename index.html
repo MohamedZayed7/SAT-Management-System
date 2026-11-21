@@ -390,6 +390,10 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
 .glowmove{box-shadow:0 0 22px -8px color-mix(in srgb,var(--accent) 70%,transparent)!important}
 @keyframes glowspin{to{--ang:360deg}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.xbox{border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg2,transparent)}
+.xrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.xic{width:18px;text-align:center;color:var(--text3);flex-shrink:0}
+.xt{font-size:13px;font-weight:600}.xs{font-size:11px;color:var(--text3);margin-top:2px}
+.xcode{font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:2px 8px;border-radius:6px;border:1px solid var(--border);user-select:all;cursor:pointer}
 </style>
 <!-- Supabase JS v2 -->
 <link rel="preconnect" href="https://esgebnchiaqwmdbpdrdj.supabase.co" crossorigin>
@@ -855,7 +859,8 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
       <select id="si-vis"><option value="auto">Auto — opens 15 min before</option><option value="hidden">Hidden (students can't see yet)</option><option value="live">Live now (visible to students)</option></select></div>
   </div>
   <div class="fg2">
-    <div class="fg"><label class="fl">Recording link (add after session)</label><input type="url" id="si-rec" placeholder="https://drive.google.com/..."></div>
+    <div class="fg"><label class="fl">Recording link (added automatically from Zoom)</label><input type="url" id="si-rec" placeholder="https://drive.google.com/...">
+      <input type="text" id="si-recpass" placeholder="Recording passcode" style="margin-top:6px"></div>
     <div class="fg"><label class="fl">Linked lesson # (payment gate)</label><input type="number" id="si-ln" min="0" max="20" placeholder="0 = no gate"></div>
   </div>
   <div class="fg"><label class="fl">Only for specific students <span style="font-size:11px;color:var(--text3)">(private session — leave empty for the whole group)</span></label>
@@ -1725,16 +1730,16 @@ function renderLB(n,ld){
       <div class="fg2" style="margin-bottom:10px">
         <div class="fg"><label class="fl">Google Form homework link</label>
           <input type="url" value="${esc(ld.hwLink)}" placeholder="https://forms.gle/..." onchange="slF(${n},'hwLink',this.value)"></div>
-        <div class="fg"><label class="fl">Recording link (Zoom / Drive)</label>
+        <div class="fg"><label class="fl">Fallback recording link <span style="font-size:10px;color:var(--text3)">(Zoom recordings are added per group automatically)</span></label>
           <input type="url" value="${esc(ld.recLink||'')}" placeholder="https://drive.google.com/..." onchange="slF(${n},'recLink',this.value)"></div>
       </div>
-      <div class="fg" style="margin-bottom:10px"><label class="fl">Book content &amp; lesson notes</label>
+      ${myClassId()?`<div style="font-size:11px;color:var(--text3);margin:2px 0 6px">What ${esc(clsName(myClassId())||'this group')} sees:</div>${recBlock(recFor(n))}${hwBlock(ld,n)}`:''}
+      <div class="fg" style="margin-bottom:10px;margin-top:10px"><label class="fl">Book content &amp; lesson notes</label>
         <textarea placeholder="Write your explanation, formulas, examples..." onchange="slF(${n},'bookContent',this.value)" style="min-height:120px">${esc(ld.bookContent)}</textarea></div>
       <div class="fg"><label class="fl">Private session notes</label>
         <textarea onchange="slF(${n},'sessNotes',this.value)" style="min-height:55px">${esc(ld.sessNotes||'')}</textarea></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${ld.hwLink?`<a href="${esc(ld.hwLink)}" target="_blank"><button class="btn bsm bg2">Open homework form</button></a>`:''}
-        ${ld.recLink?`<a href="${esc(ld.recLink)}" target="_blank"><button class="btn bsm bblu">Watch recording</button></a>`:''}
         <button class="btn bsm" onclick="setLessonStatus(${n},'done');renderCurriculum()">Mark done${clsName(myClassId())?' for '+esc(clsName(myClassId())):''}</button>
       </div>
     </div>`;
@@ -1750,15 +1755,40 @@ function renderLB(n,ld){
       }${settings.w1?`<br>${esc(settings.w1)}`:''}${settings.w2?`<br>${esc(settings.w2)}`:''
       }${settings.payInstr?`<br><br>${esc(settings.payInstr)}`:''}
     </div>`:`<div>
-      ${ld.recLink?`<a href="${esc(ld.recLink)}" target="_blank"><button class="btn bsm bblu" style="margin-bottom:10px">Watch session recording</button></a>`:
-        '<div style="font-size:12px;color:var(--text3);margin-bottom:8px">Recording not uploaded yet</div>'}
-      ${ld.hwLink?`<a href="${esc(ld.hwLink)}" target="_blank"><button class="btn bsm bg2" style="margin-bottom:10px">Open homework form</button></a>`:''}
+      ${recBlock(recFor(n))}
+      ${hwBlock(ld,n)}
       ${ld.bookContent?`<div style="margin-top:10px;font-size:12px;color:var(--text2);line-height:1.65;white-space:pre-wrap">${esc(ld.bookContent)}</div>`:''}
     </div>`}
   </div>`;
 }
 
 function togL(n){openL=(openL===n)?null:n; renderCurriculum();}
+// ── Group sessions → recording + homework deadline ──
+function grpSess(cid){return sessions.filter(s=>s.classId===cid&&s.date&&!(s.studentIds&&s.studentIds.length)).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));}
+function lessonSess(n,cid){cid=cid===undefined?myClassId():cid;if(!cid)return null;const l=grpSess(cid).filter(s=>+s.lessonNum===+n);return l.find(s=>s.rec)||l[0]||null;}
+function hwDue(n,cid){const s=lessonSess(n,cid);if(!s)return null;const st=sessStart(s);const nx=grpSess(s.classId).map(sessStart).find(d=>d&&d>st);return nx||null;}
+function recFor(n,cid){const s=lessonSess(n,cid);if(s&&s.rec)return{url:s.rec,pass:s.recPass||'',dur:+s.recDur||0,auto:!!s.recAuto};const ld=gl(n);return ld.recLink?{url:ld.recLink,pass:'',dur:0,auto:false}:null;}
+function fmtDue(d){return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+', '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
+function leftTxt(d){const ms=d-Date.now();if(ms<=0)return'Deadline passed';const m=Math.floor(ms/60000),dd=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;
+  return (dd?dd+' day'+(dd!==1?'s':'')+' ':'')+(dd||h?h+' hour'+(h!==1?'s':'')+' ':'')+(dd?'':mm+' min ')+'left';}
+function copyTxt(t){const ok=()=>toast2('Passcode copied');if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(ok,()=>prompt('Copy the passcode:',t));else prompt('Copy the passcode:',t);}
+function recBlock(r){
+  if(!r)return '<div class="xbox"><div class="xrow"><span class="xic">▶</span><div style="flex:1"><div class="xt">Session recording</div><div class="xs">Not ready yet — it appears here automatically after Zoom finishes processing.</div></div></div></div>';
+  const dur=r.dur?(r.dur>=60?Math.floor(r.dur/60)+' h '+(r.dur%60)+' min':r.dur+' min'):'';
+  return `<div class="xbox"><div class="xrow"><span class="xic">▶</span><div style="flex:1;min-width:0"><div class="xt">Session recording</div>
+    <div class="xs">${r.auto?'Added automatically from Zoom':'Recording link'}${dur?' · '+dur:''}</div></div>
+    <a href="${esc(r.url)}" target="_blank" rel="noopener"><button class="btn bsm bblu">Watch</button></a></div>
+    ${r.pass?`<div class="xrow" style="margin-top:8px;font-size:12px"><span class="xic">🔒</span><span style="color:var(--text2)">Passcode</span>
+      <code class="xcode">${esc(r.pass)}</code><button class="btn bxs" onclick='copyTxt(${JSON.stringify(r.pass).replace(/'/g,"&#39;")})'>Copy</button></div>`:''}</div>`;
+}
+function hwBlock(ld,n,cid){
+  if(!ld.hwLink)return '<div class="xbox"><div class="xrow"><span class="xic">✓</span><div class="xt" style="color:var(--text2)">No homework for this lesson</div></div></div>';
+  const d=hwDue(n,cid);
+  return `<div class="xbox"><div class="xrow"><span class="xic">✎</span><div style="flex:1;min-width:0"><div class="xt">Homework</div>
+    <div class="xs">${d?'Due before next session · '+fmtDue(d):'Due before the next session'}</div></div>
+    <a href="${esc(ld.hwLink)}" target="_blank" rel="noopener"><button class="btn bsm bg2">Open form</button></a></div>
+    ${d?`<div class="xrow" style="margin-top:8px;font-size:12px;color:${d>Date.now()?'var(--amber)':'var(--text3)'}"><span class="xic">⏱</span>${leftTxt(d)}</div>`:''}</div>`;
+}
 function cycStat(e,n){
   e.stopPropagation();
   const c={pending:'progress',progress:'done',done:'pending'};
@@ -1819,8 +1849,9 @@ function buildSessCard(s,isPast){
     ${isOpen?`<div style="padding:0 16px 14px;border-top:1px solid var(--border)">
       <div class="fg2" style="margin-top:12px">
         <div class="fg"><label class="fl">Zoom link</label><input type="url" value="${esc(s.zoom||'')}" onchange="updS('${s.id}','zoom',this.value)" placeholder="https://zoom.us/j/..."></div>
-        <div class="fg"><label class="fl">Recording link</label><input type="url" value="${esc(s.rec||'')}" onchange="updS('${s.id}','rec',this.value)" placeholder="Drive / YouTube..."></div>
+        <div class="fg"><label class="fl">Recording link${s.recAuto?' <span style="font-size:10px;color:var(--text3)">(from Zoom)</span>':''}</label><input type="url" value="${esc(s.rec||'')}" onchange="updS('${s.id}','rec',this.value)" placeholder="Drive / YouTube..."></div>
       </div>
+      <div class="fg" style="max-width:260px"><label class="fl">Recording passcode</label><input type="text" value="${esc(s.recPass||'')}" onchange="updS('${s.id}','recPass',this.value)" placeholder="Shown under the recording"></div>
       <div class="fg" style="max-width:200px"><label class="fl">Payment gate lesson #</label>
         <input type="number" min="0" max="20" value="${s.lessonNum||''}" onchange="updS('${s.id}','lessonNum',this.value)" placeholder="0 = no gate"></div>
     </div>`:''}
@@ -1847,7 +1878,7 @@ function delSess(e,id){e.stopPropagation();if(!confirm('Delete session?'))return
 function openAddSess(){
   editSessId=null;
   document.getElementById('m-sess-t').textContent='Add session';
-  ['si-date','si-title','si-zoom','si-rec'].forEach(id=>document.getElementById(id).value='');
+  ['si-date','si-title','si-zoom','si-rec','si-recpass'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('si-time').value='17:00';
   document.getElementById('si-type').value='lesson';
   fillClassSelect('si-class'); fillSessStudents([]);
@@ -1867,6 +1898,7 @@ function editSess(e,id){
   document.getElementById('si-zoom').value=s.zoom||'';
   document.getElementById('si-vis').value=s.zoomVis||'hidden';
   document.getElementById('si-rec').value=s.rec||'';
+  document.getElementById('si-recpass').value=s.recPass||'';
   document.getElementById('si-ln').value=s.lessonNum||'';
   openModal('m-add-sess');
 }
@@ -1884,6 +1916,7 @@ function saveSess(){
     zoom:document.getElementById('si-zoom').value.trim(),
     zoomVis:document.getElementById('si-vis').value,
     rec:document.getElementById('si-rec').value.trim(),
+    recPass:document.getElementById('si-recpass').value.trim(),
     lessonNum:document.getElementById('si-ln').value?+document.getElementById('si-ln').value:null,
   };
   if(editSessId){const s=sessions.find(x=>x.id===editSessId);if(s)Object.assign(s,obj);}
@@ -2637,7 +2670,7 @@ function studentZoomBtn(s,paid){
   return '<span class="bge bgray">Link coming soon</span>';
 }
 // refresh time-based buttons every minute (no network use)
-setInterval(()=>{if(!CU)return;const p=_curPage();if(['dashboard','my-schedule','schedule'].includes(p))rerenderCurrent();},60000);
+setInterval(()=>{if(!CU)return;const p=_curPage();if(['dashboard','my-schedule','schedule'].includes(p)||(p==='curriculum'&&CR==='student'))rerenderCurrent();},60000);
 
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -3223,7 +3256,7 @@ function renderMySchedule(){
           ${studentZoomBtn(s,paid)}
           ${!paid?`<span class="bge br">Payment required</span>
             <button class="btn bxs bamb" onclick="navTo('my-payments')">Pay now</button>`:''}
-          ${paid&&s.rec?`<a href="${esc(s.rec)}" target="_blank"><button class="btn bxs">Recording</button></a>`:''}
+          ${paid&&s.rec?`<a href="${esc(s.rec)}" target="_blank"><button class="btn bxs">Recording</button></a>${s.recPass?`<span style="font-size:11px;color:var(--text3)">Passcode <code class="xcode">${esc(s.recPass)}</code></span>`:''}`:''}
         </div>
       </div>
     </div>`;
@@ -3235,7 +3268,7 @@ function renderMySchedule(){
       html+=`<div class="card cp" style="margin-bottom:8px;opacity:.75;display:flex;align-items:center;gap:10px">
         <span class="bge bgray">${esc(s.date||'')}</span>
         <span style="font-size:13px;flex:1">${esc(s.title)}</span>
-        ${paid&&s.rec?`<a href="${esc(s.rec)}" target="_blank"><button class="btn bxs">Recording</button></a>`:
+        ${paid&&s.rec?`${s.recPass?`<code class="xcode" title="Recording passcode" onclick='copyTxt(${JSON.stringify(s.recPass).replace(/'/g,"&#39;")})'>${esc(s.recPass)}</code>`:''}<a href="${esc(s.rec)}" target="_blank"><button class="btn bxs">Recording</button></a>`:
           !paid?'<span class="bge br" style="font-size:9px">Locked</span>':
           '<span class="bge bgray" style="font-size:9px">No recording</span>'}
       </div>`;
