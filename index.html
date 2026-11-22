@@ -394,6 +394,11 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
 .xrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.xic{width:18px;text-align:center;color:var(--text3);flex-shrink:0}
 .xt{font-size:13px;font-weight:600}.xs{font-size:11px;color:var(--text3);margin-top:2px}
 .xcode{font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:2px 8px;border-radius:6px;border:1px solid var(--border);user-select:all;cursor:pointer}
+.seg3 span{padding:7px 10px;font-size:12px}.sr-row .seg3{width:auto;min-width:210px}
+#sr-list .sr-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}#sr-list .sr-row:last-child{border-bottom:0}
+#sr-list .sr-hw{width:76px}
+.att-badge{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+@media(max-width:600px){#sr-list .sr-row .seg3{flex:1 1 100%;order:3}}
 </style>
 <!-- Supabase JS v2 -->
 <link rel="preconnect" href="https://esgebnchiaqwmdbpdrdj.supabase.co" crossorigin>
@@ -471,6 +476,11 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
     <div class="sbi t-only" data-p="schedule" onclick="nav(this)">
       <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="1" x2="5" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="1" x2="11" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       Schedule &amp; Zoom
+    </div>
+    <div class="sbi t-only" data-p="attendance" onclick="nav(this)">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="1.5" width="12" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 6l1.3 1.3L8.8 4.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="5" y1="10.5" x2="11" y2="10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Attendance
+      <span class="att-badge" id="att-badge" style="display:none"></span>
     </div>
     <div class="sbi t-only" data-p="students" onclick="nav(this)">
       <svg viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M1 13c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="1.2" opacity=".5"/><path d="M12 10c1.66 0 3 1.34 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".5"/></svg>
@@ -582,6 +592,47 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
     <div style="display:flex;gap:8px"><button class="btn" onclick="openRepeatModal()">↻ Repeat weekly</button><button class="btn bw" onclick="openAddSess()">+ Add session</button></div>
   </div>
   <div class="pb3" id="schedule-list"></div>
+</div>
+
+<!-- ATTENDANCE -->
+<div class="page t-only" id="page-attendance">
+  <div class="ph">
+    <div><div class="ph-t">Attendance &amp; homework</div><div class="ph-s">Opens on the session that just ended · every tap saves automatically</div></div>
+    <div style="display:flex;gap:8px;align-items:center"><select id="att-grp" style="width:auto" onchange="attGroup=this.value;attSessId=null;renderAttendance()"></select></div>
+  </div>
+  <div class="pb3">
+    <div class="card cp" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn bsm" onclick="attStep(-1)" aria-label="Previous session">‹</button>
+        <select id="att-sess" style="flex:1;min-width:0" onchange="attSessId=this.value;renderAttendance()"></select>
+        <button class="btn bsm" onclick="attStep(1)" aria-label="Next session">›</button>
+      </div>
+      <div id="sr-title" style="font-size:12px;color:var(--text3);margin-top:8px"></div>
+    </div>
+    <div id="att-main">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <div style="font-size:12px;color:var(--text2)" id="att-count"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn bsm" onclick="openImport()">Import homework marks</button><button class="btn bsm" onclick="srAllPresent()">Mark all present</button></div></div>
+    <div id="imp-box" style="display:none;background:var(--card2);border-radius:var(--r);padding:12px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Import homework marks</div>
+      <div class="fg" style="margin-bottom:8px"><label class="fl">1 · Google Sheets link <span style="font-size:10px;color:var(--text3)">(saved for this lesson — next time just press Load)</span></label>
+        <div style="display:flex;gap:6px"><input type="url" id="imp-link" placeholder="https://docs.google.com/spreadsheets/d/..." style="flex:1;min-width:0"><button class="btn bsm bw" onclick="impFromLink(this)">Load</button></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">In the sheet: <b>Share</b> → General access → <b>Anyone with the link</b> → Viewer.</div></div>
+      <div class="fg" style="margin-bottom:8px"><label class="fl">2 · Or upload a file (Excel .xlsx or .csv)</label>
+        <input type="file" id="imp-file" accept=".xlsx,.xls,.csv,.tsv,.txt" onchange="impFromFile(this)"></div>
+      <div class="fg"><label class="fl">3 · Or paste the sheet (select all → copy → paste)</label>
+        <textarea id="imp-text" style="min-height:60px;font-size:11px" placeholder="Paste the whole sheet here, including the header row"></textarea></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
+        <span style="font-size:12px;color:var(--text2)">If a student submitted more than once:</span>
+        <select id="imp-rule" style="width:auto"><option value="latest">Use the latest</option><option value="highest">Use the highest</option></select>
+        <button class="btn bsm bw" onclick="previewImport()">Preview</button>
+        <button class="btn bsm" onclick="document.getElementById('imp-box').style.display='none'">Close</button></div>
+      <div id="imp-prev"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Homework mark out of <b id="sr-max">10</b> (change it in Curriculum → lesson → Homework max score)</div>
+    <div class="card" style="padding:4px 14px" id="sr-list"></div>
+    </div>
+  </div>
 </div>
 
 <!-- STUDENTS -->
@@ -930,27 +981,6 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
 </div>
 </div>
 
-<div class="ovl" id="m-sessrec">
-<div class="modal" style="max-width:600px">
-  <div class="mtit">Attendance &amp; homework</div>
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-    <div style="font-size:12px;color:var(--text2)" id="sr-title"></div>
-    <div style="display:flex;gap:6px"><button class="btn bsm" onclick="openImport()">Import from Google Sheets</button><button class="btn bsm" onclick="srAllPresent()">Mark all present</button></div></div>
-  <div id="imp-box" style="display:none;background:var(--card2);border-radius:var(--r);padding:12px;margin-bottom:12px">
-    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">In the form's Google Sheet: click the top-left corner (or <b>Ctrl+A</b>), copy (<b>Ctrl+C</b>), then paste here (<b>Ctrl+V</b>).</div>
-    <textarea id="imp-text" style="min-height:70px;font-size:11px" placeholder="Paste the whole sheet here, including the header row"></textarea>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
-      <span style="font-size:12px;color:var(--text2)">If a student submitted more than once:</span>
-      <select id="imp-rule" style="width:auto"><option value="latest">Use the latest</option><option value="highest">Use the highest</option></select>
-      <button class="btn bsm bw" onclick="previewImport()">Preview</button></div>
-    <div id="imp-prev"></div>
-  </div>
-  <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Homework mark out of <b id="sr-max">10</b> (change the maximum in Curriculum → lesson → Homework max score)</div>
-  <div id="sr-list"></div>
-  <div class="mfoot"><button class="btn" onclick="closeModal('m-sessrec')">Cancel</button><button class="btn bw" onclick="saveSessRecords()">Save</button></div>
-</div>
-</div>
-
 <!-- GROUPS modal -->
 <div class="ovl" id="m-classes">
 <div class="modal" style="max-width:620px">
@@ -1252,6 +1282,7 @@ async function loadAllFromDB(){
 // Live updates: the server only says WHICH data changed; we then re-fetch it securely
 function _curPage(){const e=document.querySelector('.sbi.active');return e?e.dataset.p:'';}
 function rerenderCurrent(){
+  try{updAttBadge();}catch(e){}
   const a=document.activeElement;
   if(a&&a.closest&&a.closest('.main')&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return; // don't disturb typing
   const el=document.querySelector('.sbi.active'); if(el&&CU){const p=el.dataset.p;const f=PAGE_RENDER[p];if(f)f();}
@@ -1413,7 +1444,7 @@ function logout(){
 function nav(el){
   const p=el.dataset.p;
   // ── RBAC: block students from teacher-only pages ──
-  const teacherPages=['groups','predictor','schedule','students','payments-admin','quizzes','notifications','manage-course','settings'];
+  const teacherPages=['attendance','groups','predictor','schedule','students','payments-admin','quizzes','notifications','manage-course','settings'];
   if(CR==='student' && teacherPages.includes(p)){
     toast2('Access denied.');
     return;
@@ -1458,7 +1489,7 @@ function updateSbProg(){
   document.getElementById('sbpb').style.width=Math.round(d/t*100)+'%';
 }
 
-function updateDots(){
+function updateDots(){try{updAttBadge();}catch(e){}
   const unread=notifications.filter(n=>!n.read).length;
   const pending=payRequests.filter(r=>r.status==='pending').length;
   const nd=document.getElementById('notif-dot');
@@ -1551,7 +1582,13 @@ function renderDashboard(){
     const actHtml=`<div class="card cp" style="margin-bottom:14px;cursor:pointer" onclick="navTo('students')">
       <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="st">Student logins</span><span class="actb"><i style="background:var(--green)"></i>${online.length} active now</span></div>
       <div style="font-size:12px;color:var(--text2);margin-top:6px">${students.length-never.length} of ${students.length} have logged in${never.length?` · <span style="color:var(--red)">Never: ${never.slice(0,5).map(s=>esc(s.name.split(' ')[0])).join(', ')}${never.length>5?' +'+(never.length-5):''}</span>`:''}</div></div>`;
-    document.getElementById('dash-left').innerHTML=actHtml+grpHtml+`<div class="st" style="margin-bottom:10px">Recent lessons${clsName(myClassId())?' — '+esc(clsName(myClassId())):''}</div>`+
+    const pend=attPending(); updAttBadge();
+    const attHtml=pend.length?`<div class="card cp glowmove" style="margin-bottom:14px">
+      <div class="st" style="margin-bottom:8px">Take attendance</div>
+      ${pend.slice(0,3).map(x=>`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--border)"><div style="flex:1;min-width:0;font-size:13px"><b>${esc(clsName(x.classId)||'Session')}</b> · ${esc(x.title||'')}<div style="font-size:11px;color:var(--text3)">${esc(fmtDue(_attStart(x)))} · ${attMissing(x)} not marked</div></div>
+        <button class="btn bsm bw" onclick="openSessRecords(event,'${esc(x.id)}')">Take attendance</button></div>`).join('')}
+      ${pend.length>3?`<div style="font-size:11px;color:var(--text3);margin-top:4px">+${pend.length-3} more on the Attendance page</div>`:''}</div>`:'';
+    document.getElementById('dash-left').innerHTML=attHtml+actHtml+grpHtml+`<div class="st" style="margin-bottom:10px">Recent lessons${clsName(myClassId())?' — '+esc(clsName(myClassId())):''}</div>`+
       (recDone.length?recDone.map(l=>`<div class="card cp" style="margin-bottom:8px;display:flex;align-items:center;gap:9px">
         <span class="bge ${DI[l.d]?.c||'bgray'}">L${l.n}</span>
         <span style="font-size:13px;font-weight:500">${esc(l.title)}</span>
@@ -2670,7 +2707,7 @@ function studentZoomBtn(s,paid){
   return '<span class="bge bgray">Link coming soon</span>';
 }
 // refresh time-based buttons every minute (no network use)
-setInterval(()=>{if(!CU)return;const p=_curPage();if(['dashboard','my-schedule','schedule'].includes(p)||(p==='curriculum'&&CR==='student'))rerenderCurrent();},60000);
+setInterval(()=>{if(!CU)return;updAttBadge();const p=_curPage();if(['dashboard','my-schedule','schedule'].includes(p)||(p==='curriculum'&&CR==='student'))rerenderCurrent();},60000);
 
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -2861,43 +2898,104 @@ function sessAudience(s){
     return false;
   });
 }
-function openSessRecords(e,id){
-  if(e)e.stopPropagation(); attSessId=id; const ib=document.getElementById('imp-box'); if(ib){ib.style.display='none';document.getElementById('imp-text').value='';document.getElementById('imp-prev').innerHTML='';} const s=sessions.find(x=>x.id===id); if(!s)return;
-  const rec=sessRecords[id]||{}; const mx=+((lessonData[s.lessonNum]||{}).hwMax)||10; const aud=sessAudience(s);
-  document.getElementById('sr-title').textContent=s.title+' · '+(s.date||'');
+let attGroup='';
+function _attStart(x){return sessStart(x);}
+function attSessList(){const now=Date.now();
+  return sessions.filter(x=>x.date&&(!attGroup||x.classId===attGroup)&&sessAudience(x).length)
+    .sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));}
+function attMissing(x){const r=sessRecords[x.id]||{};return sessAudience(x).filter(st=>!(r[st.id]&&r[st.id].a)).length;}
+// sessions that ended (1 hour after start) in the last 3 weeks and still need marking
+function attPending(){const now=Date.now();return sessions.filter(x=>{const st=_attStart(x);return st&&+st+3600000<=now&&now-st<21*864e5&&sessAudience(x).length&&attMissing(x)>0;})
+  .sort((a,b)=>_attStart(b)-_attStart(a));}
+function updAttBadge(){const b=document.getElementById('att-badge');if(!b)return;const n=(CR==='teacher'||CR==='assistant')?attPending().length:0;b.textContent=n;b.style.display=n?'':'none';}
+function openSessRecords(e,id){if(e)e.stopPropagation();const x=sessions.find(y=>y.id===id);if(!x)return;
+  attSessId=id;if(attGroup&&x.classId!==attGroup)attGroup='';navTo('attendance');}
+function attStep(d){const L=attSessList(),i=L.findIndex(x=>x.id===attSessId),j=i+d;if(j<0||j>=L.length){toast2(d<0?'This is the first session':'This is the last session');return;}attSessId=L[j].id;renderAttendance();}
+function renderAttendance(){
+  const gs=document.getElementById('att-grp');
+  gs.innerHTML='<option value="">All groups</option>'+classes.map(c=>`<option value="${esc(c.id)}" ${attGroup===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
+  const L=attSessList(); const now=Date.now();
+  if(!attSessId||!L.some(x=>x.id===attSessId)){const pend=attPending().filter(x=>!attGroup||x.classId===attGroup);
+    const started=L.filter(x=>+_attStart(x)<=now); attSessId=(pend[0]||started[started.length-1]||L[0]||{}).id||null;}
+  const ss=document.getElementById('att-sess');
+  ss.innerHTML=L.map(x=>{const m=attMissing(x),fut=+_attStart(x)>now;return `<option value="${esc(x.id)}" ${x.id===attSessId?'selected':''}>${esc(fmtDue(_attStart(x)))} · ${esc(clsName(x.classId)||'')} · ${esc(x.title||'')}${fut?' (upcoming)':m?' — '+m+' to mark':' ✓'}</option>`;}).join('')||'<option>No sessions yet</option>';
+  const x=sessions.find(y=>y.id===attSessId);
+  document.getElementById('att-main').style.display=x?'':'none';
+  if(!x){document.getElementById('sr-title').textContent='Add sessions in Schedule first.';return;}
+  const st0=_attStart(x), ago=now-st0;
+  document.getElementById('sr-title').textContent=(ago<0?'Starts '+leftTxt(st0).replace(' left',' from now'):ago<3*3600000?'Started '+Math.max(1,Math.round(ago/60000))+' min ago':'')+(x.lessonNum?(ago<0||ago<3*3600000?' · ':'')+'Lesson '+x.lessonNum:'');
+  const rec=sessRecords[x.id]||{}; const mx=+((lessonData[x.lessonNum]||{}).hwMax)||10; const aud=sessAudience(x);
   document.getElementById('sr-max').textContent=mx;
-  document.getElementById('sr-list').innerHTML=aud.length?aud.map(st=>{const r=rec[st.id]||{};const a=r.a||(st.attendance&&st.attendance[s.lessonNum]?'P':'');
-    return `<div class="sr-row" data-sid="${esc(st.id)}"><div style="flex:1;min-width:0;font-weight:500">${esc(st.name.split(' ').slice(0,2).join(' '))}</div>
-      <div class="seg" style="width:150px"><span class="${a==='P'?'on':''}" onclick="srSet(this,'P')">Present</span><span class="${a==='A'?'on':''}" onclick="srSet(this,'A')">Absent</span></div>
-      <input type="number" min="0" max="${+r.max||mx}" step="0.5" class="sr-hw" value="${esc(r.hw??'')}" ${r.max?`data-max="${+r.max}"`:''} placeholder="HW" style="width:80px"></div>`;}).join('')
-    :'<div class="empty">No students in this session\'s group</div>';
-  openModal('m-sessrec');
+  const ib=document.getElementById('imp-box'); if(ib.dataset.sid!==x.id){ib.style.display='none';ib.dataset.sid=x.id;document.getElementById('imp-text').value='';document.getElementById('imp-prev').innerHTML='';document.getElementById('imp-file').value='';}
+  document.getElementById('imp-link').value=(lessonData[x.lessonNum]||{}).hwSheet||'';
+  const ids=new Set(aud.map(a=>a.id)); const extra=Object.keys(rec).filter(k=>!ids.has(k)).map(k=>students.find(s=>s.id===k)).filter(Boolean);
+  document.getElementById('sr-list').innerHTML=[...aud,...extra].map(st=>srRow(st,rec[st.id]||{},mx,!ids.has(st.id))).join('');
+  attCount();
 }
-function srSet(el,v){const seg=el.parentElement;[...seg.children].forEach(c=>c.classList.remove('on'));el.classList.add('on');seg.dataset.v=v;}
-function srAllPresent(){document.querySelectorAll('#sr-list .sr-row').forEach(r=>srSet(r.querySelector('.seg span'),'P'));}
-function saveSessRecords(){
-  const s=sessions.find(x=>x.id===attSessId); if(!s)return; const mx=+((lessonData[s.lessonNum]||{}).hwMax)||10;
-  const rec={}; let bad=false;
+function srRow(st,r,mx,other){const a=r.a||(st.attendance&&st.attendance[(sessions.find(y=>y.id===attSessId)||{}).lessonNum]?'P':'');
+  return `<div class="sr-row" data-sid="${esc(st.id)}"><div style="flex:1;min-width:0;font-weight:500">${esc(st.name.split(' ').slice(0,2).join(' '))} <span style="font-size:10px;color:var(--text3)">${esc(st.id)}</span>${other?' <span style="font-size:10px;color:var(--amber)">(other group)</span>':''}</div>
+    <div class="seg seg3"><span data-v="P" class="${a==='P'?'on':''}" onclick="srSet(this,'P')">Present</span><span data-v="L" class="${a==='L'?'on':''}" onclick="srSet(this,'L')">Late</span><span data-v="A" class="${a==='A'?'on':''}" onclick="srSet(this,'A')">Absent</span></div>
+    <input type="number" min="0" max="${+r.max||mx}" step="0.5" class="sr-hw" value="${esc(r.hw??'')}" ${r.max?`data-max="${+r.max}"`:''} placeholder="HW" onchange="attSave()"></div>`;}
+function attCount(){const rows=[...document.querySelectorAll('#sr-list .sr-row')];const m=rows.filter(r=>r.querySelector('.seg .on')).length;
+  const c=document.getElementById('att-count');if(c)c.textContent=m+' of '+rows.length+' marked'+(m===rows.length&&rows.length?' ✓':'');}
+function srSet(el,v){const seg=el.parentElement;const was=el.classList.contains('on');[...seg.children].forEach(c=>c.classList.remove('on'));if(!was)el.classList.add('on');attSave();}
+function srAllPresent(){document.querySelectorAll('#sr-list .sr-row .seg').forEach(seg=>{if(!seg.querySelector('.on'))seg.querySelector('[data-v="P"]').classList.add('on');});attSave();}
+function attSave(quiet){
+  const x=sessions.find(y=>y.id===attSessId); if(!x)return; const mx=+((lessonData[x.lessonNum]||{}).hwMax)||10;
+  const old=sessRecords[x.id]||{}, rec={...old}; let bad=false, stuCh=false;
   document.querySelectorAll('#sr-list .sr-row').forEach(row=>{
-    const sid=row.dataset.sid, on=row.querySelector('.seg .on'), inp=row.querySelector('.sr-hw'), hw=inp.value;
-    const a=on?(on.textContent==='Present'?'P':'A'):''; const rmx=+inp.dataset.max||+(((sessRecords[attSessId]||{})[sid]||{}).max)||mx;
-    if(hw!==''&&(+hw<0||+hw>rmx))bad=true;
-    if(a||hw!=='')rec[sid]={...(a?{a}:{}),...(hw!==''?{hw:+hw}:{}),...(hw!==''&&rmx!==mx?{max:rmx}:{})};
-    const st=students.find(x=>x.id===sid); if(st&&+s.lessonNum&&a){if(!st.attendance)st.attendance={};st.attendance[s.lessonNum]=(a==='P');}
+    const sid=row.dataset.sid, on=row.querySelector('.seg .on'), inp=row.querySelector('.sr-hw'); let hw=inp.value;
+    const a=on?on.dataset.v:''; const rmx=+inp.dataset.max||+((old[sid]||{}).max)||mx;
+    if(hw!==''&&(+hw<0||+hw>rmx)){bad=true;inp.style.borderColor='var(--red)';hw=(old[sid]&&old[sid].hw!=null)?String(old[sid].hw):'';}else inp.style.borderColor='';
+    if(a||hw!=='')rec[sid]={...(a?{a}:{}),...(hw!==''?{hw:+hw}:{}),...(hw!==''&&rmx!==mx?{max:rmx}:{})}; else delete rec[sid];
+    const st=students.find(y=>y.id===sid); if(st&&+x.lessonNum){if(!st.attendance)st.attendance={};const v=a?a!=='A':undefined;
+      if(st.attendance[x.lessonNum]!==v){if(v===undefined)delete st.attendance[x.lessonNum];else st.attendance[x.lessonNum]=v;stuCh=true;}}
   });
-  if(bad){toast2('A homework mark is above its maximum — please check');return;}
-  sessRecords[attSessId]=rec; sv('sessRecords',sessRecords); sv('students',students);
-  closeModal('m-sessrec'); toast2('Attendance & homework saved'); if(_curPage()==='schedule')renderSchedule();
+  sessRecords[x.id]=rec; sv('sessRecords',sessRecords); if(stuCh)sv('students',students);
+  attCount(); updAttBadge();
+  const o=document.querySelector('#att-sess option:checked'); if(o){const m=attMissing(x);o.textContent=o.textContent.replace(/( — \d+ to mark| ✓)$/,'')+(+_attStart(x)>Date.now()?'':m?' — '+m+' to mark':' ✓');}
+  if(bad)toast2('A homework mark is above its maximum — not saved');else if(!quiet)toast2('Saved');
+}
+// ── import sources: Google Sheets link · Excel/CSV file · paste ──
+function _csvRows(t){const rows=[];let row=[],cell='',q=false;t=String(t||'').replace(/^﻿/,'');
+  for(let i=0;i<t.length;i++){const ch=t[i];
+    if(q){if(ch==='"'){if(t[i+1]==='"'){cell+='"';i++;}else q=false;}else cell+=ch;}
+    else if(ch==='"')q=true; else if(ch===','){row.push(cell);cell='';}
+    else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell='';} else if(ch!=='\r')cell+=ch;}
+  if(cell!==''||row.length){row.push(cell);rows.push(row);} return rows;}
+function _toTsv(rows){return rows.filter(r=>r.some(c=>String(c).trim())).map(r=>r.map(c=>String(c??'').replace(/[\t\n\r]+/g,' ')).join('\t')).join('\n');}
+function _impLoaded(tsv,src){document.getElementById('imp-text').value=tsv;previewImport();const n=Math.max(0,tsv.split('\n').length-1);toast2(n+' rows loaded from '+src);}
+async function impFromLink(btn){
+  const url=document.getElementById('imp-link').value.trim(); const m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(!m){toast2('Paste the Google Sheets link (it contains /spreadsheets/d/...)');return;}
+  const g=(url.match(/[#&?]gid=(\d+)/)||[])[1]||'0';
+  const x=sessions.find(y=>y.id===attSessId); if(x&&+x.lessonNum){if(!lessonData[x.lessonNum])lessonData[x.lessonNum]={...gl(x.lessonNum)};if(lessonData[x.lessonNum].hwSheet!==url){lessonData[x.lessonNum].hwSheet=url;sv('lessonData',lessonData);}}
+  btn.disabled=true;const t0=btn.textContent;btn.textContent='Loading…';
+  try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${m[1]}/gviz/tq?tqx=out:csv&gid=${g}&_=${Date.now()}`);
+    const txt=await r.text(); if(!r.ok||/^\s*</.test(txt))throw new Error('private');
+    _impLoaded(_toTsv(_csvRows(txt)),'Google Sheets');}
+  catch(e){document.getElementById('imp-prev').innerHTML='<div style="color:var(--red);font-size:12px;margin-top:8px">Could not open the sheet. In Google Sheets press <b>Share</b> → General access → <b>Anyone with the link</b> (Viewer), then press Load again. Or use the file upload / paste below.</div>';}
+  finally{btn.disabled=false;btn.textContent=t0;}
+}
+let _xlsxP=null;
+function _loadXlsx(){if(window.XLSX)return Promise.resolve();if(_xlsxP)return _xlsxP;
+  _xlsxP=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';s.onload=res;s.onerror=()=>{_xlsxP=null;rej(new Error('net'));};document.head.appendChild(s);});return _xlsxP;}
+async function impFromFile(inp){const f=inp.files&&inp.files[0]; if(!f)return;
+  try{ if(/\.(xlsx|xls)$/i.test(f.name)){toast2('Reading Excel file…');await _loadXlsx();
+        const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];
+        _impLoaded(_toTsv(XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''})),f.name);}
+      else{const t=await f.text();_impLoaded(/\t/.test(t.split('\n')[0])?t.replace(/\r/g,''):_toTsv(_csvRows(t)),f.name);} }
+  catch(e){toast2('Could not read this file. Try Excel (.xlsx) or CSV, or paste the sheet.');}
 }
 
 // ═══════════════════════════════════════════════════
 // PARENT REPORT (English / Arabic) · PDF · WhatsApp · private link
 // ═══════════════════════════════════════════════════
 const RT={en:{dir:'ltr',title:'Student progress report',id:'Student ID',grp:'Group',par:'Parent',att:'Attendance',hw:'Homework average',qz:'Quiz average',of:'of',ses:'sessions',ga:'Group average',
-  up:'Improving ↗',down:'Needs attention ↘',steady:'Steady →',none:'',hwT:'Homework marks',qzT:'Quizzes',atT:'Attendance log',d:'Date',ls:'Lesson',mk:'Mark',st:'Status',pr:'Present',ab:'Absent',
+  up:'Improving ↗',down:'Needs attention ↘',steady:'Steady →',none:'',hwT:'Homework marks',qzT:'Quizzes',atT:'Attendance log',d:'Date',ls:'Lesson',mk:'Mark',st:'Status',pr:'Present',ab:'Absent',lt:'Late',
   note:'Teacher’s note',gen:'Generated',noData:'No records in this period',dl:'Download PDF',period:'Period'},
  ar:{dir:'rtl',title:'تقرير متابعة الطالب',id:'كود الطالب',grp:'المجموعة',par:'ولي الأمر',att:'الحضور',hw:'متوسط الواجبات',qz:'متوسط الكويزات',of:'من',ses:'حصص',ga:'متوسط المجموعة',
-  up:'في تحسّن ↗',down:'يحتاج متابعة ↘',steady:'مستقر →',none:'',hwT:'درجات الواجبات',qzT:'الكويزات',atT:'سجل الحضور',d:'التاريخ',ls:'الدرس',mk:'الدرجة',st:'الحالة',pr:'حاضر',ab:'غائب',
+  up:'في تحسّن ↗',down:'يحتاج متابعة ↘',steady:'مستقر →',none:'',hwT:'درجات الواجبات',qzT:'الكويزات',atT:'سجل الحضور',d:'التاريخ',ls:'الدرس',mk:'الدرجة',st:'الحالة',pr:'حاضر',ab:'غائب',lt:'متأخر',
   note:'ملاحظة المدرس',gen:'تم الإنشاء',noData:'لا توجد سجلات في هذه الفترة',dl:'تحميل PDF',period:'الفترة'}};
 function rDate(d,lang){if(!d)return '—';const x=new Date(d+'T00:00');return x.toLocaleDateString(lang==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'short'});}
 function rFull(d,lang){if(!d)return '';const x=new Date(String(d).slice(0,10)+'T00:00');return x.toLocaleDateString(lang==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'short',year:'numeric'});}
@@ -2930,7 +3028,7 @@ function reportHTML(R,lang){
   </div>
   ${sec(t.hwT,tbl([t.d,t.ls,t.mk],(H.rows||[]).map(r=>td([rDate(r.date,lang),esc(r.title),`<span dir="ltr">${+r.score} / ${+r.max}</span>`]))))}
   ${sec(t.qzT,tbl([t.ls,t.mk,t.ga],(Q.rows||[]).map(r=>td([esc(r.title),`<span dir="ltr">${+r.score} / ${+r.max}</span>`,r.groupAvg!=null?`<span dir="ltr">${r.groupAvg}</span>`:'—']))))}
-  ${sec(t.atT,tbl([t.d,t.ls,t.st],(A.rows||[]).slice().reverse().map(r=>td([rDate(r.date,lang),esc(r.title),r.status==='P'?`<span style="color:#2f7a52;font-weight:600">${t.pr}</span>`:`<span style="color:#b23b3b;font-weight:600">${t.ab}</span>`]))))}
+  ${sec(t.atT,tbl([t.d,t.ls,t.st],(A.rows||[]).slice().reverse().map(r=>td([rDate(r.date,lang),esc(r.title),r.status==='P'?`<span style="color:#2f7a52;font-weight:600">${t.pr}</span>`:r.status==='L'?`<span style="color:#b7791f;font-weight:600">${t.lt}</span>`:`<span style="color:#b23b3b;font-weight:600">${t.ab}</span>`]))))}
   ${R.note?`<div style="margin-top:16px;border-inline-start:4px solid ${acc};background:#fcfaf5;padding:10px 12px;border-radius:4px;color:#333"><b>${t.note}:</b> ${esc(R.note)}</div>`:''}
   <div style="margin-top:auto;padding-top:12px;border-top:1px solid #eee8da;display:flex;justify-content:space-between;color:#9a958a;font-size:9.5px">
     <span>${t.gen} ${rFull(String(R.generated||new Date().toISOString()).slice(0,10),lang)} · ${esc(nm)} — ${esc(sub)}</span></div>
@@ -3077,8 +3175,7 @@ function applyImport(){
   IMP.rows.forEach(r=>{if(!r.st)return;const o=keep[r.st.id];if(!o||(rule==='latest'?r.t>=o.t:r.score>o.score))keep[r.st.id]=r;});
   Object.values(keep).forEach(r=>{
     let row=document.querySelector(`#sr-list .sr-row[data-sid="${CSS.escape(r.st.id)}"]`);
-    if(!row){document.getElementById('sr-list').insertAdjacentHTML('beforeend',`<div class="sr-row" data-sid="${esc(r.st.id)}"><div style="flex:1;min-width:0;font-weight:500">${esc(r.st.name.split(' ').slice(0,2).join(' '))} <span style="font-size:10px;color:var(--amber)">(other group)</span></div>
-      <div class="seg" style="width:150px"><span onclick="srSet(this,'P')">Present</span><span onclick="srSet(this,'A')">Absent</span></div><input type="number" min="0" step="0.5" class="sr-hw" style="width:80px"></div>`);
+    if(!row){document.getElementById('sr-list').insertAdjacentHTML('beforeend',srRow(r.st,{},r.max,true));
       row=document.querySelector(`#sr-list .sr-row[data-sid="${CSS.escape(r.st.id)}"]`);}
     const inp=row.querySelector('.sr-hw'); inp.value=r.score; inp.dataset.max=r.max; inp.max=r.max; n++;
     const pd=String(r.parent||'').replace(/\D/g,'');
@@ -3087,7 +3184,7 @@ function applyImport(){
   if(IMP.max)document.getElementById('sr-max').textContent=IMP.max;
   if(par)sv('students',students);
   document.getElementById('imp-box').style.display='none';
-  toast2(n+' marks filled'+(par?' · '+par+' parent phones added':'')+' — press Save');
+  attSave(true); toast2(n+' marks saved'+(par?' · '+par+' parent phones added':''));
 }
 
 // students: homework marks
@@ -3100,7 +3197,7 @@ function myHomework(){
 
 const PAGE_RENDER={
   dashboard:()=>renderDashboard(), curriculum:()=>renderCurriculum(),
-  schedule:()=>renderSchedule(), students:()=>renderStudents(),
+  schedule:()=>renderSchedule(), students:()=>renderStudents(), attendance:()=>renderAttendance(),
   'payments-admin':()=>renderPaymentsAdmin(), quizzes:()=>renderQuizzes(),
   notifications:()=>renderNotifications(),
   settings:()=>renderSettings(),'manage-course':()=>renderManageCourse(),'my-password':()=>{},'my-schedule':()=>renderMySchedule(),
