@@ -422,6 +422,50 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
 #sr-list .sr-hw{width:76px}
 .att-badge{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
 @media(max-width:600px){#sr-list .sr-row .seg3{flex:1 1 100%;order:3}}
+
+/* ═══ LOGIN — editorial split ═══ */
+#login-screen{display:flex;min-height:100vh;min-height:100dvh;background:var(--black);align-items:stretch;justify-content:stretch}
+html[data-theme=light] #login-screen{background:var(--bg)}
+.lsplit{display:grid;grid-template-columns:1.15fr 1fr;width:100%;min-height:100vh;min-height:100dvh}
+.lhero{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;border-right:1px solid var(--border)}
+.lh-lab{font-size:11px;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;color:var(--text3)}
+.lh-mark{position:relative;width:100%;height:clamp(110px,14vw,170px);margin:34px 0 28px;display:flex;justify-content:center}
+.lh-mark svg{height:100%;width:auto;display:block;position:relative;z-index:1}
+.lh-mark::before,.lh-mark::after{content:"";position:absolute;left:-100vw;right:-100vw;height:1px;background:color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:0 0 10px 0 color-mix(in srgb,var(--accent) 35%,transparent);animation:lglow 4.5s ease-in-out infinite}
+.lh-mark::before{top:0}.lh-mark::after{bottom:0;animation-delay:2.25s}
+@keyframes lglow{0%,100%{box-shadow:0 0 6px 0 color-mix(in srgb,var(--accent) 18%,transparent);opacity:.75}50%{box-shadow:0 0 16px 1px color-mix(in srgb,var(--accent) 55%,transparent);opacity:1}}
+.lm-m{fill:#EFE7D6}html[data-theme=light] .lm-m{fill:var(--text)}.lm-z{fill:var(--accent)}
+.lh-tag{font-family:'Noto Serif Display',Georgia,'Times New Roman',serif;font-style:italic;font-size:17px;color:var(--text2);letter-spacing:.02em}
+.lform{display:flex;flex-direction:column;justify-content:center;width:100%;max-width:400px;margin:0 auto;padding:40px 34px}
+#login-screen .ltabs{display:flex;gap:22px;background:none;padding:0;border-radius:0;margin-bottom:30px}
+#login-screen .ltab{flex:none;padding:0 0 6px;background:none!important;border-radius:0;font-size:13px;color:var(--text3);border-bottom:1px solid transparent;transition:color .2s,border-color .25s}
+#login-screen .ltab.active{color:var(--white);border-bottom-color:var(--accent)}
+#login-screen .ll{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin:0}
+#login-screen .li{background:transparent;border:0;border-bottom:1px solid var(--border3);border-radius:0;padding:10px 0 9px;margin:0 0 22px;font-size:15px;color:var(--white);transition:border-color .25s}
+#login-screen .li:focus{border-bottom-color:var(--accent)}
+#login-screen .li::placeholder{color:var(--text3);opacity:.7}
+.lgo{position:relative;overflow:hidden;height:48px;padding:0!important;margin-top:6px;border-radius:10px!important;font-size:14px;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;transition:transform .18s var(--ease),box-shadow .3s,background .4s,color .4s!important}
+html[data-theme=light] .lgo{background:var(--white)!important;color:var(--black)!important;border-color:var(--white)!important}
+.lgo:hover{box-shadow:0 10px 26px -12px var(--accent)}.lgo:active{transform:scale(.975)}
+.lgo::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);transition:left .7s var(--ease)}
+html[data-theme=light] .lgo::before{background:linear-gradient(100deg,transparent,color-mix(in srgb,var(--accent) 60%,transparent),transparent)}
+.lgo:hover::before{left:130%}
+.lgo-a{display:inline-block;transition:transform .3s var(--ease)}.lgo:hover .lgo-a{transform:translateX(5px)}
+.lgo-t{transition:opacity .2s}.lgo.ld .lgo-t{opacity:0}
+.lgo-r{position:absolute;left:14%;right:14%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;opacity:.8}
+.lgo-r{top:17px}.lgo-r.b{top:auto;bottom:17px;transform-origin:right}
+.lgo.ld .lgo-r{animation:lgoR 1.1s cubic-bezier(.65,0,.35,1) infinite alternate}.lgo.ld .lgo-r.b{animation-delay:.15s}
+@keyframes lgoR{to{transform:scaleX(1)}}
+#login-screen .lerr{text-align:left;margin-top:12px}
+.lfoot{font-size:11px;color:var(--text3);margin-top:18px}
+@media(max-width:760px){
+  .lsplit{display:flex;flex-direction:column}
+  .lhero{border-right:0;border-bottom:1px solid var(--border);padding:34px 24px 26px;flex:0 0 auto}
+  .lh-mark{height:84px;margin:18px 0 16px}
+  .lh-tag{font-size:15px}
+  .lform{padding:28px 24px 40px;justify-content:flex-start;max-width:none}
+}
+@media(prefers-reduced-motion:reduce){.lh-mark::before,.lh-mark::after{animation:none}.lgo::before{display:none}}
 </style>
 <!-- Supabase JS v2 -->
 <link rel="preconnect" href="https://esgebnchiaqwmdbpdrdj.supabase.co" crossorigin>
@@ -452,36 +496,38 @@ html[data-theme=light] .card,html[data-theme=light] .stat,html[data-theme=light]
   <span></span><span></span><span></span>
 </button>
 <div id="login-screen">
-<div class="lb">
-  <div class="lb-brand">
-    <svg class="lb-mark" viewBox="0 0 32 32" width="56" height="56" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0B0A08"/><path d="M0 9H32M0 23H32" stroke="#C9A84C" stroke-width="0.4" opacity="0.5"/><path d="M3.2 9H3.9L8.99 14.71L16.22 9.18H16.4V21.75L13.16 21.9V21.65L13.96 21.57Q14.83 21.5 15.32 21.18Q15.81 20.87 16.01 20.25Q16.22 19.62 16.22 18.57V12.46L10.61 16.69H10.43L5.25 10.85V20.02Q5.25 20.97 5.41 21.53Q5.57 22.1 5.95 22.37Q6.34 22.65 7.01 22.7L7.56 22.75V23L3.2 22.8Z" fill="#EFE7D6"/><path d="M18.8 23V22.8L25.75 9.2H22.17Q21.18 9.2 20.57 9.46Q19.97 9.73 19.69 10.32Q19.41 10.92 19.36 11.94L19.32 12.8H19.12L19.25 9H28.44V9.2L21.48 22.8H25.75Q26.71 22.8 27.3 22.54Q27.9 22.27 28.2 21.67Q28.49 21.06 28.57 20.06L28.62 19.2H28.8L28.67 23Z" fill="#C9A84C"/></svg>
-    <div class="lb-eng">Instructor</div>
-    <div class="lb-name" id="lb-name">Mohamed Zayed</div>
-    <div class="lb-sub" id="lb-sub">SAT Math — Management System</div>
-  </div>
-  <div class="lbox">
-    <div class="ltabs">
-      <div class="ltab active" onclick="switchTab('teacher',this)">Teacher</div>
-      <div class="ltab" onclick="switchTab('student',this)">Student login</div>
+<div class="lsplit">
+  <div class="lhero">
+    <div class="lh-lab" id="lb-sub">SAT Math</div>
+    <div class="lh-mark">
+      <svg viewBox="3.2 9 25.6 14" role="img" aria-labelledby="lb-name"><title id="lb-name">Mohamed Zayed</title><path class="lm-m" d="M3.2 9H3.9L8.99 14.71L16.22 9.18H16.4V21.75L13.16 21.9V21.65L13.96 21.57Q14.83 21.5 15.32 21.18Q15.81 20.87 16.01 20.25Q16.22 19.62 16.22 18.57V12.46L10.61 16.69H10.43L5.25 10.85V20.02Q5.25 20.97 5.41 21.53Q5.57 22.1 5.95 22.37Q6.34 22.65 7.01 22.7L7.56 22.75V23L3.2 22.8Z"/><path class="lm-z" d="M18.8 23V22.8L25.75 9.2H22.17Q21.18 9.2 20.57 9.46Q19.97 9.73 19.69 10.32Q19.41 10.92 19.36 11.94L19.32 12.8H19.12L19.25 9H28.44V9.2L21.48 22.8H25.75Q26.71 22.8 27.3 22.54Q27.9 22.27 28.2 21.67Q28.49 21.06 28.57 20.06L28.62 19.2H28.8L28.67 23Z"/></svg>
     </div>
-    <!-- TEACHER LOGIN -->
-    <div id="lt-t">
-      <label class="ll">Username</label>
-      <input class="li" id="lu" type="text" placeholder="mzayed" autocomplete="username">
-      <label class="ll">Password</label>
-      <input class="li" id="lp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-      <button class="lbtn" onclick="doLogin()">Sign in</button>
+    <div class="lh-tag" id="lb-tag">Road to 800</div>
+  </div>
+  <div class="lform">
+    <div class="ltabs" role="tablist">
+      <div class="ltab active" role="tab" onclick="switchTab('student',this)">Student</div>
+      <div class="ltab" role="tab" onclick="switchTab('teacher',this)">Teacher</div>
     </div>
     <!-- STUDENT LOGIN -->
-    <div id="lt-s" style="display:none">
-      <label class="ll">Student ID</label>
-      <input class="li" id="lsi" type="text" placeholder="e.g. 105" autocomplete="username">
-      <label class="ll">Password</label>
-      <input class="li" id="lsp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doStudentLogin()">
-      <button class="lbtn" onclick="doStudentLogin()">Sign in</button>
+    <div id="lt-s">
+      <label class="ll" for="lsi">Student ID</label>
+      <input class="li" id="lsi" type="text" inputmode="numeric" placeholder="e.g. 105" autocomplete="username">
+      <label class="ll" for="lsp">Password</label>
+      <input class="li" id="lsp" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doStudentLogin()">
+      <button class="lbtn lgo" onclick="doStudentLogin()"><i class="lgo-r"></i><i class="lgo-r b"></i><span class="lgo-t">Sign in <span class="lgo-a">→</span></span></button>
     </div>
-       <div class="lerr" id="lerr"></div>
+    <!-- TEACHER LOGIN -->
+    <div id="lt-t" style="display:none">
+      <label class="ll" for="lu">Username</label>
+      <input class="li" id="lu" type="text" placeholder="mzayed" autocomplete="username">
+      <label class="ll" for="lp">Password</label>
+      <input class="li" id="lp" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="lbtn lgo" onclick="doLogin()"><i class="lgo-r"></i><i class="lgo-r b"></i><span class="lgo-t">Sign in <span class="lgo-a">→</span></span></button>
+    </div>
+    <div class="lerr" id="lerr"></div>
     <div id="lattempts"></div>
+    <div class="lfoot">Forgot your password? Ask Mr. Mohamed on WhatsApp.</div>
   </div>
 </div>
 </div>
@@ -1411,7 +1457,8 @@ async function _serverLogin(kind,login,pw){
   err.textContent=''; att.textContent='';
   if(!login||!pw){err.textContent=kind==='teacher'?'Username and password are required.':'Student ID and password are required.';return;}
   if(!DB_READY){err.textContent='Cannot connect — check your internet and refresh.';return;}
-  if(_loggingIn)return; _loggingIn=true; err.textContent='Signing in...';
+  if(_loggingIn)return; _loggingIn=true; err.textContent='';
+  const _lb=document.querySelector(kind==='teacher'?'#lt-t .lgo':'#lt-s .lgo'); if(_lb)_lb.classList.add('ld');
   try{
     const {data,error}=await DB.rpc('login',{p_kind:kind,p_login:login,p_password:pw});
     if(error){err.textContent='Cannot sign in right now. Please try again.';return;}
@@ -1422,7 +1469,7 @@ async function _serverLogin(kind,login,pw){
     CR=data.role; CU=data.profile;
     err.textContent=''; showLoader('Loading your data…');
     try{await Promise.all([loadAllFromDB(),loadPayRequests()]);launchApp();}finally{hideLoader();}
-  } finally { _loggingIn=false; }
+  } finally { _loggingIn=false; document.querySelectorAll('.lgo.ld').forEach(x=>x.classList.remove('ld')); }
 }
 function doLogin(){_serverLogin('teacher',document.getElementById('lu').value.trim(),document.getElementById('lp').value);}
 function doStudentLogin(){_serverLogin('student',document.getElementById('lsi').value.trim(),document.getElementById('lsp').value);}
@@ -2505,7 +2552,8 @@ function applyBrand(b){
   r.setProperty('--accent',b.accent||'#c9a84c'); r.setProperty('--on-accent',onColor(b.accent||'#c9a84c'));
   const nm=b.name||'Mohamed Zayed';
   ['lb-name','sb-name','ldr-name'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=nm;});
-  const ls=document.getElementById('lb-sub');if(ls)ls.textContent=(b.sub||'SAT Math')+' — Student Portal';
+  const ls=document.getElementById('lb-sub');if(ls)ls.textContent=b.sub||'SAT Math';
+  const lt=document.getElementById('lb-tag');if(lt)lt.textContent=b.tagline||'Road to 800';
   document.title=nm+' — '+(b.sub||'SAT Math');
   applyTheme();
 }
