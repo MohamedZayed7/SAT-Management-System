@@ -483,6 +483,57 @@ html[data-theme=light] .ths{opacity:1;transform:rotate(0) scale(1)}html[data-the
 html.th-anim,html.th-anim *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,fill .45s ease,stroke .45s ease!important}
 html.th-anim .thk,html.th-anim .thk svg{transition:transform .45s cubic-bezier(.65,0,.35,1),opacity .3s,background .35s!important}
 @media(prefers-reduced-motion:reduce){.thk,.thk svg{transition:none}html.th-anim,html.th-anim *{transition:none!important}}
+
+/* ═══ language switch + parent page ═══ */
+.lth{display:flex;align-items:center;gap:10px}
+.langsw{display:flex;border:1px solid var(--border3);border-radius:999px;overflow:hidden;font-size:11px;font-weight:600}
+.langsw span{padding:5px 10px;cursor:pointer;color:var(--text3);transition:background .25s,color .25s}.langsw span.on{background:var(--accent);color:var(--on-accent)}
+[dir=rtl],[dir=rtl] input,[dir=rtl] button{font-family:'Noto Kufi Arabic',Tahoma,'Segoe UI',system-ui,sans-serif}
+#login-screen[dir=rtl] .ll{letter-spacing:0}
+#login-screen[dir=rtl] .lh-lab{letter-spacing:.2em}
+#login-screen[dir=rtl] .lh-tag{font-family:'Noto Kufi Arabic',Tahoma,sans-serif;font-style:normal;font-size:16px}
+.pv-hw{white-space:nowrap}
+[dir=rtl] .lgo-a{display:inline-block}[dir=rtl] .lgo:hover .lgo-a{transform:translateX(-5px)}
+.lphelp{font-size:12px;color:var(--text2);margin:-8px 0 18px;line-height:1.6}
+.lfoot a{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 60%,transparent);text-underline-offset:3px}
+#parent-view{min-height:100vh;background:var(--black);color:var(--text)}
+html[data-theme=light] #parent-view{background:var(--bg)}
+.pv-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--black) 88%,transparent);backdrop-filter:blur(8px)}
+html[data-theme=light] .pv-top{background:color-mix(in srgb,var(--bg) 88%,transparent)}
+.pv-brand{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--text3)}.pv-brand svg{height:20px}
+[dir=rtl] .pv-brand{letter-spacing:0}
+.pv-body{max-width:560px;margin:0 auto;padding:18px 18px 40px}
+.pv-kids{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.pv-kids span{padding:6px 14px;border-radius:999px;border:1px solid var(--border3);font-size:12px;cursor:pointer;color:var(--text2)}.pv-kids .on{border-color:var(--accent);color:var(--white)}
+.pv-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.pv-mut{font-size:12px;color:var(--text3)}.pv-name{font-size:24px;font-weight:600;color:var(--white);margin-top:2px}.pv-grp{font-size:12px;color:var(--accent);margin-top:3px}
+.pv-live{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--green);white-space:nowrap}.pv-live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pvp 1.8s infinite}
+@keyframes pvp{50%{opacity:.25}}
+.pv-next{margin-top:14px;border:1px solid var(--border2);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px}
+.pv-next b{display:block;font-size:14px;color:var(--white);margin-top:2px}.pv-next small{display:block;color:var(--text3);margin-top:2px}.pv-acc,.pv-accent{color:var(--accent)}
+.pv-k3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.pv-k{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 6px;text-align:center}
+.pv-ring{width:62px;height:62px;display:block;margin:0 auto 4px}
+.pv-kl{font-size:12px;color:var(--text2)}.pv-ks{font-size:11px;color:var(--text3);margin-top:2px}
+.pv-trend{margin-top:10px;font-size:12px;text-align:center}.pv-t-up{color:var(--green)}.pv-t-down{color:var(--amber)}.pv-t-steady{color:var(--text3)}
+.pv-sec{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin:22px 0 8px}[dir=rtl] .pv-sec{letter-spacing:0;font-size:12px}
+.pv-row{display:grid;grid-template-columns:1fr auto minmax(54px,auto);gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.pv-tbl .pv-row:last-child{border-bottom:0}
+.pv-d{color:var(--text);min-width:0}.pv-d small{display:block;font-size:11px;color:var(--text3);margin-top:1px}
+.pv-b{font-size:11px;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.pv-p{background:var(--green-bg);color:var(--green)}.pv-l{background:var(--amber-bg);color:var(--amber)}.pv-a{background:var(--red-bg);color:var(--red)}
+.pv-hw{text-align:center;color:var(--white);font-variant-numeric:tabular-nums}
+.pv-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.pv-sc2{display:flex;gap:26px}.pv-sc2 b{display:block;font-size:24px;color:var(--white)}.pv-spark{width:100%;height:60px;margin-top:8px}
+.pv-warn{font-size:12px;color:var(--amber);margin:4px 0}
+.pv-note{background:var(--card);border-inline-start:2px solid var(--accent);padding:12px 14px;font-size:13px;line-height:1.7;color:var(--text);border-radius:0 12px 12px 0;white-space:pre-wrap}
+[dir=rtl] .pv-note{border-radius:12px 0 0 12px}
+.pv-btns{display:flex;gap:8px;margin-top:20px}
+.pv-gold,.pv-ghost{flex:1;text-align:center;padding:12px;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;font-family:inherit}
+.pv-gold{background:var(--accent);color:var(--on-accent);border:0}.pv-ghost{background:none;border:1px solid var(--border3);color:var(--text)}
+.pv-foot{display:flex;justify-content:space-between;margin-top:18px}.pv-link{background:none;border:0;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit;padding:6px 0}.pv-link:hover{color:var(--accent)}
+#pa-form{margin-top:12px}#pa-form .ll{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text3)}
+#pa-form .li{background:transparent;border:0;border-bottom:1px solid var(--border3);border-radius:0;padding:9px 0;margin:0 0 16px;width:100%;color:var(--white);font-size:15px;outline:none}
+#pa-form .lgo{flex:1;margin:0}
 </style>
 <!-- Supabase JS v2 -->
 <link rel="preconnect" href="https://esgebnchiaqwmdbpdrdj.supabase.co" crossorigin>
@@ -513,7 +564,7 @@ html.th-anim .thk,html.th-anim .thk svg{transition:transform .45s cubic-bezier(.
   <span></span><span></span><span></span>
 </button>
 <div id="login-screen">
-<div class="lth"><button class="thtog" onclick="toggleTheme()" aria-label="Switch light or dark mode" title="Light / dark"><span class="thk"><svg class="ths" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg><svg class="thm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span></button></div>
+<div class="lth"><div class="langsw" role="group" aria-label="Language"><span data-l="en" onclick="setLang('en')">EN</span><span data-l="ar" onclick="setLang('ar')">ع</span></div><button class="thtog" onclick="toggleTheme()" aria-label="Switch light or dark mode" title="Light / dark"><span class="thk"><svg class="ths" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg><svg class="thm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span></button></div>
 <div class="lsplit">
   <div class="lhero">
     <div class="lh-lab" id="lb-sub">SAT Math</div>
@@ -524,30 +575,48 @@ html.th-anim .thk,html.th-anim .thk svg{transition:transform .45s cubic-bezier(.
   </div>
   <div class="lform">
     <div class="ltabs" role="tablist">
-      <div class="ltab active" role="tab" onclick="switchTab('student',this)">Student</div>
-      <div class="ltab" role="tab" onclick="switchTab('teacher',this)">Teacher</div>
+      <div class="ltab active" role="tab" onclick="switchTab('student',this)" data-i18n="student">Student</div>
+      <div class="ltab" role="tab" onclick="switchTab('parent',this)" data-i18n="parent">Parent</div>
+      <div class="ltab" role="tab" onclick="switchTab('teacher',this)" data-i18n="teacher">Teacher</div>
     </div>
     <!-- STUDENT LOGIN -->
     <div id="lt-s">
-      <label class="ll" for="lsi">Student ID</label>
+      <label class="ll" for="lsi" data-i18n="sid">Student ID</label>
       <input class="li" id="lsi" type="text" inputmode="numeric" placeholder="e.g. 105" autocomplete="username">
-      <label class="ll" for="lsp">Password</label>
+      <label class="ll" for="lsp" data-i18n="pw">Password</label>
       <input class="li" id="lsp" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doStudentLogin()">
       <button class="lbtn lgo" onclick="doStudentLogin()"><i class="lgo-r"></i><i class="lgo-r b"></i><span class="lgo-t">Sign in <span class="lgo-a">→</span></span></button>
     </div>
+    <!-- PARENT LOGIN (uses the child's ID and password) -->
+    <div id="lt-p" style="display:none">
+      <div class="lphelp" data-i18n="pHelp">Use your child's student ID and password.</div>
+      <label class="ll" for="ppi" data-i18n="sid">Student ID</label>
+      <input class="li" id="ppi" type="text" inputmode="numeric" placeholder="e.g. 105" autocomplete="off">
+      <label class="ll" for="ppp" data-i18n="pw">Password</label>
+      <input class="li" id="ppp" type="password" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')doParentLogin()">
+      <button class="lbtn lgo" onclick="doParentLogin()"><i class="lgo-r"></i><i class="lgo-r b"></i><span class="lgo-t">Sign in <span class="lgo-a">→</span></span></button>
+    </div>
     <!-- TEACHER LOGIN -->
     <div id="lt-t" style="display:none">
-      <label class="ll" for="lu">Username</label>
+      <label class="ll" for="lu" data-i18n="user">Username</label>
       <input class="li" id="lu" type="text" placeholder="mzayed" autocomplete="username">
-      <label class="ll" for="lp">Password</label>
+      <label class="ll" for="lp" data-i18n="pw">Password</label>
       <input class="li" id="lp" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
       <button class="lbtn lgo" onclick="doLogin()"><i class="lgo-r"></i><i class="lgo-r b"></i><span class="lgo-t">Sign in <span class="lgo-a">→</span></span></button>
     </div>
     <div class="lerr" id="lerr"></div>
     <div id="lattempts"></div>
-    <div class="lfoot">Forgot your password? Ask Mr. Mohamed on WhatsApp.</div>
+    <div class="lfoot" id="lfoot">Forgot your password? Ask Mr. Mohamed on WhatsApp.</div>
   </div>
 </div>
+</div>
+
+<!-- PARENT VIEW -->
+<div id="parent-view" style="display:none">
+  <div class="pv-top"><div class="pv-brand"><svg viewBox="3.2 9 25.6 14" aria-hidden="true"><path class="lm-m" d="M3.2 9H3.9L8.99 14.71L16.22 9.18H16.4V21.75L13.16 21.9V21.65L13.96 21.57Q14.83 21.5 15.32 21.18Q15.81 20.87 16.01 20.25Q16.22 19.62 16.22 18.57V12.46L10.61 16.69H10.43L5.25 10.85V20.02Q5.25 20.97 5.41 21.53Q5.57 22.1 5.95 22.37Q6.34 22.65 7.01 22.7L7.56 22.75V23L3.2 22.8Z"/><path class="lm-z" d="M18.8 23V22.8L25.75 9.2H22.17Q21.18 9.2 20.57 9.46Q19.97 9.73 19.69 10.32Q19.41 10.92 19.36 11.94L19.32 12.8H19.12L19.25 9H28.44V9.2L21.48 22.8H25.75Q26.71 22.8 27.3 22.54Q27.9 22.27 28.2 21.67Q28.49 21.06 28.57 20.06L28.62 19.2H28.8L28.67 23Z"/></svg><span data-i18n="parents">Parents</span></div>
+    <div style="display:flex;gap:10px;align-items:center"><div class="langsw"><span data-l="en" onclick="setLang('en')">EN</span><span data-l="ar" onclick="setLang('ar')">ع</span></div>
+    <button class="thtog" onclick="toggleTheme()" aria-label="Switch light or dark mode"><span class="thk"><svg class="ths" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg><svg class="thm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span></button></div></div>
+  <div class="pv-body" id="pv-body"></div>
 </div>
 
 <!-- APP -->
@@ -948,6 +1017,7 @@ html.th-anim .thk,html.th-anim .thk svg{transition:transform .45s cubic-bezier(.
     <div class="fg"><label class="fl">Parent name</label><input type="text" id="st-pname" placeholder="e.g. Mohamed Ali"></div>
     <div class="fg"><label class="fl">Parent phone (WhatsApp)</label><input type="tel" id="st-pphone" placeholder="010 XXXX XXXX"></div>
   </div>
+  <div class="fg"><label class="fl">Note for parents <span style="font-size:11px;color:var(--text3)">shown on the parent page — write in English or Arabic</span></label><textarea id="st-pnote" style="min-height:54px" placeholder="e.g. Improving fast in algebra — please make sure homework is done before Tuesday."></textarea></div>
   <div class="fg"><label class="fl">Custom price per session (EGP) <span style="font-size:11px;color:var(--text3)">optional — overrides the group price</span></label><input type="number" id="st-price" min="0" placeholder="Group price"></div>
   <div class="fg" id="st-sat-cw" style="display:none"><label class="fl">Custom SAT date</label><input type="date" id="st-sat-c"></div>
   <div class="fg"><label class="fl">Notes</label><textarea id="st-notes" style="min-height:52px"></textarea></div>
@@ -1279,7 +1349,7 @@ let DB_READY=false;
 const K='mz4_';
 function _lsSet(k,v){try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}}
 function _lsGet(k,d){try{const v=localStorage.getItem(K+k);return v!==null?JSON.parse(v):d}catch(e){return d}}
-try{Object.keys(localStorage).filter(x=>x.startsWith(K)&&![K+'token',K+'theme',K+'brand'].includes(x)).forEach(x=>localStorage.removeItem(x));}catch(e){} // wipe old caches (they held passwords)
+try{Object.keys(localStorage).filter(x=>x.startsWith(K)&&![K+'token',K+'theme',K+'brand',K+'lang',K+'mode',K+'ptoks',K+'pcur'].includes(x)).forEach(x=>localStorage.removeItem(x));}catch(e){} // wipe old caches (they held passwords)
 let TOKEN=_lsGet('token',null), RT_OK=false;
 function ld(k,d){return d;}
 
@@ -1399,6 +1469,7 @@ function rerenderCurrent(){
 }
 let _syncT=null,_syncKeys=new Set();
 function handleChange(payload){
+  if(PMODE&&payload&&payload.new){pRefreshSoon();return;}
   if(!CU||!payload||!payload.new)return;
   const k=payload.new.key;
   if(_lastSave[k]&&Date.now()-_lastSave[k]<3000)return; // our own save echoing back
@@ -1438,6 +1509,159 @@ async function initDB(){
   if(!TOKEN)hideLoader();
 }
 
+// ═══════════════════════════════════════════════════
+// LANGUAGE (stage 1: login + parent page) & PARENT PORTAL
+// ═══════════════════════════════════════════════════
+const I18N={
+en:{student:'Student',parent:'Parent',teacher:'Teacher',sid:'Student ID',pw:'Password',user:'Username',signin:'Sign in',
+ forgot:'Forgot your password? Ask Mr. Mohamed on WhatsApp.',pHelp:"Use your child's student ID and password.",
+ needS:'Student ID and password are required.',needT:'Username and password are required.',noconn:'Cannot connect — check your internet and refresh.',
+ cant:'Cannot sign in right now. Please try again.',badS:'Invalid student ID or password.',badT:'Invalid username or password.',
+ locked:'Too many wrong attempts. Try again in {m} min.',left:'{n} attempts left',loading:'Loading your data…',tag:'Road to 800',
+ parents:'Parents',reportFor:'Report for',live:'Updates live',next:'Next session',noNext:'No session scheduled yet',now:'Starting now',in:'in {x}',
+ d:'d',h:'h',m:'min',att:'Attendance',hw:'Homework',qz:'Quizzes',ofS:'{a} of {b} sessions',avgOf:'avg of {n}',grp:'Group {v}%',
+ up:'Improving',down:'Needs attention',steady:'Steady',recent:'Recent sessions',sess:'Session',P:'Present',L:'Late',A:'Absent',
+ quizzes:'Quiz results',scores:'Score progress',noScores:'No practice tests submitted yet',latest:'Latest',best:'Best',
+ payments:'Payments',rate:'Price per session',egp:'EGP',pendingN:'{n} payment(s) waiting for approval',lesson:'Lesson {n}',extra:'Extra session',
+ noPay:'No payments yet',note:"Teacher's note",msg:'Message teacher',pdf:'Download PDF',addChild:'Add another child',signout:'Sign out',
+ add:'Add',cancel:'Cancel',noRec:'No sessions recorded yet',noQz:'No quizzes yet',expired:'Please sign in again.',childOf:'Child'},
+ar:{student:'طالب',parent:'ولي أمر',teacher:'مدرس',sid:'كود الطالب',pw:'كلمة السر',user:'اسم المستخدم',signin:'دخول',
+ forgot:'نسيت كلمة السر؟ اسأل مستر محمد على واتساب.',pHelp:'استخدم كود الطالب وكلمة السر الخاصة بابنك أو ابنتك.',
+ needS:'كود الطالب وكلمة السر مطلوبين.',needT:'اسم المستخدم وكلمة السر مطلوبين.',noconn:'لا يوجد اتصال — تأكد من الإنترنت وأعد تحميل الصفحة.',
+ cant:'لا يمكن تسجيل الدخول الآن. حاول مرة أخرى.',badS:'كود الطالب أو كلمة السر غير صحيحة.',badT:'اسم المستخدم أو كلمة السر غير صحيحة.',
+ locked:'محاولات خاطئة كثيرة. حاول بعد {m} دقيقة.',left:'متبقي {n} محاولات',loading:'جاري تحميل البيانات…',tag:'الطريق إلى ٨٠٠',
+ parents:'أولياء الأمور',reportFor:'تقرير الطالب',live:'يتحدث تلقائياً',next:'الحصة القادمة',noNext:'لا توجد حصة محددة بعد',now:'تبدأ الآن',in:'بعد {x}',
+ d:'يوم',h:'س',m:'د',att:'الحضور',hw:'الواجب',qz:'الاختبارات',ofS:'{a} من {b} حصص',avgOf:'متوسط {n}',grp:'المجموعة {v}٪',
+ up:'في تحسن',down:'يحتاج متابعة',steady:'مستقر',recent:'آخر الحصص',sess:'الحصة',P:'حاضر',L:'متأخر',A:'غائب',
+ quizzes:'نتائج الاختبارات',scores:'تطور الدرجات',noScores:'لم يتم إرسال اختبارات تجريبية بعد',latest:'الأحدث',best:'الأعلى',
+ payments:'المدفوعات',rate:'سعر الحصة',egp:'جنيه',pendingN:'{n} دفعة في انتظار التأكيد',lesson:'الدرس {n}',extra:'حصة إضافية',
+ noPay:'لا توجد مدفوعات بعد',note:'ملاحظة المدرس',msg:'راسل المدرس',pdf:'تحميل PDF',addChild:'إضافة ابن/ابنة أخرى',signout:'خروج',
+ add:'إضافة',cancel:'إلغاء',noRec:'لا توجد حصص مسجلة بعد',noQz:'لا توجد اختبارات بعد',expired:'برجاء تسجيل الدخول مرة أخرى.',childOf:'الطالب'}};
+function curLang(){return _lsGet('lang',null)==='ar'?'ar':'en';}
+function tr(k,v){let s=(I18N[curLang()]||I18N.en)[k]; if(s==null)s=I18N.en[k]||k; if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]); return s;}
+let _arFont=false;
+function applyLang(){
+  const L=curLang(), ar=L==='ar';
+  if(ar&&!_arFont){_arFont=true;const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600&display=swap';document.head.appendChild(l);}
+  ['login-screen','parent-view'].forEach(id=>{const e=document.getElementById(id);if(e){e.dir=ar?'rtl':'ltr';e.lang=L;}});
+  document.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=tr(e.dataset.i18n);});
+  document.querySelectorAll('[data-i18n-ph]').forEach(e=>{e.placeholder=tr(e.dataset.i18nPh);});
+  document.querySelectorAll('.lgo-t').forEach(e=>{e.innerHTML=esc(tr('signin'))+' <span class="lgo-a">'+(ar?'←':'→')+'</span>';});
+  document.querySelectorAll('.langsw span').forEach(e=>e.classList.toggle('on',e.dataset.l===L));
+  const lt=document.getElementById('lb-tag'); if(lt){const b=getBrand();lt.textContent=b.tagline?b.tagline:tr('tag');}
+  const fw=document.getElementById('lfoot');if(fw){const wa=getBrand().wa;fw.innerHTML=wa?`<a href="https://wa.me/${waNumber(wa)}" target="_blank" rel="noopener">${esc(tr('forgot'))}</a>`:esc(tr('forgot'));}
+  if(PMODE&&PDATA)renderParent();
+}
+function setLang(l){_lsSet('lang',l==='ar'?'ar':'en');applyLang();}
+
+// ── Parent session (several children per phone) ──
+let PMODE=false, PDATA=null, _pT=null, _pLoading=false;
+function pToks(){return _lsGet('ptoks',[])||[];}
+function pSave(a){_lsSet('ptoks',a);}
+function pCur(){const a=pToks();const i=Math.min(+(_lsGet('pcur',0)||0),a.length-1);return a[i<0?0:i]||null;}
+async function doParentLogin(add){
+  const idEl=document.getElementById(add?'pa-id':'ppi'), pwEl=document.getElementById(add?'pa-pw':'ppp');
+  const err=document.getElementById(add?'pa-err':'lerr'), att=document.getElementById('lattempts');
+  const id=idEl.value.trim(), pw=pwEl.value; err.textContent=''; if(att)att.textContent='';
+  if(!id||!pw){err.textContent=tr('needS');return;}
+  if(!DB_READY){err.textContent=tr('noconn');return;}
+  if(_loggingIn)return; _loggingIn=true;
+  const btn=add?document.getElementById('pa-go'):document.querySelector('#lt-p .lgo'); if(btn)btn.classList.add('ld');
+  try{
+    const {data,error}=await DB.rpc('parent_login',{p_login:id,p_password:pw});
+    if(error){err.textContent=tr('cant');return;}
+    if(data.error==='locked'){err.textContent=tr('locked',{m:Math.ceil(data.seconds/60)});return;}
+    if(data.error){err.textContent=tr('badS');if(!add&&att&&data.left!==undefined&&data.left<=5)att.textContent=tr('left',{n:data.left});return;}
+    const a=pToks().filter(x=>x.id!==data.student.id); a.push({t:data.token,id:data.student.id,name:data.student.name}); pSave(a); _lsSet('pcur',a.length-1);
+    _lsSet('mode','parent'); pwEl.value='';
+    await openParent();
+  } finally {_loggingIn=false; if(btn)btn.classList.remove('ld');}
+}
+async function openParent(){
+  PMODE=true; showLoader(tr('loading'));
+  try{const ok=await loadParent(); if(!ok){PMODE=false;return false;}
+    document.getElementById('login-screen').style.display='none'; document.getElementById('app').style.display='none';
+    document.getElementById('parent-view').style.display='block'; applyLang(); renderParent(); return true;}
+  finally{hideLoader();}
+}
+async function loadParent(){
+  const c=pCur(); if(!c)return false;
+  const {data,error}=await DB.rpc('parent_view',{p_token:c.t});
+  if(error){toast2(tr('cant'));return !!PDATA;}
+  if(data&&data.error){ // token expired → drop this child
+    const a=pToks().filter(x=>x.t!==c.t); pSave(a); _lsSet('pcur',0);
+    if(a.length)return loadParent();
+    _lsSet('mode',null); PMODE=false; PDATA=null;
+    document.getElementById('parent-view').style.display='none'; document.getElementById('login-screen').style.display='flex';
+    document.getElementById('lerr').textContent=tr('expired'); return false;}
+  PDATA=data; return true;
+}
+function pRefreshSoon(){clearTimeout(_pT);_pT=setTimeout(async()=>{if(!PMODE||_pLoading)return;_pLoading=true;try{if(await loadParent())renderParent();}finally{_pLoading=false;}},900);}
+function pSwitch(i){_lsSet('pcur',i);PDATA=null;openParent();}
+function pSignOut(){pToks().forEach(x=>DB&&DB.rpc('parent_logout',{p_token:x.t}).then(()=>{},()=>{}));pSave([]);_lsSet('mode',null);PMODE=false;PDATA=null;
+  document.getElementById('parent-view').style.display='none';document.getElementById('login-screen').style.display='flex';applyLang();}
+function pAddToggle(on){const f=document.getElementById('pa-form');if(f){f.style.display=on?'block':'none';if(on)document.getElementById('pa-id').focus();}}
+function _pDate(d,opt){try{return new Date(d+'T12:00').toLocaleDateString(curLang()==='ar'?'ar-EG-u-nu-latn':'en-GB',opt||{weekday:'short',day:'numeric',month:'short'});}catch(e){return d;}}
+function _pRing(p,col){const r=22,C=2*Math.PI*r,v=p==null?0:Math.max(0,Math.min(100,p));
+  return `<svg class="pv-ring" viewBox="0 0 54 54"><circle cx="27" cy="27" r="${r}" fill="none" stroke="var(--border2)" stroke-width="4"/><circle cx="27" cy="27" r="${r}" fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${C*v/100} ${C}" transform="rotate(-90 27 27)"/><text x="27" y="31" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--white)">${p==null?'—':p+'%'}</text></svg>`;}
+function renderParent(){
+  const R=PDATA, el=document.getElementById('pv-body'); if(!R||!el)return; const ar=curLang()==='ar';
+  const A=R.attendance||{rows:[]}, H=R.hw||{rows:[]}, Q=R.quiz||{rows:[]}, Pm=R.payments||{rows:[]};
+  const attP=A.total?Math.round(A.present/A.total*100):null;
+  const kids=pToks(), cur=pCur();
+  // next session
+  let nx=`<span class="pv-mut">${esc(tr('noNext'))}</span>`;
+  if(R.next){const st=new Date(R.next.date+'T'+(R.next.time||'00:00')); const ms=st-Date.now();
+    let rel=tr('now'); if(ms>0){const mm=Math.round(ms/60000),dd=Math.floor(mm/1440),hh=Math.floor(mm%1440/60);rel=tr('in',{x:dd?dd+' '+tr('d')+(hh?' '+hh+' '+tr('h'):''):hh?hh+' '+tr('h')+' '+(mm%60)+' '+tr('m'):(mm%60)+' '+tr('m')});}
+    const tm=st.toLocaleTimeString(ar?'ar-EG-u-nu-latn':'en-US',{hour:'numeric',minute:'2-digit'});
+    nx=`<span><span class="pv-mut">${esc(tr('next'))}</span><b>${esc(_pDate(R.next.date))} · ${esc(tm)}</b><small>${esc(R.next.title||'')}</small></span><span class="pv-acc">${esc(rel)}</span>`;}
+  // sessions table: merge attendance + homework by date+title
+  const map=new Map(); A.rows.forEach(r=>map.set(r.date+'|'+r.title,{date:r.date,title:r.title,a:r.status}));
+  H.rows.forEach(r=>{const k=r.date+'|'+r.title;const o=map.get(k)||{date:r.date,title:r.title};o.hw=r.score;o.max=r.max;map.set(k,o);});
+  const rows=[...map.values()].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,12);
+  const tCls={P:'pv-p',L:'pv-l',A:'pv-a'};
+  const trendTxt={up:tr('up'),down:tr('down'),steady:tr('steady')}[R.trend]||'';
+  const sc=R.scores||[], best=sc.reduce((m,x)=>Math.max(m,+x.score||0),0), last=sc[sc.length-1];
+  const spark=sc.length>1?(()=>{const W=260,Hh=54,mn=Math.min(...sc.map(x=>+x.score))-20,mx=Math.max(...sc.map(x=>+x.score))+20;const pts=sc.map((x,i)=>[(i/(sc.length-1))*W,Hh-((+x.score-mn)/(mx-mn||1))*Hh]);
+    return `<svg viewBox="-4 -6 ${W+8} ${Hh+12}" class="pv-spark"><polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--accent)"/>`).join('')}</svg>`;})():'';
+  const wa=getBrand().wa;
+  el.innerHTML=`
+  ${kids.length>1?`<div class="pv-kids">${kids.map((k,i)=>`<span class="${cur&&k.t===cur.t?'on':''}" onclick="pSwitch(${i})">${esc((k.name||k.id).split(' ')[0])}</span>`).join('')}</div>`:''}
+  <div class="pv-hero"><div><div class="pv-mut">${esc(tr('reportFor'))}</div><div class="pv-name">${esc(R.student.name||'')}</div><div class="pv-grp">${esc([R.student.group,R.grade?(ar?'الصف '+R.grade:'Grade '+R.grade):''].filter(Boolean).join(' · '))}</div></div>
+    <span class="pv-live"><i></i>${esc(tr('live'))}</span></div>
+  <div class="pv-next">${nx}</div>
+  <div class="pv-k3">
+    <div class="pv-k">${_pRing(attP,'var(--accent)')}<div class="pv-kl">${esc(tr('att'))}</div><div class="pv-ks">${esc(tr('ofS',{a:A.present||0,b:A.total||0}))}</div></div>
+    <div class="pv-k">${_pRing(H.avg,'var(--text)')}<div class="pv-kl">${esc(tr('hw'))}</div><div class="pv-ks">${H.groupAvg!=null?esc(tr('grp',{v:H.groupAvg})):esc(tr('avgOf',{n:H.rows.length}))}</div></div>
+    <div class="pv-k">${_pRing(Q.avg,'var(--text3)')}<div class="pv-kl">${esc(tr('qz'))}</div><div class="pv-ks">${Q.groupAvg!=null?esc(tr('grp',{v:Q.groupAvg})):esc(tr('avgOf',{n:Q.rows.length}))}</div></div>
+  </div>
+  ${trendTxt?`<div class="pv-trend pv-t-${esc(R.trend)}">${esc(trendTxt)}</div>`:''}
+  <div class="pv-sec">${esc(tr('recent'))}</div>
+  ${rows.length?`<div class="pv-tbl">${rows.map(r=>`<div class="pv-row"><span class="pv-d">${esc(r.title||tr('sess'))}<small>${esc(_pDate(r.date))}</small></span>
+     <span class="pv-b ${tCls[r.a]||''}">${r.a?esc(tr(r.a)):'—'}</span><span class="pv-hw">${r.hw!=null?esc(r.hw+'/'+r.max):'—'}</span></div>`).join('')}</div>`:`<div class="pv-mut">${esc(tr('noRec'))}</div>`}
+  <div class="pv-sec">${esc(tr('quizzes'))}</div>
+  ${Q.rows.length?`<div class="pv-tbl">${Q.rows.slice().reverse().map(q=>`<div class="pv-row"><span class="pv-d">${esc(q.title||'')}${q.groupAvg!=null?`<small>${esc(tr('grp',{v:Math.round(q.groupAvg/q.max*100)}))}</small>`:''}</span><span></span><span class="pv-hw pv-accent">${esc(q.score+'/'+q.max)}</span></div>`).join('')}</div>`:`<div class="pv-mut">${esc(tr('noQz'))}</div>`}
+  <div class="pv-sec">${esc(tr('scores'))}</div>
+  ${sc.length?`<div class="pv-card"><div class="pv-sc2"><div><span class="pv-mut">${esc(tr('latest'))}</span><b>${esc(last.score)}</b></div><div><span class="pv-mut">${esc(tr('best'))}</span><b class="pv-accent">${esc(best)}</b></div></div>${spark}</div>`:`<div class="pv-mut">${esc(tr('noScores'))}</div>`}
+  <div class="pv-sec">${esc(tr('payments'))}</div>
+  <div class="pv-card"><div class="pv-row" style="border:0;padding-top:0"><span class="pv-d">${esc(tr('rate'))}</span><span></span><span class="pv-hw pv-accent">${esc(Pm.rate)} ${esc(tr('egp'))}</span></div>
+    ${Pm.pending?`<div class="pv-warn">${esc(tr('pendingN',{n:Pm.pending}))}</div>`:''}
+    ${Pm.rows.length?Pm.rows.slice(0,10).map(p=>`<div class="pv-row"><span class="pv-d">${esc(p.extra?tr('extra'):+p.lesson?tr('lesson',{n:p.lesson}):tr('payments'))}<small>${esc(p.date?_pDate(p.date):'')}</small></span><span class="pv-b pv-p">✓</span><span class="pv-hw">${esc(p.amount)}</span></div>`).join(''):`<div class="pv-mut" style="margin-top:6px">${esc(tr('noPay'))}</div>`}</div>
+  ${R.note?`<div class="pv-sec">${esc(tr('note'))}</div><div class="pv-note">${esc(R.note)}</div>`:''}
+  <div class="pv-btns">${wa?`<a class="pv-gold" href="https://wa.me/${waNumber(wa)}" target="_blank" rel="noopener">${esc(tr('msg'))}</a>`:''}<button class="pv-ghost" onclick="pPdf(this)">${esc(tr('pdf'))}</button></div>
+  <div class="pv-foot"><button class="pv-link" onclick="pAddToggle(true)">+ ${esc(tr('addChild'))}</button><button class="pv-link" onclick="pSignOut()">${esc(tr('signout'))}</button></div>
+  <div id="pa-form" style="display:none" class="pv-card"><div class="f"><label class="ll" for="pa-id">${esc(tr('sid'))}</label><input class="li" id="pa-id" inputmode="numeric" autocomplete="off"></div>
+    <div class="f"><label class="ll" for="pa-pw">${esc(tr('pw'))}</label><input class="li" id="pa-pw" type="password" autocomplete="off" onkeydown="if(event.key==='Enter')doParentLogin(true)"></div>
+    <div class="lerr" id="pa-err"></div><div style="display:flex;gap:8px"><button class="lbtn lgo" id="pa-go" onclick="doParentLogin(true)"><i class="lgo-r"></i><i class="lgo-r b"></i><span>${esc(tr('add'))}</span></button><button class="pv-ghost" onclick="pAddToggle(false)">${esc(tr('cancel'))}</button></div></div>`;
+}
+function pPdf(btn){_busy(btn,async()=>{const R=JSON.parse(JSON.stringify(PDATA));const ds=[...(R.attendance.rows||[]),...(R.hw.rows||[])].map(x=>x.date).filter(Boolean).sort();if(ds[0])R.period.from=ds[0];await reportPdf(R,curLang());});}
+async function maybeParent(){
+  if(_lsGet('mode',null)!=='parent'||!pToks().length)return false;
+  return !!(await openParent());
+}
+setInterval(()=>{if(PMODE&&document.visibilityState==='visible')renderParent();},60000);
+document.addEventListener('visibilitychange',()=>{if(PMODE&&document.visibilityState==='visible')pRefreshSoon();});
+
 // ── IN-MEMORY STATE (initialized from localStorage cache, then Supabase overwrites on load) ──
 let students      = ld('students',[]);
 let lessonData    = ld('lessonData',{});
@@ -1465,6 +1689,7 @@ function switchTab(t,el){
   el.classList.add('active');
   document.getElementById('lt-t').style.display=t==='teacher'?'block':'none';
   document.getElementById('lt-s').style.display=t==='student'?'block':'none';
+  document.getElementById('lt-p').style.display=t==='parent'?'block':'none';
   document.getElementById('lerr').textContent='';
   if(document.getElementById('lattempts'))document.getElementById('lattempts').textContent='';
 }
@@ -1473,19 +1698,19 @@ let _loggingIn=false;
 async function _serverLogin(kind,login,pw){
   const err=document.getElementById('lerr'), att=document.getElementById('lattempts');
   err.textContent=''; att.textContent='';
-  if(!login||!pw){err.textContent=kind==='teacher'?'Username and password are required.':'Student ID and password are required.';return;}
-  if(!DB_READY){err.textContent='Cannot connect — check your internet and refresh.';return;}
+  if(!login||!pw){err.textContent=tr(kind==='teacher'?'needT':'needS');return;}
+  if(!DB_READY){err.textContent=tr('noconn');return;}
   if(_loggingIn)return; _loggingIn=true; err.textContent='';
   const _lb=document.querySelector(kind==='teacher'?'#lt-t .lgo':'#lt-s .lgo'); if(_lb)_lb.classList.add('ld');
   try{
     const {data,error}=await DB.rpc('login',{p_kind:kind,p_login:login,p_password:pw});
-    if(error){err.textContent='Cannot sign in right now. Please try again.';return;}
-    if(data.error==='locked'){err.textContent='Too many wrong attempts. Try again in '+Math.ceil(data.seconds/60)+' min.';return;}
-    if(data.error){err.textContent=kind==='teacher'?'Invalid username or password.':'Invalid student ID or password.';
-      if(data.left!==undefined&&data.left<=5)att.textContent=data.left+' attempt'+(data.left!==1?'s':'')+' left';return;}
-    TOKEN=data.token; _lsSet('token',TOKEN);
+    if(error){err.textContent=tr('cant');return;}
+    if(data.error==='locked'){err.textContent=tr('locked',{m:Math.ceil(data.seconds/60)});return;}
+    if(data.error){err.textContent=tr(kind==='teacher'?'badT':'badS');
+      if(data.left!==undefined&&data.left<=5)att.textContent=tr('left',{n:data.left});return;}
+    TOKEN=data.token; _lsSet('token',TOKEN); _lsSet('mode',null);
     CR=data.role; CU=data.profile;
-    err.textContent=''; showLoader('Loading your data…');
+    err.textContent=''; showLoader(tr('loading'));
     try{await Promise.all([loadAllFromDB(),loadPayRequests()]);launchApp();}finally{hideLoader();}
   } finally { _loggingIn=false; document.querySelectorAll('.lgo.ld').forEach(x=>x.classList.remove('ld')); }
 }
@@ -2098,6 +2323,7 @@ function fillTempFields(s){
   document.getElementById('st-allowed').value=s?fmtLessons(s.allowedLessons):'';
   document.getElementById('st-price').value=s&&+s.price?s.price:'';
   document.getElementById('st-pname').value=(s&&s.parentName)||''; document.getElementById('st-pphone').value=(s&&s.parentPhone)||'';
+  document.getElementById('st-pnote').value=(s&&s.parentNote)||'';
   onStuClassChange();
 }
 function openAddStudent(presetClass){
@@ -2135,7 +2361,7 @@ const group=document.getElementById('st-grp').value;
   const hostClassId=isTmp?document.getElementById('st-host').value:'';
   const allowedLessons=isTmp?parseLessons(document.getElementById('st-allowed').value):[];
   const price=+document.getElementById('st-price').value||'';
-  const parentName=document.getElementById('st-pname').value.trim(), parentPhone=document.getElementById('st-pphone').value.trim();
+  const parentName=document.getElementById('st-pname').value.trim(), parentPhone=document.getElementById('st-pphone').value.trim(), parentNote=document.getElementById('st-pnote').value.trim();
   const grade=(clsById(classId)||{}).grade||document.getElementById('st-grade').value;
   const satDate=document.getElementById('st-sat').value;
   const satCustom=document.getElementById('st-sat-c').value;
@@ -2143,10 +2369,10 @@ const group=document.getElementById('st-grp').value;
   const eid=document.getElementById('m-add-student')._eid;
   if(eid){
     if(id!==eid&&students.find(x=>x.id===id)){toast2('ID already exists');return;}
-    const s=students.find(x=>x.id===eid); if(s){Object.assign(s,{name,id,phone,fee,group,grade,classId,hostClassId,allowedLessons,price,parentName,parentPhone,satDate,satCustom,notes});if(pw)s.pw=pw;}
+    const s=students.find(x=>x.id===eid); if(s){Object.assign(s,{name,id,phone,fee,group,grade,classId,hostClassId,allowedLessons,price,parentName,parentPhone,parentNote,satDate,satCustom,notes});if(pw)s.pw=pw;}
   } else {
     if(students.find(x=>x.id===id)){toast2('ID already exists');return;}
-    students.push({id,name,phone,pw,fee,group,grade,classId,hostClassId,allowedLessons,price,parentName,parentPhone,satDate,satCustom,notes,attendance:{}});
+    students.push({id,name,phone,pw,fee,group,grade,classId,hostClassId,allowedLessons,price,parentName,parentPhone,parentNote,satDate,satCustom,notes,attendance:{}});
     addNotif('New student registered: '+name,'info');
   }
   sv('students',students); students.forEach(x=>delete x.pw); // password is stored scrambled on the server only
@@ -2571,7 +2797,8 @@ function applyBrand(b){
   const nm=b.name||'Mohamed Zayed';
   ['lb-name','sb-name','ldr-name'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=nm;});
   const ls=document.getElementById('lb-sub');if(ls)ls.textContent=b.sub||'SAT Math';
-  const lt=document.getElementById('lb-tag');if(lt)lt.textContent=b.tagline||'Road to 800';
+  const lt=document.getElementById('lb-tag');if(lt)lt.textContent=b.tagline||(typeof tr==='function'?tr('tag'):'Road to 800');
+  if(typeof applyLang==='function'&&document.getElementById('lfoot'))try{applyLang();}catch(e){}
   document.title=nm+' — '+(b.sub||'SAT Math');
   applyTheme();
 }
@@ -2624,6 +2851,8 @@ function renderBrandCard(){
   el.innerHTML=`<div class="st" style="margin-bottom:14px">Branding</div>
     <div class="fg"><label class="fl">Name shown on the site</label><input type="text" value="${esc(b.name||'')}" onchange="setBrand('name',this.value)"></div>
     <div class="fg"><label class="fl">Subtitle</label><input type="text" value="${esc(b.sub||'')}" placeholder="SAT Math" onchange="setBrand('sub',this.value)"></div>
+    <div class="fg"><label class="fl">Tagline on the login page <span style="font-size:11px;color:var(--text3)">empty = “Road to 800” (and Arabic version)</span></label><input type="text" value="${esc(b.tagline||'')}" placeholder="Road to 800" onchange="setBrand('tagline',this.value.trim())"></div>
+    <div class="fg"><label class="fl">Your WhatsApp number <span style="font-size:11px;color:var(--text3)">for “Message teacher” and “Forgot password” links</span></label><input type="tel" value="${esc(b.wa||'')}" placeholder="010 XXXX XXXX" onchange="setBrand('wa',this.value.trim())"></div>
     <div class="fg"><label class="fl">Main colour</label><div>${ACCENTS.map(a=>`<span class="sw ${(b.accent||'').toLowerCase()===a[0]?'on':''}" title="${a[2]}" style="background:${a[0]}" onclick="setBrand('accent','${a[0]}')"></span>`).join('')}
       <label class="sw" title="Custom colour" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);position:relative;overflow:hidden"><input type="color" value="${esc(b.accent||'#c9a84c')}" onchange="setBrand('accent',this.value)" style="opacity:0;position:absolute;inset:0;cursor:pointer"></label></div></div>
     <div class="fg"><label class="fl">Default theme for everyone (each person can still switch)</label>
@@ -4087,6 +4316,8 @@ function closeMobSb(){
   applyBrand();
   await initDB();
   if(DB_READY&&await maybePublicReport())return;
+  applyLang();
+  if(DB_READY&&_lsGet('mode',null)==='parent'&&await maybeParent())return;
   if(DB_READY)DB.rpc('public_brand').then(({data})=>{if(data&&data.accent){applyBrand(data);}}).catch(()=>{});
   if(!await restoreSession()){  // restoreSession is now async
     document.getElementById('login-screen').style.display='flex';
